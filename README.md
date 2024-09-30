@@ -1,2 +1,1 @@
-# tasky
-Mentorship Project
+# Tasky
