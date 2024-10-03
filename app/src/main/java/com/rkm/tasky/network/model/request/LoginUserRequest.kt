@@ -1,4 +1,4 @@
-package com.rkm.network.model.request
+package com.rkm.tasky.network.model.request
 
 data class LoginUserRequest(
     val email: String,

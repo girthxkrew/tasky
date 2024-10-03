@@ -1,7 +1,7 @@
-package com.rkm.network.model.response
+package com.rkm.tasky.network.model.response
 
-import com.rkm.network.model.Reminder
-import com.rkm.network.model.Task
+import com.rkm.tasky.network.Reminder
+import com.rkm.tasky.network.Task
 
 data class AgendaResponse(
     val events: List<EventResponse>,

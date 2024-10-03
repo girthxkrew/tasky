@@ -1,10 +1,9 @@
-package com.rkm.network.model
+package com.rkm.tasky.network
 
-data class Task(
+data class Reminder(
     val id: String,
     val title: String,
     val description: String?,
     val time: Long,
-    val remindAt: Long,
-    val isDone: Boolean
+    val remindAt: Long
 )

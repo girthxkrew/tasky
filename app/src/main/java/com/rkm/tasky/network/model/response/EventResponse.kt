@@ -1,4 +1,4 @@
-package com.rkm.network.model.response
+package com.rkm.tasky.network.model.response
 
 data class EventResponse(
     val id: String,
