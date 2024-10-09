@@ -2,9 +2,8 @@ package com.rkm.tasky.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
+import androidx.room.Upsert
 import com.rkm.tasky.database.model.ReminderEntity
 
 @Dao
@@ -16,11 +15,8 @@ interface ReminderDao {
     @Query("SELECT * FROM reminders")
     suspend fun getAllReminders(): List<ReminderEntity>
 
-    @Update
-    suspend fun updateReminder(reminder: ReminderEntity)
-
-    @Insert
-    suspend fun insertReminder(reminder: ReminderEntity)
+    @Upsert
+    suspend fun upsertReminder(reminder: ReminderEntity)
 
     @Delete
     suspend fun deleteReminder(reminder: ReminderEntity)
