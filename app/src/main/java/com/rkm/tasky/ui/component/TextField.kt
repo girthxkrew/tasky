@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rkm.tasky.R
@@ -39,8 +41,7 @@ fun EmailValidationTextField(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .padding(16.dp)
+            .height(75.dp)
             .background(color = LightGreyTextFieldBackground, shape = RoundedCornerShape(8.dp)),
         verticalAlignment = Alignment.CenterVertically
         )
@@ -58,7 +59,7 @@ fun EmailValidationTextField(
             decorationBox = { innerTextField ->
                 if (email.isEmpty()) {
                     Text(
-                        text = stringResource(R.string.login_screen_email_hint),
+                        text = stringResource(R.string.text_field_email_hint),
                         style = TextStyle(
                             color = TextFieldHintColor,
                             fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -94,8 +95,7 @@ fun PasswordTextField(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .padding(16.dp)
+            .height(75.dp)
             .background(color = LightGreyTextFieldBackground, shape = RoundedCornerShape(8.dp)),
         verticalAlignment = Alignment.CenterVertically
     )
@@ -110,10 +110,11 @@ fun PasswordTextField(
                 color = TextFieldFontColor,
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
             ),
+            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
             decorationBox = { innerTextField ->
                 if (password.isEmpty()) {
                     Text(
-                        text = stringResource(R.string.login_screen_email_hint),
+                        text = stringResource(R.string.text_field_password_hint),
                         style = TextStyle(
                             color = TextFieldHintColor,
                             fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -126,11 +127,21 @@ fun PasswordTextField(
 
         if(showPassword) {
             Icon(
-                imageVector = Icons.Filled.,
+                painter = painterResource(id = R.drawable.round_visibility_24),
                 modifier = Modifier
                     .weight(1f)
                     .padding(16.dp),
                 contentDescription = null,
+                tint = TextFieldHintColor
+            )
+        } else {
+            Icon(
+                painter = painterResource(id = R.drawable.round_visibility_off_24),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp),
+                contentDescription = null,
+                tint = TextFieldHintColor
             )
         }
     }
@@ -143,9 +154,23 @@ fun PasswordTextField(
 @Composable
 fun EmailValidationTextFieldPreview() {
     EmailValidationTextField(
-        email = "",
+        email = "someemail@email.com",
         onEmailChange = {},
         isValidEmail = true,
         modifier = Modifier
     )
 }
+
+@Preview(
+    showBackground = false,
+)
+@Composable
+fun PasswordTextFieldPreview() {
+    PasswordTextField(
+        password = "password",
+        onPasswordChange = {},
+        showPassword = false,
+        modifier = Modifier
+    )
+}
+
