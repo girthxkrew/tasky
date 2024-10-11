@@ -1,11 +1,14 @@
 package com.rkm.tasky.feature.loginscreen.viewmodel
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class LoginViewModel: ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor() : ViewModel() {
 
     private val _emailState = MutableStateFlow("")
     val emailState = _emailState.asStateFlow()
@@ -21,14 +24,14 @@ class LoginViewModel: ViewModel() {
 
     fun updateEmail(email: String) {
         _emailState.update {
-            it + email
+            email
         }
 
     }
 
     fun updatePassword(password: String) {
         _passwordState.update {
-            it + password
+            password
         }
 
     }

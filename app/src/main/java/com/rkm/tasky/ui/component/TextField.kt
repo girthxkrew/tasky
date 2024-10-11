@@ -1,6 +1,5 @@
 package com.rkm.tasky.ui.component
 
-import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,10 +29,11 @@ import com.rkm.tasky.ui.theme.TextFieldFontColor
 import com.rkm.tasky.ui.theme.TextFieldHintColor
 
 @Composable
-fun EmailValidationTextField(
-    email: String,
-    onEmailChange: (String) -> Unit,
-    isValidEmail: Boolean,
+fun ValidationTextField(
+    value: String,
+    hint: Int,
+    onValueChange: (String) -> Unit,
+    isValid: Boolean,
     modifier: Modifier
 ) {
 
@@ -47,8 +46,8 @@ fun EmailValidationTextField(
         )
     {
         BasicTextField(
-            value = email,
-            onValueChange = onEmailChange,
+            value = value,
+            onValueChange = onValueChange,
             modifier = Modifier
                 .weight(5f)
                 .padding(16.dp),
@@ -57,9 +56,9 @@ fun EmailValidationTextField(
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
             ),
             decorationBox = { innerTextField ->
-                if (email.isEmpty()) {
+                if (value.isEmpty()) {
                     Text(
-                        text = stringResource(R.string.text_field_email_hint),
+                        text = stringResource(hint),
                         style = TextStyle(
                             color = TextFieldHintColor,
                             fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -70,7 +69,7 @@ fun EmailValidationTextField(
             }
         )
 
-        if(isValidEmail) {
+        if(isValid) {
             Icon(
                 imageVector = Icons.Rounded.Check,
                 modifier = Modifier
@@ -152,11 +151,12 @@ fun PasswordTextField(
     showBackground = false,
 )
 @Composable
-fun EmailValidationTextFieldPreview() {
-    EmailValidationTextField(
-        email = "someemail@email.com",
-        onEmailChange = {},
-        isValidEmail = true,
+private fun EmailValidationTextFieldPreview() {
+    ValidationTextField(
+        hint = R.string.text_field_email_hint,
+        value = "someemail@email.com",
+        onValueChange = {},
+        isValid = true,
         modifier = Modifier
     )
 }
@@ -165,7 +165,7 @@ fun EmailValidationTextFieldPreview() {
     showBackground = false,
 )
 @Composable
-fun PasswordTextFieldPreview() {
+private fun PasswordTextFieldPreview() {
     PasswordTextField(
         password = "password",
         onPasswordChange = {},
