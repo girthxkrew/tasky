@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.rkm.tasky"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.rkm.tasky"
@@ -59,6 +59,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -67,7 +68,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
-    implementation(libs.androidx.hilt)
+    implementation(libs.hilt)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.androidx.hilt.compiler)
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.kotlin)

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Tasky</string>
+    <string name="login_screen_greeting">Welcome Back!</string>
+    <string name="text_field_email_hint">Email address</string>
+    <string name="text_field_password_hint">Password</string>
+    <string name="login_button_text">LOG IN</string>
+    <string name="login_text_sign_up_question">DON\'T HAVE AN ACCOUNT?</string>
+    <string name="login_text_sign_up">SIGN UP</string>
 </resources>
