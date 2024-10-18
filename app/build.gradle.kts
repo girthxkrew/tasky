@@ -1,9 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose.plugin)
     alias(libs.plugins.hilt.plugin)
     alias(libs.plugins.ksp.plugin)
+    alias(libs.plugins.room.plugin)
 }
 
 android {
@@ -21,6 +22,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+    }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
     }
 
     buildTypes {
@@ -68,7 +73,12 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.room)
+    implementation(libs.androidx.room.kotlin)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room)
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.room.test.helpers)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
