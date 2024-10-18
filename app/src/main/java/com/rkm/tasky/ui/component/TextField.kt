@@ -1,12 +1,17 @@
 package com.rkm.tasky.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Icon
@@ -18,8 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rkm.tasky.R
@@ -30,10 +33,9 @@ import com.rkm.tasky.ui.theme.TextFieldHintColor
 
 @Composable
 fun ValidationTextField(
-    value: String,
+    state: TextFieldState,
     hint: Int,
-    onValueChange: (String) -> Unit,
-    isValid: Boolean,
+    isValidEmail: Boolean,
     modifier: Modifier
 ) {
 
@@ -43,20 +45,19 @@ fun ValidationTextField(
             .height(75.dp)
             .background(color = LightGreyTextFieldBackground, shape = RoundedCornerShape(8.dp)),
         verticalAlignment = Alignment.CenterVertically
-        )
+    )
     {
         BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
+            state = state,
             modifier = Modifier
-                .weight(5f)
+                .fillMaxWidth(0.85f)
                 .padding(16.dp),
             textStyle = TextStyle(
                 color = TextFieldFontColor,
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
             ),
-            decorationBox = { innerTextField ->
-                if (value.isEmpty()) {
+            decorator = { innerTextField ->
+                if (state.text.isEmpty()) {
                     Text(
                         text = stringResource(hint),
                         style = TextStyle(
@@ -69,11 +70,11 @@ fun ValidationTextField(
             }
         )
 
-        if(isValid) {
+        if (isValidEmail) {
             Icon(
                 imageVector = Icons.Rounded.Check,
                 modifier = Modifier
-                    .weight(1f)
+                    .wrapContentSize()
                     .padding(16.dp),
                 contentDescription = null,
                 tint = TextFieldCheckColor
@@ -85,9 +86,9 @@ fun ValidationTextField(
 
 @Composable
 fun PasswordTextField(
-    password: String,
-    onPasswordChange: (String) -> Unit,
+    password: TextFieldState,
     showPassword: Boolean,
+    onShowPasswordClick: () -> Unit,
     modifier: Modifier
 ) {
 
@@ -99,19 +100,18 @@ fun PasswordTextField(
         verticalAlignment = Alignment.CenterVertically
     )
     {
-        BasicTextField(
-            value = password,
-            onValueChange = onPasswordChange,
+        BasicSecureTextField(
+            state = password,
             modifier = Modifier
-                .weight(5f)
-                .padding(16.dp),
+                .padding(16.dp)
+                .fillMaxWidth(0.85f),
             textStyle = TextStyle(
                 color = TextFieldFontColor,
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
             ),
-            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-            decorationBox = { innerTextField ->
-                if (password.isEmpty()) {
+            textObfuscationMode = if (showPassword) TextObfuscationMode.Visible else TextObfuscationMode.Hidden,
+            decorator = { innerTextField ->
+                if (password.text.isEmpty()) {
                     Text(
                         text = stringResource(R.string.text_field_password_hint),
                         style = TextStyle(
@@ -124,12 +124,13 @@ fun PasswordTextField(
             }
         )
 
-        if(showPassword) {
+        if (showPassword) {
             Icon(
                 painter = painterResource(id = R.drawable.round_visibility_24),
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(16.dp),
+                    .wrapContentSize()
+                    .padding(16.dp)
+                    .clickable { onShowPasswordClick() },
                 contentDescription = null,
                 tint = TextFieldHintColor
             )
@@ -137,8 +138,9 @@ fun PasswordTextField(
             Icon(
                 painter = painterResource(id = R.drawable.round_visibility_off_24),
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(16.dp),
+                    .wrapContentSize()
+                    .padding(16.dp)
+                    .clickable { onShowPasswordClick() },
                 contentDescription = null,
                 tint = TextFieldHintColor
             )
@@ -151,12 +153,11 @@ fun PasswordTextField(
     showBackground = false,
 )
 @Composable
-private fun EmailValidationTextFieldPreview() {
+private fun ValidationTextFieldNoEmailPreview() {
     ValidationTextField(
         hint = R.string.text_field_email_hint,
-        value = "someemail@email.com",
-        onValueChange = {},
-        isValid = true,
+        state = TextFieldState(),
+        isValidEmail = false,
         modifier = Modifier
     )
 }
@@ -165,11 +166,62 @@ private fun EmailValidationTextFieldPreview() {
     showBackground = false,
 )
 @Composable
-private fun PasswordTextFieldPreview() {
+private fun ValidationTextFieldNotValidEmailPreview() {
+    ValidationTextField(
+        hint = R.string.text_field_email_hint,
+        state = TextFieldState("someemail"),
+        isValidEmail = false,
+        modifier = Modifier
+    )
+}
+
+@Preview(
+    showBackground = false,
+)
+@Composable
+private fun ValidationTextFieldValidEmailPreview() {
+    ValidationTextField(
+        hint = R.string.text_field_email_hint,
+        state = TextFieldState("someemail@email.com"),
+        isValidEmail = true,
+        modifier = Modifier
+    )
+}
+
+@Preview(
+    showBackground = false,
+)
+@Composable
+private fun PasswordTextFieldNoPasswordPreview() {
     PasswordTextField(
-        password = "password",
-        onPasswordChange = {},
+        password = TextFieldState(),
+        onShowPasswordClick = {},
         showPassword = false,
+        modifier = Modifier
+    )
+}
+
+@Preview(
+    showBackground = false,
+)
+@Composable
+private fun PasswordTextFieldPasswordHiddenPreview() {
+    PasswordTextField(
+        password = TextFieldState("password"),
+        onShowPasswordClick = {},
+        showPassword = false,
+        modifier = Modifier
+    )
+}
+@Preview(
+    showBackground = false,
+)
+@Composable
+private fun PasswordTextFieldPasswordVisiblePreview() {
+    PasswordTextField(
+        password = TextFieldState("password"),
+        onShowPasswordClick = {},
+        showPassword = true,
         modifier = Modifier
     )
 }

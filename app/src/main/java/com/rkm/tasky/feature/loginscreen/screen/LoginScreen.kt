@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -45,18 +46,15 @@ fun LoginScreenRoot(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
 
-    val email by viewModel.emailState.collectAsStateWithLifecycle()
-    val isValidEmail by viewModel.isValidEmailState.collectAsStateWithLifecycle()
-    val password by viewModel.passwordState.collectAsStateWithLifecycle()
-    val showPassword by viewModel.showPasswordState.collectAsStateWithLifecycle()
+    val showPassword by viewModel.showPassword.collectAsStateWithLifecycle()
+    val isValidEmail by viewModel.isValidEmail.collectAsStateWithLifecycle()
 
     LoginScreen(
-        email = email,
-        password = password,
+        email = viewModel.email,
+        password = viewModel.password,
         isValidEmail = isValidEmail,
         showPassword = showPassword,
-        onEmailChange = viewModel::updateEmail,
-        onPasswordChange = viewModel::updatePassword,
+        onShowPasswordClick = viewModel::onShowPasswordClicked,
         onLoginButtonClick = { /*TODO*/ },
         modifier = Modifier
     )
@@ -65,12 +63,11 @@ fun LoginScreenRoot(
 
 @Composable
 fun LoginScreen(
-    email: String,
-    password: String,
+    email: TextFieldState,
+    password: TextFieldState,
     isValidEmail: Boolean,
     showPassword: Boolean,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
+    onShowPasswordClick: () -> Unit,
     onLoginButtonClick: () -> Unit,
     modifier: Modifier
 ) {
@@ -113,8 +110,7 @@ fun LoginScreen(
                 password = password,
                 isValidEmail = isValidEmail,
                 showPassword = showPassword,
-                onEmailChange = onEmailChange,
-                onPasswordChange = onPasswordChange,
+                onShowPasswordClick = onShowPasswordClick,
                 onLoginButtonClick = onLoginButtonClick
             )
 
@@ -134,14 +130,13 @@ fun LoginScreen(
 }
 
 @Composable
-fun LoginBodyScreen(
+private fun LoginBodyScreen(
     modifier: Modifier,
-    email: String,
-    password: String,
+    email: TextFieldState,
+    password: TextFieldState,
     isValidEmail: Boolean,
     showPassword: Boolean,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
+    onShowPasswordClick: () -> Unit,
     onLoginButtonClick: () -> Unit
 ) {
    Column(
@@ -150,16 +145,15 @@ fun LoginBodyScreen(
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         ValidationTextField(
-            value = email,
+            state = email,
             hint = R.string.text_field_email_hint,
-            onValueChange = onEmailChange,
-            isValid = isValidEmail,
+            isValidEmail = isValidEmail,
             modifier = Modifier.padding(top = 48.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
         )
 
         PasswordTextField(
             password = password,
-            onPasswordChange = onPasswordChange,
+            onShowPasswordClick = onShowPasswordClick,
             showPassword = showPassword,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         )
@@ -180,7 +174,7 @@ fun LoginBodyScreen(
 }
 
 @Composable
-fun SignUpText(
+private fun SignUpText(
     modifier: Modifier,
     onSignUpClick: () -> Unit
 ){
@@ -217,11 +211,10 @@ private fun SignUpTextPreview() {
 @Composable
 private fun LoginScreenPreview() {
     LoginScreen(
-        "",
-        "",
+        TextFieldState("email@email.com"),
+        TextFieldState("password"),
+        true,
         false,
-        false,
-        {},
         {},
         {},
         Modifier

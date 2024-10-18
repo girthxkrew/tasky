@@ -1,5 +1,6 @@
 package com.rkm.tasky.feature.loginscreen.viewmodel
 
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,31 +11,22 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor() : ViewModel() {
 
-    private val _emailState = MutableStateFlow("")
-    val emailState = _emailState.asStateFlow()
+    val email = TextFieldState()
+    val password = TextFieldState()
+//    private val _isValidEmail = MutableStateFlow(isValidEmail(email.text.toString()))
+    private val _isValidEmail = MutableStateFlow(false)
+    val isValidEmail = _isValidEmail.asStateFlow()
+    private val _showPassword = MutableStateFlow(false)
+    val showPassword = _showPassword.asStateFlow()
 
-    private val _isValidEmailState = MutableStateFlow(false)
-    val isValidEmailState = _isValidEmailState.asStateFlow()
 
-    private val _passwordState = MutableStateFlow("")
-    val passwordState = _passwordState.asStateFlow()
-
-    private val _showPasswordState = MutableStateFlow(false)
-    val showPasswordState = _isValidEmailState.asStateFlow()
-
-    fun updateEmail(email: String) {
-        _emailState.update {
-            email
-        }
-
+    private fun isValidEmail(email: String): Boolean {
+       TODO("Not implemented yet")
     }
 
-    fun updatePassword(password: String) {
-        _passwordState.update {
-            password
+    fun onShowPasswordClicked() {
+        _showPassword.update {
+            !it
         }
-
     }
-
-
 }
