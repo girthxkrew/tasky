@@ -48,6 +48,12 @@ android {
         compose = true
     }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -79,6 +85,9 @@ dependencies {
     implementation(libs.androidx.datastore)
     testImplementation(libs.junit)
     testImplementation(libs.androidx.room.test.helpers)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

@@ -18,7 +18,7 @@ class DataStoreEncryptor @Inject constructor(): Encryptor{
     private val ENCRYPTION_BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM
     private val ENCRYPTION_PADDING = KeyProperties.ENCRYPTION_PADDING_NONE
     private val ENCRYPTION_ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
-    private val KEY_SIZE = 128
+    private val KEY_SIZE = 256
 
     private lateinit var keyStore: KeyStore
 
@@ -61,7 +61,7 @@ class DataStoreEncryptor @Inject constructor(): Encryptor{
     private fun getCipherForDecryption(initializationVector: ByteArray): Cipher {
         val cipher = getCipher()
         val secretKey = getOrCreateSecretKey()
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(KEY_SIZE, initializationVector))
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, initializationVector))
         return cipher
     }
 
