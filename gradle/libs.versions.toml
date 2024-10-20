@@ -18,6 +18,9 @@ androidx-hilt = "1.2.0"
 navigationRuntimeKtx = "2.8.3"
 room = "2.6.1"
 datastore = "1.1.1"
+robolectric = "4.13"
+turbine = "1.2.0"
+ktx_coroutines-test = "1.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,7 +50,10 @@ androidx-room-kotlin = { group = "androidx.room", name = "room-ktx", version.ref
 androidx-room-test-helpers = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidx-hilt" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
-androidx-datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore"}
+androidx-datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "ktx_coroutines-test" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
