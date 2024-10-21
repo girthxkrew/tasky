@@ -1,7 +1,7 @@
 package com.rkm.tasky.network.datasource
 
-import com.rkm.tasky.network.Reminder
-import com.rkm.tasky.network.Task
+import com.rkm.tasky.network.model.Reminder
+import com.rkm.tasky.network.model.Task
 import com.rkm.tasky.network.model.request.AccessTokenRequest
 import com.rkm.tasky.network.model.request.CreateEventRequest
 import com.rkm.tasky.network.model.response.LoginUserResponse
@@ -24,7 +24,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Query
 
-internal interface TaskyRemoteDataSource {
+interface TaskyRemoteDataSource {
 
     @POST("/register")
     suspend fun registerUser(
@@ -82,7 +82,7 @@ internal interface TaskyRemoteDataSource {
     suspend fun updateEvent(
         @Part("update_event_request") updateEventRequest: UpdateEventRequest,
         @Part photos: List<MultipartBody.Part>
-    )
+    ): Response<Unit>
 
     @GET
     suspend fun getAttendee(
@@ -133,6 +133,4 @@ internal interface TaskyRemoteDataSource {
     suspend fun deleteReminder(
         @Query("reminderId") reminderId: String
     ): Response<Unit>
-
-
 }

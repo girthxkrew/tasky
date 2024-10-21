@@ -1,4 +1,4 @@
-package com.rkm.tasky.network
+package com.rkm.tasky.network.model
 
 data class Task(
     val id: String,

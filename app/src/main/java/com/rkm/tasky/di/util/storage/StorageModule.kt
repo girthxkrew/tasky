@@ -1,4 +1,4 @@
-package com.rkm.tasky.di
+package com.rkm.tasky.di.util.storage
 
 import com.rkm.tasky.util.storage.abstraction.SessionStorage
 import com.rkm.tasky.util.storage.implementation.SessionStorageImpl

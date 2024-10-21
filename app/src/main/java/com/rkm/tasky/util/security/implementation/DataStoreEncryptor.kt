@@ -3,6 +3,7 @@ package com.rkm.tasky.util.security.implementation
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import com.rkm.tasky.util.security.abstraction.Encryptor
 import java.security.KeyStore
 import javax.crypto.Cipher
@@ -86,6 +87,8 @@ class DataStoreEncryptor @Inject constructor(): Encryptor{
 }
 
 private data class CipherWrapper(
+    @SerializedName("text")
     val text: ByteArray,
+    @SerializedName("initializationVector")
     val initializationVector: ByteArray
 )

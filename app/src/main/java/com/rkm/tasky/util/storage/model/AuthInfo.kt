@@ -1,9 +1,18 @@
 package com.rkm.tasky.util.storage.model
 
+import com.google.gson.annotations.SerializedName
+
 data class AuthInfo (
+    @SerializedName("accessToken")
     val accessToken: String,
+    @SerializedName("refreshToken")
     val refreshToken: String,
+    @SerializedName("userId")
     val userId: String,
+    @SerializedName("fullName")
     val fullName: String,
-    val email: String
+    @SerializedName("email")
+    val email: String,
+    @SerializedName("accessTokenExpirationTimestamp")
+    val accessTokenExpirationTimestamp: Long
 )

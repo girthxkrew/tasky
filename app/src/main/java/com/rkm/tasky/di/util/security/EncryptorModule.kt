@@ -1,4 +1,4 @@
-package com.rkm.tasky.di
+package com.rkm.tasky.di.util.security
 
 import com.rkm.tasky.util.security.abstraction.Encryptor
 import com.rkm.tasky.util.security.implementation.DataStoreEncryptor
@@ -6,7 +6,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
