@@ -14,5 +14,5 @@ abstract class NetworkManagerModule {
 
     @Singleton
     @Binds
-    abstract fun bindsLoginManager(manager: AuthenticationManagerImpl): AuthenticationManager
+    abstract fun bindsAuthenticationManager(manager: AuthenticationManagerImpl): AuthenticationManager
 }
