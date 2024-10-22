@@ -2,7 +2,6 @@ package com.rkm.tasky.network.model.response
 
 import com.google.gson.annotations.SerializedName
 import com.rkm.tasky.network.model.dto.LoginDTO
-import com.rkm.tasky.util.storage.model.AuthInfo
 
 data class LoginUserResponse(
     @SerializedName("accessToken")
