@@ -11,15 +11,15 @@ interface AuthenticationRepository {
         fullName: String,
         email: String,
         password: String
-    ): EmptyResult<NetworkError.AuthError>
+    ): EmptyResult<NetworkError.APIError>
     suspend fun loginUser(
         email: String,
         password: String
-    ): Result<LoginDTO, NetworkError.AuthError>
+    ): Result<LoginDTO, NetworkError.APIError>
     suspend fun getNewAccessToken(
         refreshToken: String,
         userId: String
-    ): Result<AccessTokenDTO, NetworkError.AuthError>
-    suspend fun checkAuthentication(): EmptyResult<NetworkError.AuthError>
-    suspend fun logoutUser(): EmptyResult<NetworkError.AuthError>
+    ): Result<AccessTokenDTO, NetworkError.APIError>
+    suspend fun checkAuthentication(): EmptyResult<NetworkError.APIError>
+    suspend fun logoutUser(): EmptyResult<NetworkError.APIError>
 }
