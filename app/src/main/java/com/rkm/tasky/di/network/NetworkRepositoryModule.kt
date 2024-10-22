@@ -1,7 +1,7 @@
 package com.rkm.tasky.di.network
 
-import com.rkm.tasky.network.repository.abstraction.TaskyRemoteRepository
-import com.rkm.tasky.network.repository.implementation.TaskyRemoteRepositoryImpl
+import com.rkm.tasky.network.repository.abstraction.AuthenticationRepository
+import com.rkm.tasky.network.repository.implementation.AuthenticationRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,5 +14,5 @@ abstract class NetworkRepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun bindsTaskyRemoteRepository(repositoryImpl: TaskyRemoteRepositoryImpl): TaskyRemoteRepository
+    abstract fun bindsAuthenticationRepository(repository: AuthenticationRepositoryImpl): AuthenticationRepository
 }

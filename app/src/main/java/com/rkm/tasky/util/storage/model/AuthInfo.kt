@@ -11,8 +11,6 @@ data class AuthInfo (
     val userId: String,
     @SerializedName("fullName")
     val fullName: String,
-    @SerializedName("email")
-    val email: String,
     @SerializedName("accessTokenExpirationTimestamp")
     val accessTokenExpirationTimestamp: Long
 )

@@ -64,7 +64,6 @@ class SessionStorageImplTest {
             refreshToken = "123",
             userId = "1",
             fullName = "Bob Smith",
-            email = "email@email.com",
             accessTokenExpirationTimestamp = 12L
         )
         sessionStorage.setSession(authInfo)
@@ -81,7 +80,6 @@ class SessionStorageImplTest {
             refreshToken = "123",
             userId = "1",
             fullName = "Bob Smith",
-            email = "email@email.com",
             accessTokenExpirationTimestamp = 12L
         )
         sessionStorage.setSession(authInfo)
