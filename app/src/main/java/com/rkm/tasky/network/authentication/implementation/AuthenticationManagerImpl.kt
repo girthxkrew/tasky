@@ -41,7 +41,7 @@ class AuthenticationManagerImpl @Inject constructor(
 
     override suspend fun checkAuthentication(): EmptyResult<NetworkError.APIError> =
         withContext(dispatcher) {
-            return@withContext checkAuthentication().asEmptyDataResult()
+            return@withContext repository.checkAuthentication().asEmptyDataResult()
         }
 
     override suspend fun getNewAccessToken(): EmptyResult<NetworkError.APIError> =

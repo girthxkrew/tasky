@@ -2,6 +2,7 @@ package com.rkm.tasky.network.util
 
 import com.google.gson.JsonParseException
 import com.rkm.tasky.util.result.Result
+import com.rkm.tasky.util.result.asEmptyDataResult
 import retrofit2.Response
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -26,7 +27,7 @@ suspend inline fun <reified T> safeCall(execute: () -> Response<T>): Result<T, N
 }
 
 suspend inline fun <reified T> responseToResult(response: Response<T>): Result<T, NetworkError.APIError> {
-    response.body() ?: return Result.Error(NetworkError.APIError.EMPTY_RESPONSE)
+    if (response.body() == null && response.isSuccessful) return Result.Success(Unit as T)
     return when(response.code()) {
         in 200..299 -> Result.Success(response.body()!!)
         401 -> Result.Error(NetworkError.APIError.UNAUTHORIZED)
