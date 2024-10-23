@@ -1,5 +1,6 @@
 package com.rkm.tasky.di.network
 
+import com.rkm.tasky.BuildConfig
 import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
 import dagger.Module
 import dagger.Provides
@@ -18,7 +19,7 @@ object NetworkModule {
     @Provides
     fun providesRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
