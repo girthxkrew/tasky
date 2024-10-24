@@ -5,12 +5,10 @@ import com.rkm.tasky.network.authentication.fakes.SessionStorageFake
 import com.rkm.tasky.network.model.dto.asAuthInfo
 import com.rkm.tasky.network.model.response.asAccessTokenDTO
 import com.rkm.tasky.network.model.response.asLoginDTO
-import com.rkm.tasky.network.repository.abstraction.AuthenticationRepository
 import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.resources.response.getNewAccessTokenResponseToPojo
 import com.rkm.tasky.resources.response.loginUserResponseToPojo
 import com.rkm.tasky.util.result.Result
-import com.rkm.tasky.util.storage.abstraction.SessionStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher

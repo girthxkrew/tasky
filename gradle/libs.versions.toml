@@ -24,6 +24,7 @@ ktx_coroutines-test = "1.9.0"
 mockWebServer = "4.12.0"
 mockito = "5.14.2"
 mockito-kotlin = "5.4.0"
+okHttp = "4.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,6 +61,8 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 mock-web-server = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "mockWebServer" }
 mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito"}
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
+okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okHttp" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
