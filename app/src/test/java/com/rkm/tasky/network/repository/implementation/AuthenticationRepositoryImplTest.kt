@@ -33,7 +33,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthenticationRepositoryImplTest {
 
-    // TODO: Add interceptors to test
     private lateinit var server: MockWebServer
     private lateinit var authRepository: AuthenticationRepositoryImpl
     private lateinit var dataSource: TaskyRemoteDataSource

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -22,6 +24,13 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val apiProperties = project.rootProject.file("api.properties")
+        val properties = Properties()
+        properties.load(apiProperties.inputStream())
+
+        buildConfigField("String", "BASE_URL", properties.getProperty("BASE_URL"))
+        buildConfigField("String", "APIKEY", properties.getProperty("APIKEY"))
     }
 
     room {
@@ -46,6 +55,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     testOptions {
@@ -74,6 +84,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
+    implementation(platform(libs.okhttp.bom))
+    implementation(libs.okhttp)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.hilt)
