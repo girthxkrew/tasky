@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.gson.Gson
 import com.rkm.tasky.util.security.implementation.DataStoreEncryptor
 import com.rkm.tasky.util.storage.abstraction.SessionStorage
-import com.rkm.tasky.util.storage.model.AuthInfo
+import com.rkm.tasky.util.storage.model.SessionInfo
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -25,7 +25,7 @@ class SessionStorageImpl @Inject constructor(
         const val SESSION_AUTH_USER_KEY = "SESSION_AUTH_USER"
     }
 
-    override suspend fun getSession(): AuthInfo? {
+    override suspend fun getSession(): SessionInfo? {
 
         val authInfo = dataStore.data.map { preferences ->
             val user = preferences[keyMap[SESSION_AUTH_USER_KEY]!!]?.let { key ->
@@ -41,7 +41,7 @@ class SessionStorageImpl @Inject constructor(
         return authInfo
     }
 
-    override suspend fun setSession(info: AuthInfo) {
+    override suspend fun setSession(info: SessionInfo) {
         dataStore.edit { preferences ->
             preferences[keyMap[SESSION_AUTH_USER_KEY]!!] = encryptor.encrypt(authUserToString(info))
         }
@@ -53,11 +53,11 @@ class SessionStorageImpl @Inject constructor(
         }
     }
 
-    private fun authUserFromString(user: String): AuthInfo {
-        return Gson().fromJson(user, AuthInfo::class.java)
+    private fun authUserFromString(user: String): SessionInfo {
+        return Gson().fromJson(user, SessionInfo::class.java)
     }
 
-    private fun authUserToString(user: AuthInfo): String {
+    private fun authUserToString(user: SessionInfo): String {
         return Gson().toJson(user)
     }
 }

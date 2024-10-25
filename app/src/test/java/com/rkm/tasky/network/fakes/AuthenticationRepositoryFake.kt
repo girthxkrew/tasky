@@ -1,4 +1,4 @@
-package com.rkm.tasky.network.authentication.fakes
+package com.rkm.tasky.network.fakes
 
 import com.rkm.tasky.network.model.dto.AccessTokenDTO
 import com.rkm.tasky.network.model.dto.LoginDTO
@@ -30,22 +30,6 @@ class AuthenticationRepositoryFake: AuthenticationRepository {
     ): Result<LoginDTO, NetworkError.APIError> {
         return if(!hasError) Result.Success(loginUserResponseToPojo().asLoginDTO())
         else Result.Error(NetworkError.APIError.UNAUTHORIZED)
-    }
-
-    override suspend fun getNewAccessToken(
-        refreshToken: String,
-        userId: String
-    ): Result<AccessTokenDTO, NetworkError.APIError> {
-        return if(!hasError) Result.Success(getNewAccessTokenResponseToPojo().asAccessTokenDTO())
-        else Result.Error(NetworkError.APIError.UNAUTHORIZED)
-    }
-
-    override suspend fun checkAuthentication(): EmptyResult<NetworkError.APIError> {
-        return handleResults()
-    }
-
-    override suspend fun logoutUser(): EmptyResult<NetworkError.APIError> {
-        return handleResults()
     }
 
     fun setHasError(hasError: Boolean) {
