@@ -32,7 +32,6 @@ class AuthorizationManagerFake(
         )
 
         result.onSuccess { newAccessToken ->
-            println("I LOVE MEN SO MUCH <3")
             storage.setSession(
                 authInfo.copy(
                     accessToken = newAccessToken.accessToken,
