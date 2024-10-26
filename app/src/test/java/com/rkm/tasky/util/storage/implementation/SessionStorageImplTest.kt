@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import com.rkm.tasky.testUtils.fake.FakeAndroidKeyStore
 import com.rkm.tasky.util.security.implementation.DataStoreEncryptor
-import com.rkm.tasky.util.storage.model.AuthInfo
+import com.rkm.tasky.util.storage.model.SessionInfo
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -59,34 +59,34 @@ class SessionStorageImplTest {
 
     @Test
     fun `store auth info and retrieve auth info`() = runTest(dispatcher) {
-        val authInfo = AuthInfo(
+        val sessionInfo = SessionInfo(
             accessToken = "123",
             refreshToken = "123",
             userId = "1",
             fullName = "Bob Smith",
             accessTokenExpirationTimestamp = 12L
         )
-        sessionStorage.setSession(authInfo)
+        sessionStorage.setSession(sessionInfo)
         runCurrent()
         val result = sessionStorage.getSession()
         runCurrent()
-        assertTrue(authInfo == result)
+        assertTrue(sessionInfo == result)
     }
 
     @Test
     fun `store auth info, retrieve auth info, clear auth info`() = runTest(dispatcher) {
-        val authInfo = AuthInfo(
+        val sessionInfo = SessionInfo(
             accessToken = "123",
             refreshToken = "123",
             userId = "1",
             fullName = "Bob Smith",
             accessTokenExpirationTimestamp = 12L
         )
-        sessionStorage.setSession(authInfo)
+        sessionStorage.setSession(sessionInfo)
         runCurrent()
         val result = sessionStorage.getSession()
         runCurrent()
-        assertTrue(authInfo == result)
+        assertTrue(sessionInfo == result)
         sessionStorage.clearSession()
         runCurrent()
         val result2 = sessionStorage.getSession()

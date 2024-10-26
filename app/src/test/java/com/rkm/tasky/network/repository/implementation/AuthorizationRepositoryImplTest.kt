@@ -1,17 +1,15 @@
 package com.rkm.tasky.network.repository.implementation
 
 import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
-import com.rkm.tasky.network.model.request.RegisterUserRequest
 import com.rkm.tasky.network.model.response.asAccessTokenDTO
 import com.rkm.tasky.network.model.response.asLoginDTO
-import com.rkm.tasky.resources.response.errorMessageToString
 import com.rkm.tasky.network.util.NetworkError
+import com.rkm.tasky.resources.response.errorMessageToString
 import com.rkm.tasky.resources.response.getNewAccessTokenResponseToPojo
 import com.rkm.tasky.resources.response.getNewAccessTokenResponseToString
 import com.rkm.tasky.resources.response.loginUserResponseToPojo
 import com.rkm.tasky.resources.response.loginUserResponseToString
 import com.rkm.tasky.util.result.Result
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -25,16 +23,15 @@ import org.junit.Assert.*
 
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class AuthenticationRepositoryImplTest {
+class AuthorizationRepositoryImplTest {
 
     private lateinit var server: MockWebServer
-    private lateinit var authRepository: AuthenticationRepositoryImpl
+    private lateinit var authRepository: AuthorizationRepositoryImpl
     private lateinit var dataSource: TaskyRemoteDataSource
     private lateinit var retrofit: Retrofit
     private val dispatcher = StandardTestDispatcher()
@@ -49,54 +46,64 @@ class AuthenticationRepositoryImplTest {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         dataSource = retrofit.create(TaskyRemoteDataSource::class.java)
-        authRepository = AuthenticationRepositoryImpl(dataSource, dispatcher)
-
+        authRepository = AuthorizationRepositoryImpl(dataSource, dispatcher)
     }
 
     @Test
-    fun `register user successful`() = runTest {
-        val name = "Bob Smith"
-        val email = "email@gmail.com"
-        val password = "password"
+    fun `logout successful`() = runTest {
         val mockResponse = MockResponse().setResponseCode(200)
         server.enqueue(mockResponse)
-        val result = authRepository.registerUser(name, email, password)
+        val result = authRepository.logoutUser()
         runCurrent()
         assertTrue(result is Result.Success)
     }
 
     @Test
-    fun `register user failure`() = runTest {
-        val name = "Bob Smith"
-        val email = "email@gmail.com"
-        val password = "password"
+    fun `logout failure`() = runTest {
         val mockResponse = MockResponse().setResponseCode(401).setBody(errorMessageToString())
         server.enqueue(mockResponse)
-        val result = authRepository.registerUser(name, email, password)
+        val result = authRepository.logoutUser()
         runCurrent()
         assertTrue(result is Result.Error)
         assertTrue((result as Result.Error).error == NetworkError.APIError.UNAUTHORIZED)
     }
 
     @Test
-    fun `login successful`() = runTest {
-        val email = "email@gmail.com"
-        val password = "password"
-        val mockResponse = MockResponse().setResponseCode(200).setBody(loginUserResponseToString())
+    fun `check authentication successful`() = runTest {
+        val mockResponse = MockResponse().setResponseCode(200)
         server.enqueue(mockResponse)
-        val result = authRepository.loginUser(email, password)
+        val result = authRepository.checkAuthentication()
         runCurrent()
         assertTrue(result is Result.Success)
-        assertTrue((result as Result.Success).data == loginUserResponseToPojo().asLoginDTO())
     }
 
     @Test
-    fun `login failure`() = runTest {
-        val email = "email@gmail.com"
-        val password = "password"
+    fun `check authentication failure`() = runTest {
         val mockResponse = MockResponse().setResponseCode(401).setBody(errorMessageToString())
         server.enqueue(mockResponse)
-        val result = authRepository.loginUser(email, password)
+        val result = authRepository.checkAuthentication()
+        runCurrent()
+        assertTrue(result is Result.Error)
+        assertTrue((result as Result.Error).error == NetworkError.APIError.UNAUTHORIZED)
+    }
+
+    @Test
+    fun `get new access token successful`() = runTest {
+        val mockResponse = MockResponse().setResponseCode(200).setBody(
+            getNewAccessTokenResponseToString()
+        )
+        server.enqueue(mockResponse)
+        val result = authRepository.getNewAccessToken("", "")
+        runCurrent()
+        assertTrue(result is Result.Success)
+        assertTrue((result as Result.Success).data == getNewAccessTokenResponseToPojo().asAccessTokenDTO())
+    }
+
+    @Test
+    fun `get new access token failure`() = runTest {
+        val mockResponse = MockResponse().setResponseCode(401).setBody(errorMessageToString())
+        server.enqueue(mockResponse)
+        val result = authRepository.getNewAccessToken("", "")
         runCurrent()
         assertTrue(result is Result.Error)
         assertTrue((result as Result.Error).error == NetworkError.APIError.UNAUTHORIZED)

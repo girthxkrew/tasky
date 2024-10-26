@@ -30,7 +30,7 @@ android {
         properties.load(apiProperties.inputStream())
 
         buildConfigField("String", "BASE_URL", properties.getProperty("BASE_URL"))
-        buildConfigField("String", "APIKEY", properties.getProperty("APIKEY"))
+        buildConfigField("String", "API_KEY", properties.getProperty("API_KEY"))
     }
 
     room {

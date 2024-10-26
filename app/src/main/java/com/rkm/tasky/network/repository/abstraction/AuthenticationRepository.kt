@@ -16,10 +16,4 @@ interface AuthenticationRepository {
         email: String,
         password: String
     ): Result<LoginDTO, NetworkError.APIError>
-    suspend fun getNewAccessToken(
-        refreshToken: String,
-        userId: String
-    ): Result<AccessTokenDTO, NetworkError.APIError>
-    suspend fun checkAuthentication(): EmptyResult<NetworkError.APIError>
-    suspend fun logoutUser(): EmptyResult<NetworkError.APIError>
 }

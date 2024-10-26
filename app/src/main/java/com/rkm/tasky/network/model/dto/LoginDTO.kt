@@ -1,6 +1,6 @@
 package com.rkm.tasky.network.model.dto
 
-import com.rkm.tasky.util.storage.model.AuthInfo
+import com.rkm.tasky.util.storage.model.SessionInfo
 
 data class LoginDTO(
     val accessToken: String,
@@ -10,8 +10,8 @@ data class LoginDTO(
     val accessTokenExpirationTimestamp: Long
 )
 
-fun LoginDTO.asAuthInfo(): AuthInfo {
-    return AuthInfo(
+fun LoginDTO.asSessionInfo(): SessionInfo {
+    return SessionInfo(
         accessToken = this.accessToken,
         refreshToken = this.refreshToken,
         fullName = this.fullName,
