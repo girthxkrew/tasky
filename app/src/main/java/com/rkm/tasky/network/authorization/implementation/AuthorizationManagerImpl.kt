@@ -36,7 +36,7 @@ class AuthorizationManagerImpl @Inject constructor(
     override suspend fun getNewAccessToken(): EmptyResult<NetworkError.APIError> =
         withContext(dispatcher) {
             val authInfo = sessionStorage.getSession() ?: return@withContext Result.Error(
-                NetworkError.APIError.UNKNOWN
+                NetworkError.APIError.NO_SESSION_INFO
             )
 
             val result = repository.getNewAccessToken(

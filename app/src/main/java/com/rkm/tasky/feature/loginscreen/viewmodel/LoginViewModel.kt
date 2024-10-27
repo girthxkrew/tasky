@@ -2,6 +2,7 @@ package com.rkm.tasky.feature.loginscreen.viewmodel
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.lifecycle.ViewModel
+import com.rkm.tasky.network.authentication.abstraction.AuthenticationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,7 +10,9 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val manager: AuthenticationManager
+) : ViewModel() {
 
     val email = TextFieldState()
     val password = TextFieldState()

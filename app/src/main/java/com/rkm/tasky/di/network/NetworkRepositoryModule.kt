@@ -16,9 +16,5 @@ abstract class NetworkRepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun bindsAuthenticationRepository(repository: AuthenticationRepositoryImpl): AuthenticationRepository
-
-    @Singleton
-    @Binds
     abstract fun bindsAuthorizationRepository(repository: AuthorizationRepositoryImpl): AuthorizationRepository
 }

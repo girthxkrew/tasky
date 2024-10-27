@@ -1,7 +1,7 @@
 package com.rkm.tasky.network.repository.implementation
 
 import com.rkm.tasky.di.IoDispatcher
-import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
+import com.rkm.tasky.network.datasource.TaskyAuthorizationRemoteDateSource
 import com.rkm.tasky.network.model.dto.AccessTokenDTO
 import com.rkm.tasky.network.model.request.AccessTokenRequest
 import com.rkm.tasky.network.model.response.asAccessTokenDTO
@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AuthorizationRepositoryImpl @Inject constructor(
-    private val dataSource: TaskyRemoteDataSource,
+    private val dataSource: TaskyAuthorizationRemoteDateSource,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ): AuthorizationRepository {
     override suspend fun getNewAccessToken(

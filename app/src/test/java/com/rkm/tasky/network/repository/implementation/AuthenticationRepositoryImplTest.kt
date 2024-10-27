@@ -1,5 +1,6 @@
 package com.rkm.tasky.network.repository.implementation
 
+import com.rkm.tasky.network.datasource.TaskyAuthenticationRemoteDataSource
 import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
 import com.rkm.tasky.network.model.request.RegisterUserRequest
 import com.rkm.tasky.network.model.response.asAccessTokenDTO
@@ -35,7 +36,7 @@ class AuthenticationRepositoryImplTest {
 
     private lateinit var server: MockWebServer
     private lateinit var authRepository: AuthenticationRepositoryImpl
-    private lateinit var dataSource: TaskyRemoteDataSource
+    private lateinit var dataSource: TaskyAuthenticationRemoteDataSource
     private lateinit var retrofit: Retrofit
     private val dispatcher = StandardTestDispatcher()
 
@@ -48,7 +49,7 @@ class AuthenticationRepositoryImplTest {
             .baseUrl(server.url(""))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        dataSource = retrofit.create(TaskyRemoteDataSource::class.java)
+        dataSource = retrofit.create(TaskyAuthenticationRemoteDataSource::class.java)
         authRepository = AuthenticationRepositoryImpl(dataSource, dispatcher)
 
     }

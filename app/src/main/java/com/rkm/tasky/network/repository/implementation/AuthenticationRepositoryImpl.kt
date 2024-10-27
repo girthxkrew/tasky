@@ -1,6 +1,7 @@
 package com.rkm.tasky.network.repository.implementation
 
 import com.rkm.tasky.di.IoDispatcher
+import com.rkm.tasky.network.datasource.TaskyAuthenticationRemoteDataSource
 import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
 import com.rkm.tasky.network.model.dto.AccessTokenDTO
 import com.rkm.tasky.network.model.dto.LoginDTO
@@ -19,7 +20,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AuthenticationRepositoryImpl @Inject constructor(
-    private val dataSource: TaskyRemoteDataSource,
+    private val dataSource: TaskyAuthenticationRemoteDataSource,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : AuthenticationRepository {
     override suspend fun registerUser(
