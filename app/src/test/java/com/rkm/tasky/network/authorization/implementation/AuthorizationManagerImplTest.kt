@@ -67,7 +67,7 @@ class AuthorizationManagerImplTest {
     fun `get new access token session empty`() = runTest(dispatcher) {
         val result = authManager.getNewAccessToken()
         assertTrue(result is Result.Error)
-        assertEquals((result as Result.Error).error, NetworkError.APIError.UNKNOWN)
+        assertEquals((result as Result.Error).error, NetworkError.APIError.NO_SESSION_INFO)
     }
 
     @Test

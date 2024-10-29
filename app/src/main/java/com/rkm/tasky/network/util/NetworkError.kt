@@ -14,6 +14,7 @@ sealed interface NetworkError : Error {
         NOT_FOUND,
         SERVER_ERROR,
         SERIALIZATION,
-        UNKNOWN
+        UNKNOWN,
+        NO_SESSION_INFO
     }
 }

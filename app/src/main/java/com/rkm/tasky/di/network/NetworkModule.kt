@@ -1,8 +1,12 @@
 package com.rkm.tasky.di.network
 
 import com.rkm.tasky.BuildConfig
+import com.rkm.tasky.network.authorization.abstraction.AuthorizationManager
+import com.rkm.tasky.network.datasource.TaskyAuthorizationRemoteDateSource
 import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
-import com.rkm.tasky.network.interceptor.TaskyInterceptor
+import com.rkm.tasky.network.interceptor.TaskyApiKeyInterceptor
+import com.rkm.tasky.network.interceptor.TaskyAuthorizationInterceptor
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +20,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    // TODO: Add baseUrl and Api Key to project
     @Singleton
     @Provides
     fun providesRetrofit(client: OkHttpClient): Retrofit {
@@ -29,9 +32,13 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun providesOkHttpClient(interceptor: TaskyInterceptor): OkHttpClient {
+    fun providesOkHttpClient(
+        authInterceptor: TaskyAuthorizationInterceptor,
+        apiInterceptor: TaskyApiKeyInterceptor
+    ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(interceptor)
+            .addInterceptor(authInterceptor)
+            .addInterceptor(apiInterceptor)
             .build()
     }
 
@@ -39,5 +46,21 @@ object NetworkModule {
     @Provides
     fun providesRemoteDataSource(retrofit: Retrofit): TaskyRemoteDataSource {
         return retrofit.create(TaskyRemoteDataSource::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesTaskyAuthorizationRemoteDataSource(retrofit: Retrofit): TaskyAuthorizationRemoteDateSource {
+        return retrofit.create(TaskyAuthorizationRemoteDateSource::class.java)
+    }
+
+    @Provides
+    fun providesTaskyAuthorizationInterceptor(manager: Lazy<AuthorizationManager>): TaskyAuthorizationInterceptor {
+        return TaskyAuthorizationInterceptor(manager)
+    }
+
+    @Provides
+    fun providesTaskyApiKeyInterceptor(): TaskyApiKeyInterceptor {
+        return TaskyApiKeyInterceptor()
     }
 }

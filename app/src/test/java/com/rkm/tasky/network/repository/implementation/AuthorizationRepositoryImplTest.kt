@@ -1,14 +1,12 @@
 package com.rkm.tasky.network.repository.implementation
 
+import com.rkm.tasky.network.datasource.TaskyAuthorizationRemoteDateSource
 import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
 import com.rkm.tasky.network.model.response.asAccessTokenDTO
-import com.rkm.tasky.network.model.response.asLoginDTO
 import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.resources.response.errorMessageToString
 import com.rkm.tasky.resources.response.getNewAccessTokenResponseToPojo
 import com.rkm.tasky.resources.response.getNewAccessTokenResponseToString
-import com.rkm.tasky.resources.response.loginUserResponseToPojo
-import com.rkm.tasky.resources.response.loginUserResponseToString
 import com.rkm.tasky.util.result.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,7 +30,7 @@ class AuthorizationRepositoryImplTest {
 
     private lateinit var server: MockWebServer
     private lateinit var authRepository: AuthorizationRepositoryImpl
-    private lateinit var dataSource: TaskyRemoteDataSource
+    private lateinit var dataSource: TaskyAuthorizationRemoteDateSource
     private lateinit var retrofit: Retrofit
     private val dispatcher = StandardTestDispatcher()
 
@@ -45,7 +43,7 @@ class AuthorizationRepositoryImplTest {
             .baseUrl(server.url(""))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        dataSource = retrofit.create(TaskyRemoteDataSource::class.java)
+        dataSource = retrofit.create(TaskyAuthorizationRemoteDateSource::class.java)
         authRepository = AuthorizationRepositoryImpl(dataSource, dispatcher)
     }
 
