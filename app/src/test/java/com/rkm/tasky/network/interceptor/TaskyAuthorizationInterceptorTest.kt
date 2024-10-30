@@ -51,9 +51,9 @@ class TaskyAuthorizationInterceptorTest {
         storage = SessionStorageFake()
         authorizationManager = AuthorizationManagerFake(authorizationRepository, storage)
         authenticationManager = AuthenticationManagerFake(authenticationRepository, storage)
-        val lazyManager = Lazy {authorizationManager}
+        val lazyManager = Lazy { authorizationManager }
         authInterceptor = TaskyAuthorizationInterceptor(lazyManager)
-        apiKeyInterceptor  = TaskyApiKeyInterceptor()
+        apiKeyInterceptor = TaskyApiKeyInterceptor()
         okHttpClient = OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
             .addInterceptor(apiKeyInterceptor)
@@ -74,7 +74,10 @@ class TaskyAuthorizationInterceptorTest {
         server.enqueue(response)
         authorizationDataSource.logoutUser()
         val request = server.takeRequest()
-        assertEquals(request.getHeader("Authorization"), "Bearer ${storage.getSession()!!.accessToken}")
+        assertEquals(
+            request.getHeader("Authorization"),
+            "Bearer ${storage.getSession()!!.accessToken}"
+        )
     }
 
     @Test
@@ -85,7 +88,10 @@ class TaskyAuthorizationInterceptorTest {
         authorizationDataSource.logoutUser()
         server.takeRequest()
         val request2 = server.takeRequest()
-        assertEquals(request2.getHeader("Authorization"), "Bearer ${storage.getSession()!!.accessToken}")
+        assertEquals(
+            request2.getHeader("Authorization"),
+            "Bearer ${storage.getSession()!!.accessToken}"
+        )
     }
 
     @Test
@@ -95,7 +101,10 @@ class TaskyAuthorizationInterceptorTest {
         server.enqueue(MockResponse().setBody("Authorized").setResponseCode(401))
         authorizationDataSource.logoutUser()
         val request = server.takeRequest()
-        assertEquals(request.getHeader("Authorization"), "Bearer ${storage.getSession()!!.accessToken}")
+        assertEquals(
+            request.getHeader("Authorization"),
+            "Bearer ${storage.getSession()!!.accessToken}"
+        )
     }
 
     @Test
@@ -105,20 +114,21 @@ class TaskyAuthorizationInterceptorTest {
         server.enqueue(response)
         authorizationDataSource.logoutUser()
         val request = server.takeRequest()
-        assertEquals(request.getHeader("Authorization"), "Bearer ${storage.getSession()!!.accessToken}")
+        assertEquals(
+            request.getHeader("Authorization"),
+            "Bearer ${storage.getSession()!!.accessToken}"
+        )
         assertEquals(request.getHeader("x-api-key"), BuildConfig.API_KEY)
     }
 
     @Test
     fun `confirming authorization header is not added to specific call`() = runTest {
-        fun `confirming api key being added to request`() = runTest {
-            val response = MockResponse().setResponseCode(200)
-            server.enqueue(response)
-            authenticationDataSource.registerUser(RegisterUserRequest("", "", ""))
-            val request = server.takeRequest()
-            assertEquals(request.getHeader("x-api-key"), BuildConfig.API_KEY)
-            assertEquals(request.getHeader("Authorization"), null)
-        }
+        val response = MockResponse().setResponseCode(200)
+        server.enqueue(response)
+        authenticationDataSource.registerUser(RegisterUserRequest("", "", ""))
+        val request = server.takeRequest()
+        assertEquals(request.getHeader("x-api-key"), BuildConfig.API_KEY)
+        assertEquals(request.getHeader("Authorization"), null)
     }
 
     @After

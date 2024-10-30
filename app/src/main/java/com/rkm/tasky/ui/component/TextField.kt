@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.material.icons.Icons
@@ -56,6 +57,7 @@ fun ValidationTextField(
                 color = TextFieldFontColor,
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
             ),
+            lineLimits = TextFieldLineLimits.SingleLine,
             decorator = { innerTextField ->
                 if (state.text.isEmpty()) {
                     Text(

@@ -11,7 +11,7 @@ class TaskyApiKeyInterceptor @Inject constructor(): Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        val newRequest = request.newBuilder().addHeader(
+        val newRequest = request.newBuilder().header(
             apiHeader, BuildConfig.API_KEY
         )
         return chain.proceed(newRequest.build())

@@ -25,6 +25,8 @@ mockWebServer = "4.12.0"
 mockito = "5.14.2"
 mockito-kotlin = "5.4.0"
 okHttp = "4.12.0"
+navigation = "2.8.3"
+cerealization = "1.7.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -54,6 +56,7 @@ androidx-room-kotlin = { group = "androidx.room", name = "room-ktx", version.ref
 androidx-room-test-helpers = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidx-hilt" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation"}
 androidx-datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
@@ -63,6 +66,7 @@ mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
 okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okHttp" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "cerealization"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -73,3 +77,4 @@ hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp-plugin = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 compose-plugin = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 room-plugin = { id = "androidx.room", version.ref = "room" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

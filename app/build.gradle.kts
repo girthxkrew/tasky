@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt.plugin)
     alias(libs.plugins.ksp.plugin)
     alias(libs.plugins.room.plugin)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -86,7 +87,9 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.hilt)
     ksp(libs.androidx.hilt.compiler)
