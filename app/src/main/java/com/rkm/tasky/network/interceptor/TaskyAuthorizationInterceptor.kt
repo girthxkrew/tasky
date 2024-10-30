@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class TaskyAuthorizationInterceptor @Inject constructor(
     private val lazyManager: Lazy<AuthorizationManager>,
-): Interceptor {
+) : Interceptor {
 
     private val authHeader = "Authorization"
     private val authKey = "Bearer"
@@ -23,20 +23,18 @@ class TaskyAuthorizationInterceptor @Inject constructor(
 
         val request = chain.request()
 
-        if(fromRequest(request) == RequestType.AUTHENTICATION) {
+        if (fromRequest(request) == RequestType.AUTHENTICATION) {
             return chain.proceed(request)
         }
 
-        val authInfo = runBlocking { manager.getSessionInfo() }
-
-        authInfo ?: return chain.proceed(request)
+        val authInfo = runBlocking { manager.getSessionInfo() } ?: return chain.proceed(request)
 
         val newRequest = request.newBuilder()
-            .addHeader(authHeader, "$authKey ${authInfo.accessToken}")
+            .header(authHeader, "$authKey ${authInfo.accessToken}")
 
         val response = chain.proceed(newRequest.build())
 
-        if(response.code == 401) {
+        if (response.code == 401) {
 
             val result = runBlocking {
                 manager.getNewAccessToken()
@@ -44,14 +42,14 @@ class TaskyAuthorizationInterceptor @Inject constructor(
 
             if (result is Result.Success) {
 
-                val newAuthInfo = runBlocking { manager.getSessionInfo() }
-
-                newAuthInfo ?: return response
+                val newAuthInfo = runBlocking {
+                    manager.getSessionInfo()
+                } ?: return response
 
                 response.close()
 
                 val retryRequest = request.newBuilder()
-                    .addHeader(authHeader, "$authKey ${newAuthInfo.accessToken}")
+                    .header(authHeader, "$authKey ${newAuthInfo.accessToken}")
 
                 return chain.proceed(retryRequest.build())
             }

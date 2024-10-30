@@ -8,4 +8,5 @@ plugins {
     alias(libs.plugins.hilt.plugin) apply false
     alias(libs.plugins.compose.plugin) apply false
     alias(libs.plugins.room.plugin) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 }

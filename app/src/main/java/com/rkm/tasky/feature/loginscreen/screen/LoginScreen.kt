@@ -42,33 +42,35 @@ import com.rkm.tasky.ui.theme.LoginSignUpTextColor
 
 @Composable
 fun LoginScreenRoot(
-    navHostController: NavHostController,
-    viewModel: LoginViewModel = hiltViewModel()
+    onNavigation: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel(),
+    modifier: Modifier
 ) {
 
     val showPassword by viewModel.showPassword.collectAsStateWithLifecycle()
-    val isValidEmail by viewModel.isValidEmail.collectAsStateWithLifecycle()
 
     LoginScreen(
         email = viewModel.email,
         password = viewModel.password,
-        isValidEmail = isValidEmail,
+        isValidEmail = viewModel.isValidEmail,
         showPassword = showPassword,
         onShowPasswordClick = viewModel::onShowPasswordClicked,
-        onLoginButtonClick = { /*TODO*/ },
-        modifier = Modifier
+        onLoginButtonClick = viewModel::onLoginButtonClicked,
+        onNavigation = onNavigation,
+        modifier = modifier
     )
 
 }
 
 @Composable
-fun LoginScreen(
+private fun LoginScreen(
     email: TextFieldState,
     password: TextFieldState,
     isValidEmail: Boolean,
     showPassword: Boolean,
     onShowPasswordClick: () -> Unit,
     onLoginButtonClick: () -> Unit,
+    onNavigation: () -> Unit,
     modifier: Modifier
 ) {
 
@@ -121,7 +123,7 @@ fun LoginScreen(
 
             SignUpText(
                 modifier = modifier,
-                onSignUpClick = {}
+                onSignUpClick = onNavigation
             )
         }
 
@@ -215,6 +217,7 @@ private fun LoginScreenPreview() {
         TextFieldState("password"),
         true,
         false,
+        {},
         {},
         {},
         Modifier
