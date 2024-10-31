@@ -6,4 +6,16 @@
     <string name="login_button_text">LOG IN</string>
     <string name="login_text_sign_up_question">DON\'T HAVE AN ACCOUNT?</string>
     <string name="login_text_sign_up">SIGN UP</string>
+    <string name="api_error_no_internet">No internet connection. Please check your network settings.</string>
+    <string name="api_error_request_timeout">The request took too long to respond. Please try again.</string>
+    <string name="api_error_too_many_requests">Too many requests sent. Please wait a moment and try again.</string>
+    <string name="api_error_connection_timeout">Connection timed out. Please check your network and try again.</string>
+    <string name="api_error_payload_too_large">The data sent is too large. Please reduce the file size or data.</string>
+    <string name="api_error_unauthorized">You are not authorized. Please log in to continue.</string>
+    <string name="api_error_forbidden">You don’t have permission to access this resource.</string>
+    <string name="api_error_not_found">The requested resource could not be found.</string>
+    <string name="api_error_server_error">Server error. Please try again later.</string>
+    <string name="api_error_serialization">An error occurred while processing data. Please try again.</string>
+    <string name="api_error_unknown">An unexpected error occurred. Please try again.</string>
+    <string name="api_error_no_session_info">Session information is missing. Please log in again.</string>
 </resources>
