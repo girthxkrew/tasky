@@ -13,6 +13,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object Login
+@Serializable
+object Registration
+@Serializable
+object Agenda
+
 
 @Composable
 fun AppNavigation(
@@ -26,7 +31,8 @@ fun AppNavigation(
     ) {
         composable<Login> {
             LoginScreenRoot(
-                onNavigation = { TODO("Add SignUp Screen") },
+                onRegistrationClick = { TODO("Add SignUp Screen") },
+                onLoginSuccess = { TODO("Add agenda screen") },
                 viewModel = hiltViewModel<LoginViewModel>(),
                 modifier = modifier
             )
