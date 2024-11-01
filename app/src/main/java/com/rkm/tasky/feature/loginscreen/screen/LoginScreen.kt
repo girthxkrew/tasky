@@ -73,7 +73,7 @@ fun LoginScreenRoot(
             }
 
             is LoginScreenEvent.LoginFailedEvent -> {
-                val message = context.getString(event.error)
+                val message = event.message.asString(context)
                 scope.launch {
                     SnackBarController.sendEvent(
                         event = SnackBarEvent(

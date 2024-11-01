@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rkm.tasky.feature.error.errorToUiMessage
 import com.rkm.tasky.network.authentication.abstraction.AuthenticationManager
+import com.rkm.tasky.ui.component.UiText
 import com.rkm.tasky.util.result.onFailure
 import com.rkm.tasky.util.result.onSuccess
 import com.rkm.tasky.util.validator.abstraction.EmailPatternValidator
@@ -57,7 +58,7 @@ class LoginViewModel @Inject constructor(
                 _isLoading.update { false }
             }
             result.onFailure { error ->
-                _loginScreenEventChannel.send(LoginScreenEvent.LoginFailedEvent(errorToUiMessage(error)))
+                _loginScreenEventChannel.send(LoginScreenEvent.LoginFailedEvent(UiText.StringResource(errorToUiMessage(error))))
                 _isLoading.update { false }
             }
         }
@@ -67,6 +68,6 @@ class LoginViewModel @Inject constructor(
 sealed interface LoginScreenEvent{
     data object LoginSuccessEvent : LoginScreenEvent
     data class LoginFailedEvent(
-        val error: Int
+        val message: UiText
     ): LoginScreenEvent
 }
