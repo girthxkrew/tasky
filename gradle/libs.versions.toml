@@ -1,13 +1,13 @@
 [versions]
 agp = "8.7.1"
 kotlin = "2.0.10"
-coreKtx = "1.13.1"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycle = "2.8.6"
+lifecycle = "2.8.7"
 activityCompose = "1.9.3"
-composeBom = "2024.10.00"
+composeBom = "2024.10.01"
 jetbrainsKotlinJvm = "1.9.0"
 appcompat = "1.7.0"
 material = "1.12.0"
@@ -27,6 +27,8 @@ mockito-kotlin = "5.4.0"
 okHttp = "4.12.0"
 navigation = "2.8.3"
 cerealization = "1.7.3"
+splashscreen = "1.0.1"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -66,7 +68,8 @@ mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
 okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okHttp" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp" }
-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "cerealization"}
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "cerealization" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref="splashscreen" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
