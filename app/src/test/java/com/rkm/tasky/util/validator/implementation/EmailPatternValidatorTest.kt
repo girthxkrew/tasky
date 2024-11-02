@@ -1,6 +1,5 @@
 package com.rkm.tasky.util.validator.implementation
 
-import com.rkm.tasky.util.validator.abstraction.EmailPatternValidator
 import org.junit.Assert.*
 import org.junit.Before
 
@@ -8,25 +7,30 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
-class EmailPatternValidatorImplTest {
+class EmailPatternValidatorTest {
 
     private lateinit var validator: EmailPatternValidator
 
     @Before
     fun setUp() {
-        validator = EmailPatternValidatorImpl()
+        validator = EmailPatternValidator()
     }
 
     @Test
-    fun isValidEmail() {
+    fun `valid email`() {
         val testEmail = "user@gmail.com"
-        assertTrue(validator.isValidEmail(testEmail))
+        assertTrue(validator.validate(testEmail))
     }
 
     @Test
-    fun notValidEmail() {
+    fun `invalid email`() {
         val testEmail = "user"
-        assertTrue(!validator.isValidEmail(testEmail))
+        assertFalse(validator.validate(testEmail))
+    }
+
+    @Test
+    fun `empty email`() {
+        val testEmail = ""
+        assertFalse(validator.validate(testEmail))
     }
 }

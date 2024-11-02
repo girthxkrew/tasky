@@ -1,11 +1,6 @@
 package com.rkm.tasky.navigation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -14,8 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.rkm.tasky.feature.agenda.screen.AgendaScreenRoot
-import com.rkm.tasky.feature.loginscreen.screen.LoginScreenRoot
-import com.rkm.tasky.feature.loginscreen.viewmodel.LoginViewModel
+import com.rkm.tasky.feature.login.screen.LoginScreenRoot
+import com.rkm.tasky.feature.login.viewmodel.LoginViewModel
 import com.rkm.tasky.feature.registration.screen.RegistrationScreenRoot
 import com.rkm.tasky.feature.registration.viewmodel.RegistrationViewModel
 import com.rkm.tasky.ui.activity.AuthState
@@ -74,7 +69,13 @@ fun AppNavigation(
 
             composable<Registration> {
                 RegistrationScreenRoot(
-                    onNavigateBack = { navController.navigate(Login) },
+                    onNavigateBack = {
+                        navController.navigate(Login) {
+                            popUpTo(Login) {
+                                inclusive = true
+                            }
+                        }
+                    },
                     viewModel = hiltViewModel<RegistrationViewModel>(),
                     modifier = modifier
                 )

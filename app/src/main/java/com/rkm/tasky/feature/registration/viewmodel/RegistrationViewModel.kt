@@ -8,14 +8,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rkm.tasky.R
+import com.rkm.tasky.di.util.validator.EmailValidator
+import com.rkm.tasky.di.util.validator.NameValidator
+import com.rkm.tasky.di.util.validator.PasswordValidator
 import com.rkm.tasky.feature.error.errorToUiMessage
 import com.rkm.tasky.network.authentication.abstraction.AuthenticationManager
 import com.rkm.tasky.ui.component.UiText
 import com.rkm.tasky.util.result.onFailure
 import com.rkm.tasky.util.result.onSuccess
-import com.rkm.tasky.util.validator.abstraction.EmailPatternValidator
-import com.rkm.tasky.util.validator.abstraction.NamePatternValidator
-import com.rkm.tasky.util.validator.abstraction.PasswordPatternValidator
+import com.rkm.tasky.util.validator.abstraction.Validator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,9 +31,9 @@ import javax.inject.Inject
 class RegistrationViewModel @Inject constructor(
     private val manager: AuthenticationManager,
     private val savedStateHandle: SavedStateHandle,
-    private val emailValidator: EmailPatternValidator,
-    private val passwordValidator: PasswordPatternValidator,
-    private val nameValidator: NamePatternValidator
+    @EmailValidator private val emailValidator: Validator,
+    @PasswordValidator private val passwordValidator: Validator,
+    @NameValidator private val nameValidator: Validator
 ) : ViewModel() {
 
     private companion object {
@@ -49,29 +50,37 @@ class RegistrationViewModel @Inject constructor(
     )
 
     val email = TextFieldState(savedStateHandle[EMAIL_KEY] ?: "")
-    suspend fun setEmail() {
-        snapshotFlow { email.text }.collectLatest { text ->
-            savedStateHandle[EMAIL_KEY] = text
+    private fun setEmail() {
+        viewModelScope.launch {
+            snapshotFlow { email.text }.collectLatest { text ->
+                savedStateHandle[EMAIL_KEY] = text
+            }
         }
     }
 
     val isValidEmail by derivedStateOf {
-        emailValidator.isValidEmail(email.text.toString())
+        emailValidator.validate(email.text.toString())
     }
     val password = TextFieldState(savedStateHandle[PASSWORD_KEY] ?: "")
 
     private val isValidPassword by derivedStateOf {
-        passwordValidator.isValidPassword(password.text.toString())
+        passwordValidator.validate(password.text.toString())
     }
     val fullName = TextFieldState(savedStateHandle[NAME_KEY] ?: "")
-    suspend fun setName() {
-        snapshotFlow { fullName.text }.collectLatest { text ->
-            savedStateHandle[NAME_KEY] = text
+    private fun setName() {
+        viewModelScope.launch {
+            snapshotFlow { fullName.text }.collectLatest { text ->
+                savedStateHandle[NAME_KEY] = text
+            }
         }
     }
 
     val isValidName by derivedStateOf {
-        nameValidator.isValidName(fullName.text.toString())
+        nameValidator.validate(fullName.text.toString())
+    }
+    init {
+        setName()
+        setEmail()
     }
     private val _showPassword = MutableStateFlow(savedStateHandle[SHOW_PASSWORD_KEY] ?: false)
     val showPassword = _showPassword.asStateFlow()
@@ -87,23 +96,17 @@ class RegistrationViewModel @Inject constructor(
     }
 
     fun onRegistrationClicked() {
+        val errorKey = when {
+            !isValidName -> NAME_KEY
+            !isValidPassword -> PASSWORD_KEY
+            !isValidEmail -> EMAIL_KEY
+            else -> null
+        }
         viewModelScope.launch {
-            if (!isValidName || !isValidPassword || !isValidEmail) {
+            if (errorKey != null) {
                 _registrationScreenEventChannel.send(
-                    if (!isValidName) RegistrationScreenEvent.RegistrationFailedEvent(
-                        UiText.StringResource(
-                            mapErrors[NAME_KEY]!!
-                        )
-                    )
-                    else if (!isValidEmail) RegistrationScreenEvent.RegistrationFailedEvent(
-                        UiText.StringResource(
-                            mapErrors[EMAIL_KEY]!!
-                        )
-                    )
-                    else RegistrationScreenEvent.RegistrationFailedEvent(
-                        UiText.StringResource(
-                            mapErrors[PASSWORD_KEY]!!
-                        )
+                    RegistrationScreenEvent.RegistrationFailedEvent(
+                        UiText.StringResource(mapErrors[errorKey]!!)
                     )
                 )
                 return@launch

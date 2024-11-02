@@ -1,15 +1,14 @@
-package com.rkm.tasky.feature.loginscreen.viewmodel
+package com.rkm.tasky.feature.login.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import app.cash.turbine.turbineScope
-import com.rkm.tasky.feature.fakes.EmailPatternValidatorFake
 import com.rkm.tasky.network.authentication.abstraction.AuthenticationManager
 import com.rkm.tasky.network.fakes.AuthenticationManagerFake
 import com.rkm.tasky.network.fakes.AuthenticationRepositoryFake
 
 import com.rkm.tasky.network.fakes.SessionStorageFake
-import com.rkm.tasky.util.validator.abstraction.EmailPatternValidator
+import com.rkm.tasky.util.validator.implementation.EmailPatternValidator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -39,7 +38,7 @@ class LoginViewModelTest {
         Dispatchers.setMain(dispatcher)
         repository = AuthenticationRepositoryFake()
         manager = AuthenticationManagerFake(repository, SessionStorageFake())
-        validator = EmailPatternValidatorFake()
+        validator = EmailPatternValidator()
     }
 
     @Test
@@ -59,7 +58,7 @@ class LoginViewModelTest {
     fun`verify when invalid email that isValidEmail is set to false`() {
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "email" to "email",
+                "email" to "",
                 "password" to "password",
                 "show_password" to true
             )
