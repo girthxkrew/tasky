@@ -13,22 +13,16 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rkm.tasky.feature.snackbar.SnackBarController
 import com.rkm.tasky.navigation.AppNavigation
 import com.rkm.tasky.ui.event.ObserveAsEvents
 import com.rkm.tasky.ui.theme.TaskyTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -40,19 +34,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var authState: AuthState by mutableStateOf(AuthState.Loading)
-
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.authState
-                    .onEach { authState = it }
-                    .collect()
-            }
-        }
-
         installSplashScreen().apply {
             setKeepOnScreenCondition {
-                when(authState) {
+                when(viewModel.authState.value) {
                     AuthState.Loading -> false
                     AuthState.NoSessionInfo -> true
                     AuthState.Error -> true
@@ -63,6 +47,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TaskyTheme {
+                val authState by viewModel.authState.collectAsStateWithLifecycle()
                 val snackBarHostState = remember { SnackbarHostState() }
                 val scope = rememberCoroutineScope()
                 ObserveAsEvents(
