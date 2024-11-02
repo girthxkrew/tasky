@@ -36,7 +36,7 @@ import com.rkm.tasky.ui.theme.TextFieldHintColor
 fun ValidationTextField(
     state: TextFieldState,
     hint: Int,
-    isValidEmail: Boolean,
+    isValid: Boolean,
     modifier: Modifier
 ) {
 
@@ -72,7 +72,7 @@ fun ValidationTextField(
             }
         )
 
-        if (isValidEmail) {
+        if (isValid) {
             Icon(
                 imageVector = Icons.Rounded.Check,
                 modifier = Modifier
@@ -159,7 +159,7 @@ private fun ValidationTextFieldNoEmailPreview() {
     ValidationTextField(
         hint = R.string.text_field_email_hint,
         state = TextFieldState(),
-        isValidEmail = false,
+        isValid = false,
         modifier = Modifier
     )
 }
@@ -172,7 +172,7 @@ private fun ValidationTextFieldNotValidEmailPreview() {
     ValidationTextField(
         hint = R.string.text_field_email_hint,
         state = TextFieldState("someemail"),
-        isValidEmail = false,
+        isValid = false,
         modifier = Modifier
     )
 }
@@ -185,7 +185,7 @@ private fun ValidationTextFieldValidEmailPreview() {
     ValidationTextField(
         hint = R.string.text_field_email_hint,
         state = TextFieldState("someemail@email.com"),
-        isValidEmail = true,
+        isValid = true,
         modifier = Modifier
     )
 }

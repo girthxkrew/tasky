@@ -1,4 +1,4 @@
-package com.rkm.tasky.feature.loginscreen.screen
+package com.rkm.tasky.feature.registration.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +19,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -39,8 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rkm.tasky.R
-import com.rkm.tasky.feature.loginscreen.viewmodel.LoginScreenEvent
-import com.rkm.tasky.feature.loginscreen.viewmodel.LoginViewModel
+import com.rkm.tasky.feature.registration.viewmodel.RegistrationScreenEvent
+import com.rkm.tasky.feature.registration.viewmodel.RegistrationViewModel
 import com.rkm.tasky.feature.snackbar.SnackBarController
 import com.rkm.tasky.feature.snackbar.SnackBarEvent
 import com.rkm.tasky.ui.component.PasswordTextField
@@ -50,11 +51,10 @@ import com.rkm.tasky.ui.theme.LoginSignUpTextColor
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreenRoot(
-    onRegistrationClick: () -> Unit,
-    onLoginSuccess: () -> Unit,
-    viewModel: LoginViewModel = hiltViewModel(),
-    modifier: Modifier
+fun RegistrationScreenRoot(
+    onNavigateBack:() -> Unit,
+    modifier: Modifier,
+    viewModel: RegistrationViewModel = hiltViewModel()
 ) {
 
     val showPassword by viewModel.showPassword.collectAsStateWithLifecycle()
@@ -62,13 +62,15 @@ fun LoginScreenRoot(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    ObserveAsEvents(viewModel.loginScreenEventChannel) { event ->
-        when (event) {
-            is LoginScreenEvent.LoginSuccessEvent -> {
-                onLoginSuccess()
-            }
+    LaunchedEffect(Unit) { viewModel.setEmail() }
+    LaunchedEffect(Unit) { viewModel.setName() }
 
-            is LoginScreenEvent.LoginFailedEvent -> {
+    ObserveAsEvents(viewModel.registrationScreenEventChannel) { event ->
+        when(event) {
+            is RegistrationScreenEvent.RegistrationSuccessEvent -> {
+                onNavigateBack()
+            }
+            is RegistrationScreenEvent.RegistrationFailedEvent -> {
                 val message = event.message.asString(context)
                 scope.launch {
                     SnackBarController.sendEvent(
@@ -80,18 +82,21 @@ fun LoginScreenRoot(
             }
         }
     }
+
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        LoginScreen(
+        RegistrationScreen(
             email = viewModel.email,
             password = viewModel.password,
+            fullName = viewModel.fullName,
             isValidEmail = viewModel.isValidEmail,
+            isValidName = viewModel.isValidName,
             showPassword = showPassword,
             onShowPasswordClick = viewModel::onShowPasswordClicked,
-            onLoginButtonClick = viewModel::onLoginButtonClicked,
-            onRegistrationClick = onRegistrationClick,
+            onRegistrationButtonClick = viewModel::onRegistrationClicked,
+            onLoginClick = onNavigateBack,
             modifier = modifier
         )
 
@@ -102,20 +107,22 @@ fun LoginScreenRoot(
             )
         }
     }
+
 }
 
 @Composable
-private fun LoginScreen(
+private fun RegistrationScreen(
     email: TextFieldState,
     password: TextFieldState,
+    fullName: TextFieldState,
     isValidEmail: Boolean,
+    isValidName: Boolean,
     showPassword: Boolean,
-    onShowPasswordClick: () -> Unit,
-    onLoginButtonClick: () -> Unit,
-    onRegistrationClick: () -> Unit,
+    onShowPasswordClick:() -> Unit,
+    onRegistrationButtonClick:() -> Unit,
+    onLoginClick:() -> Unit,
     modifier: Modifier
 ) {
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -132,7 +139,7 @@ private fun LoginScreen(
             Text(
                 modifier = Modifier
                     .padding(8.dp),
-                text = stringResource(R.string.login_screen_greeting),
+                text = stringResource(R.string.registration_screen_greeting),
                 style = TextStyle(
                     color = Color.White,
                     fontSize = MaterialTheme.typography.headlineLarge.fontSize,
@@ -148,41 +155,44 @@ private fun LoginScreen(
                 .background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LoginBodyScreen(
+            RegistrationBodyScreen(
                 modifier = modifier,
                 email = email,
                 password = password,
+                fullName = fullName,
                 isValidEmail = isValidEmail,
+                isValidName = isValidName,
                 showPassword = showPassword,
                 onShowPasswordClick = onShowPasswordClick,
-                onLoginButtonClick = onLoginButtonClick
+                onRegistrationButtonClick = onRegistrationButtonClick,
             )
 
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.7f)
+                    .fillMaxHeight(0.5f)
             )
 
-            SignUpText(
+            SignInText(
                 modifier = modifier,
-                onSignUpClick = onRegistrationClick
+                onLoginClick = onLoginClick
             )
         }
 
     }
-
 }
 
 @Composable
-private fun LoginBodyScreen(
+private fun RegistrationBodyScreen(
     modifier: Modifier,
     email: TextFieldState,
     password: TextFieldState,
+    fullName: TextFieldState,
     isValidEmail: Boolean,
+    isValidName: Boolean,
     showPassword: Boolean,
-    onShowPasswordClick: () -> Unit,
-    onLoginButtonClick: () -> Unit
+    onShowPasswordClick:() -> Unit,
+    onRegistrationButtonClick:() -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -190,10 +200,17 @@ private fun LoginBodyScreen(
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         ValidationTextField(
+            state = fullName,
+            hint = R.string.text_field_name_hint,
+            isValid = isValidName,
+            modifier = Modifier.padding(top = 48.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+        )
+
+        ValidationTextField(
             state = email,
             hint = R.string.text_field_email_hint,
             isValid = isValidEmail,
-            modifier = Modifier.padding(top = 48.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         )
 
         PasswordTextField(
@@ -207,28 +224,27 @@ private fun LoginBodyScreen(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-            onClick = onLoginButtonClick,
+            onClick = onRegistrationButtonClick,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
             )
         ) {
-            Text(text = stringResource(R.string.login_button_text))
+            Text(text = stringResource(R.string.registration_button_text))
         }
     }
-
 }
 
 @Composable
-private fun SignUpText(
+private fun SignInText(
     modifier: Modifier,
-    onSignUpClick: () -> Unit
+    onLoginClick: () -> Unit
 ) {
     Text(
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 32.dp)
             .clickable {
-                onSignUpClick()
+                onLoginClick()
             },
         text = buildAnnotatedString {
             withStyle(
@@ -237,7 +253,7 @@ private fun SignUpText(
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
                 )
             ) {
-                append(stringResource(R.string.login_text_sign_up_question) + " ")
+                append(stringResource(R.string.registration_text_sign_up_question) + " ")
             }
             withStyle(
                 style = SpanStyle(
@@ -245,19 +261,10 @@ private fun SignUpText(
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
                 )
             ) {
-                append(stringResource(R.string.login_text_sign_up))
+                append(stringResource(R.string.registration_text_sign_in))
             }
         },
         textAlign = TextAlign.Center
-    )
-}
-
-@Preview
-@Composable
-private fun SignUpTextPreview() {
-    SignUpText(
-        modifier = Modifier,
-        onSignUpClick = {}
     )
 }
 
@@ -266,15 +273,17 @@ private fun SignUpTextPreview() {
     showSystemUi = true
 )
 @Composable
-private fun LoginScreenPreview() {
-    LoginScreen(
-        TextFieldState("email@email.com"),
-        TextFieldState("password"),
-        true,
-        false,
-        {},
-        {},
-        {},
-        Modifier
+private fun RegistrationScreenPreview() {
+    RegistrationScreen(
+        email = TextFieldState("email@email.com"),
+        password = TextFieldState("password"),
+        fullName = TextFieldState("Bob Smith"),
+        isValidEmail = true,
+        isValidName = true,
+        showPassword = false,
+        onShowPasswordClick = {},
+        onRegistrationButtonClick = {},
+        onLoginClick = {},
+        modifier = Modifier
     )
 }

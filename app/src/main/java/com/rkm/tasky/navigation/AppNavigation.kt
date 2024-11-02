@@ -16,6 +16,8 @@ import androidx.navigation.navigation
 import com.rkm.tasky.feature.agenda.screen.AgendaScreenRoot
 import com.rkm.tasky.feature.loginscreen.screen.LoginScreenRoot
 import com.rkm.tasky.feature.loginscreen.viewmodel.LoginViewModel
+import com.rkm.tasky.feature.registration.screen.RegistrationScreenRoot
+import com.rkm.tasky.feature.registration.viewmodel.RegistrationViewModel
 import com.rkm.tasky.ui.activity.AuthState
 import kotlinx.serialization.Serializable
 
@@ -71,13 +73,11 @@ fun AppNavigation(
             }
 
             composable<Registration> {
-                Column(
-                    modifier = modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text("Registration Screen Holder")
-                }
+                RegistrationScreenRoot(
+                    onNavigateBack = { navController.navigate(Login) },
+                    viewModel = hiltViewModel<RegistrationViewModel>(),
+                    modifier = modifier
+                )
             }
         }
     }
