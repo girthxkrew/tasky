@@ -62,9 +62,6 @@ fun RegistrationScreenRoot(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) { viewModel.setEmail() }
-    LaunchedEffect(Unit) { viewModel.setName() }
-
     ObserveAsEvents(viewModel.registrationScreenEventChannel) { event ->
         when(event) {
             is RegistrationScreenEvent.RegistrationSuccessEvent -> {

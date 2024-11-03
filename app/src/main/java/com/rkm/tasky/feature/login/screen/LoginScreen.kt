@@ -1,4 +1,4 @@
-package com.rkm.tasky.feature.loginscreen.screen
+package com.rkm.tasky.feature.login.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rkm.tasky.R
-import com.rkm.tasky.feature.loginscreen.viewmodel.LoginScreenEvent
-import com.rkm.tasky.feature.loginscreen.viewmodel.LoginViewModel
+import com.rkm.tasky.feature.login.viewmodel.LoginScreenEvent
+import com.rkm.tasky.feature.login.viewmodel.LoginViewModel
 import com.rkm.tasky.feature.snackbar.SnackBarController
 import com.rkm.tasky.feature.snackbar.SnackBarEvent
 import com.rkm.tasky.ui.component.PasswordTextField
@@ -80,14 +80,6 @@ fun LoginScreenRoot(
                 }
             }
         }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.setEmail()
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.setPassword()
     }
 
     Box(
