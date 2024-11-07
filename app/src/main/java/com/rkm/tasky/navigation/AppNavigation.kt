@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.rkm.tasky.feature.agenda.screen.AgendaScreenRoot
+import com.rkm.tasky.feature.agenda.viewmodel.AgendaViewModel
 import com.rkm.tasky.feature.login.screen.LoginScreenRoot
 import com.rkm.tasky.feature.login.viewmodel.LoginViewModel
 import com.rkm.tasky.feature.registration.screen.RegistrationScreenRoot
@@ -46,7 +47,10 @@ fun AppNavigation(
 
         navigation<Home>(startDestination = Agenda) {
             composable<Agenda> {
-                AgendaScreenRoot(modifier = modifier)
+                AgendaScreenRoot(
+                    modifier = modifier,
+                    viewModel = hiltViewModel<AgendaViewModel>()
+                )
             }
         }
 
