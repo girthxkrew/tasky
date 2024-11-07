@@ -28,6 +28,8 @@ okHttp = "4.12.0"
 navigation = "2.8.3"
 cerealization = "1.7.3"
 splashscreen = "1.0.1"
+datetime = "0.6.1"
+desugar = "2.1.2"
 
 
 [libraries]
@@ -69,7 +71,9 @@ mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", versio
 okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okHttp" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "cerealization" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref="splashscreen" }
+android-tools-desugar = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

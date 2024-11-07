@@ -55,4 +55,10 @@ class NamePatternValidatorTest {
         val name = ""
         assertFalse(nameValidator.validate(name))
     }
+
+    @Test
+    fun `internation name`() {
+        val name = "José Álvarez"
+        assertTrue(nameValidator.validate(name))
+    }
 }
