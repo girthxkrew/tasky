@@ -1,8 +1,9 @@
 package com.rkm.tasky.feature.agenda.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.rkm.tasky.feature.agenda.screen.DateHelper
-import com.rkm.tasky.feature.agenda.screen.DayUiModel
+import com.rkm.tasky.feature.agenda.screen.dayselector.DateItem
+import com.rkm.tasky.util.date.getCurrentDay
+import com.rkm.tasky.util.date.getMonth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +13,6 @@ import javax.inject.Inject
 //Todo redo agenda viewmodel. Temporary for the time being
 @HiltViewModel
 class AgendaViewModel @Inject constructor(
-    private val helper: DateHelper
 ) : ViewModel() {
 
     private val _selectedDate = MutableStateFlow(0L)
@@ -24,8 +24,6 @@ class AgendaViewModel @Inject constructor(
     private val _selectedMonth = MutableStateFlow("")
     val selectedMonth = _selectedMonth.asStateFlow()
 
-    private val _sixDays = MutableStateFlow(emptyList<DayUiModel>())
-    val sixDay = _sixDays.asStateFlow()
 
 
     init {
@@ -34,23 +32,19 @@ class AgendaViewModel @Inject constructor(
 
     fun updateSelectedDate(date: Long) {
         _selectedDate.update { date }
-        _selectedMonth.update { helper.getMonth(date) }
-    }
-
-    fun updateSixDays(date: Long) {
-        _sixDays.update {
-            helper.getSixDaySelectorList(date)
-        }
+        _selectedMonth.update { getMonth(date) }
     }
 
     fun updateShowDialog() {
         _showDialog.update { !it }
     }
 
+    fun loadDate(date: Long) {
+    }
+
     private fun setCurrentDay() {
-        val day = helper.getCurrentDay()
-        _selectedMonth.update { helper.getMonth(day) }
+        val day = getCurrentDay()
+        _selectedMonth.update { getMonth(day) }
         _selectedDate.update { day }
-        _sixDays.update { helper.getSixDaySelectorList(day) }
     }
 }
