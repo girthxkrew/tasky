@@ -1,8 +1,7 @@
 package com.rkm.tasky.network.datasource
 
 import RequestType
-import com.rkm.tasky.network.model.Reminder
-import com.rkm.tasky.network.model.Task
+import com.rkm.tasky.network.model.TaskRemote
 import com.rkm.tasky.network.model.request.CreateEventRequest
 import com.rkm.tasky.network.model.request.SyncAgendaRequest
 import com.rkm.tasky.network.model.request.UpdateEventRequest
@@ -84,7 +83,7 @@ interface TaskyRemoteDataSource {
     suspend fun getTask(
         @Query("taskId") taskId: String,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<Task>
+    ): Response<TaskRemote>
 
     @DELETE("/task")
     suspend fun deleteTask(
@@ -94,13 +93,13 @@ interface TaskyRemoteDataSource {
 
     @PUT("/task")
     suspend fun updateTask(
-        @Body taskRequest: Task,
+        @Body taskRemoteRequest: TaskRemote,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
     ): Response<Unit>
 
     @POST("/task")
     suspend fun createTask(
-        @Body taskRequest: Task,
+        @Body taskRemoteRequest: TaskRemote,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
     ): Response<Unit>
 

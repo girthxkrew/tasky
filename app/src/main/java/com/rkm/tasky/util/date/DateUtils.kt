@@ -2,8 +2,10 @@ package com.rkm.tasky.util.date
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 
@@ -32,4 +34,13 @@ fun getDayOfTheMonth(date: Long): Int {
         .toLocalDateTime(timezone)
 
     return day.dayOfMonth
+}
+
+fun Long.toLocalDateTime(): LocalDateTime {
+    return Instant.fromEpochMilliseconds(this)
+        .toLocalDateTime(timezone)
+}
+
+fun LocalDateTime.toLong(): Long {
+    return this.toInstant(timezone).toEpochMilliseconds() * 1000
 }
