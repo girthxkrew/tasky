@@ -30,6 +30,7 @@ cerealization = "1.7.3"
 splashscreen = "1.0.1"
 datetime = "0.6.1"
 desugar = "2.1.2"
+junitJunit = "4.12"
 
 
 [libraries]
@@ -74,6 +75,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref="splashscreen" }
 android-tools-desugar = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
+junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

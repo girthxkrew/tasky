@@ -22,6 +22,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -76,6 +77,7 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.junit.junit)
     coreLibraryDesugaring(libs.android.tools.desugar)
 
     implementation(libs.kotlinx.datetime)
@@ -116,6 +118,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.mock.web.server)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

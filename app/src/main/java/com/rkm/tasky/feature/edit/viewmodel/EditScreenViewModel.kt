@@ -3,7 +3,7 @@ package com.rkm.tasky.feature.edit.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
-import com.rkm.tasky.navigation.Edit
+import com.rkm.tasky.navigation.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +17,7 @@ class EditScreenViewModel @Inject constructor(
     private companion object {
         const val TEXT_KEY = "TEXT"
     }
-    private val edit = savedStateHandle.toRoute<Edit>()
+    private val edit = savedStateHandle.toRoute<Destination.Edit>()
 
     val action = edit.action
 

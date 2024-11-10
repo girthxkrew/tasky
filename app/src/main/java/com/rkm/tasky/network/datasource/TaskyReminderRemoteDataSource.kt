@@ -1,7 +1,8 @@
 package com.rkm.tasky.network.datasource
 
+import ReminderRequest
 import RequestType
-import com.rkm.tasky.network.model.Reminder
+import com.rkm.tasky.network.model.response.ReminderResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -14,13 +15,13 @@ import retrofit2.http.Tag
 interface TaskyReminderRemoteDataSource {
     @POST("/reminder")
     suspend fun createReminder(
-        @Body reminderRequest: Reminder,
+        @Body reminderRemoteRequest: ReminderRequest,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
     ): Response<Unit>
 
     @PUT("/reminder")
     suspend fun updateReminder(
-        @Body reminderRequest: Reminder,
+        @Body reminderRemoteRequest: ReminderRequest,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
     ): Response<Unit>
 
@@ -28,7 +29,7 @@ interface TaskyReminderRemoteDataSource {
     suspend fun getReminder(
         @Query("reminderId") reminderId: String,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<Reminder>
+    ): Response<ReminderResponse>
 
     @DELETE("/reminder")
     suspend fun deleteReminder(
