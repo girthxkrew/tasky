@@ -27,9 +27,15 @@ val AgendaTopBarBackgroundColor = Color(0xFF000000)
 val AgendaMainBodyBackgroundColor = Color(0xFF000000)
 val AgendaMainBodyForegroundColor = Color(0xFFFFFFFF)
 
-//Six Day Selector
+//Date Selector
 val SixDaySelectorDateTextColor = Color(0xFF000000)
 val SixDaySelectorUnselectedDay = Color(0xFF696969)
 val SixDaySelectorSelectedDay = Color(0xFF000000)
 val SixDaySelectorDayCardUnselected = Color(0xFFFFFFFF)
 val SixDaySelectorDayCardSelected = Color(0xFFFFF59E)
+
+//EditScreen
+val EditScreenTopAppBarColor = Color(0xFFFFFFFF)
+val EditScreenTopBarAppTitleTextColor = Color(0xFF000000)
+val EditScreenTopBarSaveTextColor = Color(0xFF259f70)
+val EditScreenDivider = Color(0xFFE6E6E6)

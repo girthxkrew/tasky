@@ -104,28 +104,4 @@ interface TaskyRemoteDataSource {
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
     ): Response<Unit>
 
-    @POST("/reminder")
-    suspend fun createReminder(
-        @Body reminderRequest: Reminder,
-        @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    )
-
-    @PUT("/reminder")
-    suspend fun updateReminder(
-        @Body reminderRequest: Reminder,
-        @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<Unit>
-
-    @GET("/reminder")
-    suspend fun getReminder(
-        @Query("reminderId") reminderId: String,
-        @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<Reminder>
-
-    @DELETE("/reminder")
-    suspend fun deleteReminder(
-        @Query("reminderId") reminderId: String,
-        @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<Unit>
-
 }
