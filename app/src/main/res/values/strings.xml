@@ -28,6 +28,9 @@
     <string name="api_error_no_session_info">Session information is missing. Please log in again.</string>
     <string name="agenda_datepicker_modal_confirm">OK</string>
     <string name="agenda_datepicker_modal_dismiss">Cancel</string>
+    <string name="event">Event</string>
+    <string name="reminder">Reminder</string>
+    <string name="task">Task</string>
     <string name="edit_screen_toolbar_title">EDIT TITLE</string>
     <string name="edit_screen_toolbar_description">EDIT DESCRIPTION</string>
     <string name="edit_screen_save">Save</string>

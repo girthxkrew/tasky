@@ -31,6 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rkm.tasky.R
+import com.rkm.tasky.feature.agenda.screen.dayselector.DateItem
+import com.rkm.tasky.feature.agenda.screen.dayselector.DateSelector
+import com.rkm.tasky.feature.agenda.screen.dayselector.TimeSpan
+import com.rkm.tasky.feature.agenda.screen.dayselector.rememberDateSelectorState
 import com.rkm.tasky.feature.agenda.viewmodel.AgendaViewModel
 import com.rkm.tasky.ui.theme.AgendaMainBodyBackgroundColor
 import com.rkm.tasky.ui.theme.AgendaMainBodyForegroundColor
@@ -45,16 +49,14 @@ fun AgendaScreenRoot(
     val showDialog by viewModel.showDialog.collectAsStateWithLifecycle()
     val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
     val selectedMonth by viewModel.selectedMonth.collectAsStateWithLifecycle()
-    val sixDays by viewModel.sixDay.collectAsStateWithLifecycle()
 
     AgendaScreen(
         modifier = modifier,
         showDialog = showDialog,
         selectedDate = selectedDate,
         selectedMonth = selectedMonth,
-        sixDay = sixDays,
-        onDateSelected = viewModel::updateSelectedDate,
-        updateSixDays = viewModel::updateSixDays,
+        updateSelectedDate = viewModel::updateSelectedDate,
+        onDateSelected = viewModel::loadDate,
         onShowDatePicker = viewModel::updateShowDialog
     )
 }
@@ -65,11 +67,12 @@ private fun AgendaScreen(
     showDialog: Boolean,
     selectedDate: Long,
     selectedMonth: String,
-    sixDay: List<DayUiModel>,
+    updateSelectedDate: (Long) -> Unit,
     onDateSelected: (Long) -> Unit,
-    updateSixDays: (Long) -> Unit,
     onShowDatePicker: () -> Unit
 ) {
+
+    val state = rememberDateSelectorState(selectedDate)
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -86,13 +89,18 @@ private fun AgendaScreen(
                 )
             )
             LazyColumn(
-                modifier = modifier.fillMaxSize()
+                modifier = modifier
+                    .fillMaxSize()
                     .background(AgendaMainBodyBackgroundColor)
                     .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
                     .background(AgendaMainBodyForegroundColor)
             ) {
                 item {
-                    SixDaySelector(modifier.padding(top = 16.dp), sixDay, {})
+                    DateSelector(
+                        Modifier.padding(top = 16.dp),
+                        state = state,
+                        onClick = onDateSelected
+                    )
                 }
             }
         }
@@ -100,8 +108,10 @@ private fun AgendaScreen(
         if (showDialog) {
             DatePickerModal(
                 selectedDate = selectedDate,
-                onDateSelected = onDateSelected,
-                updateSixDays = updateSixDays,
+                onDateSelected = {
+                    updateSelectedDate(it)
+                    state.selectedDate = it
+                },
                 onDismiss = onShowDatePicker
             )
         }
@@ -126,7 +136,6 @@ private fun TopBarDateSelector(
 private fun DatePickerModal(
     selectedDate: Long,
     onDateSelected: (Long) -> Unit,
-    updateSixDays: (Long) -> Unit,
     onDismiss: () -> Unit
 ) {
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate)
@@ -137,7 +146,6 @@ private fun DatePickerModal(
                 onClick = {
                     datePickerState.selectedDateMillis?.let {
                         onDateSelected(it)
-                        updateSixDays(it)
                     }
                     onDismiss()
                 }
@@ -162,21 +170,20 @@ private fun DatePickerModal(
 @Composable
 private fun PreviewAgendaScreen() {
     val list = mutableListOf(
-        DayUiModel(0L, "M", 5),
-        DayUiModel(0L, "T", 6),
-        DayUiModel(0L, "W", 7),
-        DayUiModel(0L, "T", 8),
-        DayUiModel(0L, "F", 9),
-        DayUiModel(0L, "S", 10)
+        DateItem(0L, "M", 5),
+        DateItem(0L, "T", 6),
+        DateItem(0L, "W", 7),
+        DateItem(0L, "T", 8),
+        DateItem(0L, "F", 9),
+        DateItem(0L, "S", 10)
     )
     AgendaScreen(
         Modifier,
         showDialog = false,
         selectedMonth = "DECEMBER",
-        sixDay = list,
         selectedDate = 0L,
+        updateSelectedDate = {},
         onDateSelected = {},
-        updateSixDays = {},
         onShowDatePicker = {}
     )
 }

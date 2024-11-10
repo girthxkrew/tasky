@@ -1,4 +1,4 @@
-package com.rkm.tasky.feature.agenda.screen
+package com.rkm.tasky.feature.agenda.screen.dayselector
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,10 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,37 +25,42 @@ import com.rkm.tasky.ui.theme.SixDaySelectorSelectedDay
 import com.rkm.tasky.ui.theme.SixDaySelectorUnselectedDay
 
 @Composable
-internal fun SixDaySelector(
-    modifier: Modifier,
-    days: List<DayUiModel>,
+fun DateSelector(
+    modifier: Modifier = Modifier,
+    state: DateSelectorState,
     onClick: (Long) -> Unit
 ) {
+    DateSelectorImpl(modifier, state as DateSelectorStateImpl, onClick)
+}
 
-    var selectedIndex by remember { mutableStateOf(0) }
-
+@Composable
+private fun DateSelectorImpl(
+    modifier: Modifier,
+    state: DateSelectorStateImpl,
+    onClick: (Long) -> Unit
+) {
     LazyRow(
         modifier = modifier
             .fillMaxWidth()
             .height(70.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        itemsIndexed(days) { index, day ->
+        itemsIndexed(state.dateList) { index, day ->
             DayCard(
-                dayUiModel = day,
-                isSelected = index == selectedIndex,
+                dateItem = day,
+                isSelected = index == state.selectedIndex,
                 onClick = {
-                    selectedIndex = index
-                    onClick(day.day)
+                    state.selectedIndex = index
+                    onClick(day.dayLong)
                 }
             )
         }
     }
-
 }
 
 @Composable
 internal fun DayCard(
-    dayUiModel: DayUiModel,
+    dateItem: DateItem,
     onClick: () -> Unit,
     isSelected: Boolean,
 ) {
@@ -73,12 +74,12 @@ internal fun DayCard(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = dayUiModel.dayOfWeek,
+            text = dateItem.dayOfWeek,
             color = if(isSelected) SixDaySelectorSelectedDay else SixDaySelectorUnselectedDay,
             style = MaterialTheme.typography.bodySmall
         )
         Text(
-            text = dayUiModel.dayOfWeekNumeric.toString(),
+            text = dateItem.dayOfMonth.toString(),
             color = SixDaySelectorDateTextColor,
             style = MaterialTheme.typography.bodyLarge
         )
@@ -89,7 +90,7 @@ internal fun DayCard(
 @Composable
 private fun DayCardPreview(
 ) {
-    val day = DayUiModel(0L, "S", 5)
+    val day = DateItem(0L, "S", 5)
     DayCard(
         day,
         {},
@@ -101,21 +102,7 @@ private fun DayCardPreview(
     showBackground = false
 )
 @Composable
-private fun SixDaySelectorPreview() {
-    val list = mutableListOf(
-        DayUiModel(0L, "M", 5),
-        DayUiModel(0L, "T", 6),
-        DayUiModel(0L, "W", 7),
-        DayUiModel(0L, "T", 8),
-        DayUiModel(0L, "F", 9),
-        DayUiModel(0L, "S", 10)
-    )
-
-    SixDaySelector(Modifier, list, {})
+private fun DateSelectorPreview() {
+    val state = rememberDateSelectorState(0L)
+    DateSelector(Modifier, state, {})
 }
-
-data class DayUiModel(
-    val day: Long,
-    val dayOfWeek: String,
-    val dayOfWeekNumeric: Int,
-)
