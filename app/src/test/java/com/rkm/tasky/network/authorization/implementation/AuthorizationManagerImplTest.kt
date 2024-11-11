@@ -1,10 +1,8 @@
 package com.rkm.tasky.network.authorization.implementation
 
+import com.rkm.tasky.network.authentication.mapper.asSessionInfo
 import com.rkm.tasky.network.fakes.AuthorizationRepositoryFake
 import com.rkm.tasky.network.fakes.SessionStorageFake
-import com.rkm.tasky.network.model.dto.asSessionInfo
-import com.rkm.tasky.network.model.response.asAccessTokenDTO
-import com.rkm.tasky.network.model.response.asLoginDTO
 import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.resources.response.getNewAccessTokenResponseToPojo
 import com.rkm.tasky.resources.response.loginUserResponseToPojo
@@ -33,7 +31,7 @@ class AuthorizationManagerImplTest {
 
     @Test
     fun `logout success`() = runTest(dispatcher) {
-        sessionStorage.setSession(loginUserResponseToPojo().asLoginDTO().asSessionInfo())
+        sessionStorage.setSession(loginUserResponseToPojo().asSessionInfo())
         assertTrue(sessionStorage.getSession() != null)
         val result2 = authManager.logOut()
         assertTrue(result2 is Result.Success)
@@ -42,7 +40,7 @@ class AuthorizationManagerImplTest {
 
     @Test
     fun `logout failed`() = runTest(dispatcher) {
-        sessionStorage.setSession(loginUserResponseToPojo().asLoginDTO().asSessionInfo())
+        sessionStorage.setSession(loginUserResponseToPojo().asSessionInfo())
         assertTrue(sessionStorage.getSession() != null)
         authRepository.setHasError(true)
         val result2 = authManager.logOut()
@@ -72,8 +70,8 @@ class AuthorizationManagerImplTest {
 
     @Test
     fun `get new access token session success`() = runTest(dispatcher) {
-        val authInfo = loginUserResponseToPojo().asLoginDTO().asSessionInfo()
-        val tokenResponse = getNewAccessTokenResponseToPojo().asAccessTokenDTO()
+        val authInfo = loginUserResponseToPojo().asSessionInfo()
+        val tokenResponse = getNewAccessTokenResponseToPojo()
         sessionStorage.setSession(authInfo)
         val updatedAuthInfo = authInfo.copy(
             accessToken = tokenResponse.accessToken,
@@ -86,8 +84,8 @@ class AuthorizationManagerImplTest {
 
     @Test
     fun `get new access token session failed`() = runTest(dispatcher) {
-        val authInfo = loginUserResponseToPojo().asLoginDTO().asSessionInfo()
-        val tokenResponse = getNewAccessTokenResponseToPojo().asAccessTokenDTO()
+        val authInfo = loginUserResponseToPojo().asSessionInfo()
+        val tokenResponse = getNewAccessTokenResponseToPojo()
         sessionStorage.setSession(authInfo)
         val updatedAuthInfo = authInfo.copy(
             accessToken = tokenResponse.accessToken,
@@ -102,7 +100,7 @@ class AuthorizationManagerImplTest {
 
     @Test
     fun `get session success`() = runTest(dispatcher) {
-        val authInfo = loginUserResponseToPojo().asLoginDTO().asSessionInfo()
+        val authInfo = loginUserResponseToPojo().asSessionInfo()
         sessionStorage.setSession(authInfo)
         assertTrue(authManager.getSessionInfo() == authInfo.asAuthInfoDTO())
     }

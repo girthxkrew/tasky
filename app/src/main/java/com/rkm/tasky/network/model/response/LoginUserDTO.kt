@@ -1,9 +1,8 @@
 package com.rkm.tasky.network.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.rkm.tasky.network.model.dto.LoginDTO
 
-data class LoginUserResponse(
+data class LoginUserDTO(
     @SerializedName("accessToken")
     val accessToken: String,
     @SerializedName("refreshToken")
@@ -15,13 +14,3 @@ data class LoginUserResponse(
     @SerializedName("accessTokenExpirationTimestamp")
     val accessTokenExpirationTimestamp: Long
 )
-
-fun LoginUserResponse.asLoginDTO(): LoginDTO {
-    return LoginDTO(
-        accessToken = this.accessToken,
-        refreshToken = this.refreshToken,
-        fullName = this.fullName,
-        userId = this.userId,
-        accessTokenExpirationTimestamp = this.accessTokenExpirationTimestamp
-    )
-}

@@ -1,6 +1,6 @@
 package com.rkm.tasky.network.model.response
 
-data class AttendeeResponse(
+data class AttendeeDTO(
     val doesUserExist: Boolean,
     val attendee: Attendee
 ) {

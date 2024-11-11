@@ -1,6 +1,6 @@
 package com.rkm.tasky.network.model.response
 
-data class EventResponse(
+data class EventDTO(
     val id: String,
     val title: String,
     val description: String,

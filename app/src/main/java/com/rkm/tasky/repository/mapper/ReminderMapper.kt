@@ -2,10 +2,12 @@ package com.rkm.tasky.repository.mapper
 
 import ReminderRequest
 import com.rkm.tasky.database.model.ReminderEntity
-import com.rkm.tasky.network.model.dto.ReminderDTO
-import com.rkm.tasky.repository.model.Reminder
+import com.rkm.tasky.network.model.response.ReminderDTO
+import com.rkm.tasky.feature.reminder.model.Reminder
 import com.rkm.tasky.util.date.toLocalDateTime
 import com.rkm.tasky.util.date.toLong
+
+//Todo: test mapper functions for timedate error 
 
 fun ReminderDTO.asReminderEntity(): ReminderEntity {
     return ReminderEntity(

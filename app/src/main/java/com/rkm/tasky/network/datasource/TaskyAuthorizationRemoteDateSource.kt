@@ -2,7 +2,7 @@ package com.rkm.tasky.network.datasource
 
 import RequestType
 import com.rkm.tasky.network.model.request.AccessTokenRequest
-import com.rkm.tasky.network.model.response.AccessTokenResponse
+import com.rkm.tasky.network.model.response.AccessTokenDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,7 +15,7 @@ interface TaskyAuthorizationRemoteDateSource {
     suspend fun getNewAccessToken(
         @Body request: AccessTokenRequest,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<AccessTokenResponse>
+    ): Response<AccessTokenDTO>
 
     @GET("/authenticate")
     suspend fun checkAuthentication(

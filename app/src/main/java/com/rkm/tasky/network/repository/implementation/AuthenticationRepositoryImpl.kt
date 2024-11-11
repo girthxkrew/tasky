@@ -3,13 +3,10 @@ package com.rkm.tasky.network.repository.implementation
 import com.rkm.tasky.di.IoDispatcher
 import com.rkm.tasky.network.datasource.TaskyAuthenticationRemoteDataSource
 import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
-import com.rkm.tasky.network.model.dto.AccessTokenDTO
-import com.rkm.tasky.network.model.dto.LoginDTO
 import com.rkm.tasky.network.model.request.AccessTokenRequest
 import com.rkm.tasky.network.model.request.LoginUserRequest
 import com.rkm.tasky.network.model.request.RegisterUserRequest
-import com.rkm.tasky.network.model.response.asAccessTokenDTO
-import com.rkm.tasky.network.model.response.asLoginDTO
+import com.rkm.tasky.network.model.response.LoginUserDTO
 import com.rkm.tasky.network.repository.abstraction.AuthenticationRepository
 import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.network.util.safeCall
@@ -42,11 +39,11 @@ class AuthenticationRepositoryImpl @Inject constructor(
     override suspend fun loginUser(
         email: String,
         password: String
-    ): Result<LoginDTO, NetworkError.APIError> = withContext(dispatcher) {
+    ): Result<LoginUserDTO, NetworkError.APIError> = withContext(dispatcher) {
         val result =
             safeCall { dataSource.loginUser(LoginUserRequest(email = email, password = password)) }
         return@withContext when (result) {
-            is Result.Success -> Result.Success(result.data.asLoginDTO())
+            is Result.Success -> Result.Success(result.data)
             is Result.Error -> result
         }
     }

@@ -1,18 +1,11 @@
 package com.rkm.tasky.network.repository.implementation
 
 import com.rkm.tasky.network.datasource.TaskyAuthenticationRemoteDataSource
-import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
-import com.rkm.tasky.network.model.request.RegisterUserRequest
-import com.rkm.tasky.network.model.response.asAccessTokenDTO
-import com.rkm.tasky.network.model.response.asLoginDTO
 import com.rkm.tasky.resources.response.errorMessageToString
 import com.rkm.tasky.network.util.NetworkError
-import com.rkm.tasky.resources.response.getNewAccessTokenResponseToPojo
-import com.rkm.tasky.resources.response.getNewAccessTokenResponseToString
 import com.rkm.tasky.resources.response.loginUserResponseToPojo
 import com.rkm.tasky.resources.response.loginUserResponseToString
 import com.rkm.tasky.util.result.Result
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -26,7 +19,6 @@ import org.junit.Assert.*
 
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -88,7 +80,7 @@ class AuthenticationRepositoryImplTest {
         val result = authRepository.loginUser(email, password)
         runCurrent()
         assertTrue(result is Result.Success)
-        assertTrue((result as Result.Success).data == loginUserResponseToPojo().asLoginDTO())
+        assertTrue((result as Result.Success).data == loginUserResponseToPojo())
     }
 
     @Test

@@ -5,9 +5,9 @@ import com.rkm.tasky.network.model.TaskRemote
 import com.rkm.tasky.network.model.request.CreateEventRequest
 import com.rkm.tasky.network.model.request.SyncAgendaRequest
 import com.rkm.tasky.network.model.request.UpdateEventRequest
-import com.rkm.tasky.network.model.response.AgendaResponse
-import com.rkm.tasky.network.model.response.AttendeeResponse
-import com.rkm.tasky.network.model.response.EventResponse
+import com.rkm.tasky.network.model.response.AgendaDTO
+import com.rkm.tasky.network.model.response.AttendeeDTO
+import com.rkm.tasky.network.model.response.EventDTO
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -26,7 +26,7 @@ interface TaskyRemoteDataSource {
     suspend fun getAgenda(
         @Query("time") time: Long,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<AgendaResponse>
+    ): Response<AgendaDTO>
 
     @POST("/syncAgenda")
     suspend fun syncAgenda(
@@ -37,7 +37,7 @@ interface TaskyRemoteDataSource {
     @POST("/fullAgenda")
     suspend fun getFullAgenda(
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<AgendaResponse>
+    ): Response<AgendaDTO>
 
     @Multipart
     @POST("/event")
@@ -45,13 +45,13 @@ interface TaskyRemoteDataSource {
         @Part("create_event_request") createEventRequest: CreateEventRequest,
         @Part photos: List<MultipartBody.Part>,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<EventResponse>
+    ): Response<EventDTO>
 
     @GET("/event")
     suspend fun getEvent(
         @Query("eventId") eventId: String,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<EventResponse>
+    ): Response<EventDTO>
 
     @DELETE("/event")
     suspend fun deleteEvent(
@@ -71,7 +71,7 @@ interface TaskyRemoteDataSource {
     suspend fun getAttendee(
         @Query("email") email: String,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<AttendeeResponse>
+    ): Response<AttendeeDTO>
 
     @DELETE
     suspend fun deleteAttendee(

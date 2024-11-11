@@ -2,6 +2,7 @@ package com.rkm.tasky.network.interceptor
 
 import com.rkm.tasky.BuildConfig
 import com.rkm.tasky.network.authentication.abstraction.AuthenticationManager
+import com.rkm.tasky.network.authentication.mapper.asSessionInfo
 import com.rkm.tasky.network.authorization.abstraction.AuthorizationManager
 import com.rkm.tasky.network.datasource.TaskyAuthenticationRemoteDataSource
 import com.rkm.tasky.network.datasource.TaskyAuthorizationRemoteDateSource
@@ -10,9 +11,7 @@ import com.rkm.tasky.network.fakes.AuthenticationRepositoryFake
 import com.rkm.tasky.network.fakes.AuthorizationManagerFake
 import com.rkm.tasky.network.fakes.AuthorizationRepositoryFake
 import com.rkm.tasky.network.fakes.SessionStorageFake
-import com.rkm.tasky.network.model.dto.asSessionInfo
 import com.rkm.tasky.network.model.request.RegisterUserRequest
-import com.rkm.tasky.network.model.response.asLoginDTO
 import com.rkm.tasky.resources.response.loginUserResponseToPojo
 import dagger.Lazy
 import kotlinx.coroutines.test.runTest
@@ -69,7 +68,7 @@ class TaskyAuthorizationInterceptorTest {
 
     @Test
     fun `adding api key + authorization to request`() = runTest {
-        storage.setSession(loginUserResponseToPojo().asLoginDTO().asSessionInfo())
+        storage.setSession(loginUserResponseToPojo().asSessionInfo())
         val response = MockResponse().setResponseCode(200)
         server.enqueue(response)
         authorizationDataSource.logoutUser()
@@ -82,7 +81,7 @@ class TaskyAuthorizationInterceptorTest {
 
     @Test
     fun `adding api key + authorization to request but with new access token success`() = runTest {
-        storage.setSession(loginUserResponseToPojo().asLoginDTO().asSessionInfo())
+        storage.setSession(loginUserResponseToPojo().asSessionInfo())
         server.enqueue(MockResponse().setBody("Authorized").setResponseCode(401))
         server.enqueue(MockResponse().setResponseCode(200))
         authorizationDataSource.logoutUser()
@@ -97,7 +96,7 @@ class TaskyAuthorizationInterceptorTest {
     @Test
     fun `adding api key + authorization to request but with new access token failed`() = runTest {
         authorizationRepository.setHasError(true)
-        storage.setSession(loginUserResponseToPojo().asLoginDTO().asSessionInfo())
+        storage.setSession(loginUserResponseToPojo().asSessionInfo())
         server.enqueue(MockResponse().setBody("Authorized").setResponseCode(401))
         authorizationDataSource.logoutUser()
         val request = server.takeRequest()
@@ -109,7 +108,7 @@ class TaskyAuthorizationInterceptorTest {
 
     @Test
     fun `confirming api key + authorization header`() = runTest {
-        storage.setSession(loginUserResponseToPojo().asLoginDTO().asSessionInfo())
+        storage.setSession(loginUserResponseToPojo().asSessionInfo())
         val response = MockResponse().setResponseCode(200)
         server.enqueue(response)
         authorizationDataSource.logoutUser()

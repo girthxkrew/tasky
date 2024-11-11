@@ -1,8 +1,6 @@
 package com.rkm.tasky.network.repository.implementation
 
 import com.rkm.tasky.network.datasource.TaskyAuthorizationRemoteDateSource
-import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
-import com.rkm.tasky.network.model.response.asAccessTokenDTO
 import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.resources.response.errorMessageToString
 import com.rkm.tasky.resources.response.getNewAccessTokenResponseToPojo
@@ -94,7 +92,7 @@ class AuthorizationRepositoryImplTest {
         val result = authRepository.getNewAccessToken("", "")
         runCurrent()
         assertTrue(result is Result.Success)
-        assertTrue((result as Result.Success).data == getNewAccessTokenResponseToPojo().asAccessTokenDTO())
+        assertTrue((result as Result.Success).data == getNewAccessTokenResponseToPojo())
     }
 
     @Test
