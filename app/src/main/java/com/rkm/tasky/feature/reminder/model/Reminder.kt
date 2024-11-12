@@ -1,4 +1,4 @@
-package com.rkm.tasky.repository.model
+package com.rkm.tasky.feature.reminder.model
 
 import kotlinx.datetime.LocalDateTime
 

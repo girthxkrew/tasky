@@ -7,14 +7,13 @@ import com.rkm.tasky.database.model.SyncItemType
 import com.rkm.tasky.database.model.SyncUserAction
 import com.rkm.tasky.di.IoDispatcher
 import com.rkm.tasky.network.datasource.TaskyReminderRemoteDataSource
-import com.rkm.tasky.network.model.dto.asReminderDTO
 import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.network.util.safeCall
 import com.rkm.tasky.repository.abstraction.TaskyReminderRepository
 import com.rkm.tasky.repository.mapper.asReminder
 import com.rkm.tasky.repository.mapper.asReminderEntity
 import com.rkm.tasky.repository.mapper.asReminderRequest
-import com.rkm.tasky.repository.model.Reminder
+import com.rkm.tasky.feature.reminder.model.Reminder
 import com.rkm.tasky.util.result.EmptyResult
 import com.rkm.tasky.util.result.Result
 import com.rkm.tasky.util.result.onFailure
@@ -31,10 +30,9 @@ class TaskyReminderRepositoryImpl @Inject constructor(
     override suspend fun getReminder(id: String): Result<Reminder?, NetworkError.APIError> = withContext(dispatcher) {
         val result = safeCall { remoteDataSource.getReminder(id) }
         result.onFailure {
-            println(it.name)
             return@withContext Result.Success(localDataSource.getReminderById(id)?.asReminder())
         }
-        return@withContext Result.Success((result as Result.Success).data.asReminderDTO().asReminder())
+        return@withContext Result.Success((result as Result.Success).data.asReminder())
     }
 
     override suspend fun createReminder(reminder: Reminder): EmptyResult<NetworkError.APIError> = withContext(dispatcher) {

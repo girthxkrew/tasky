@@ -1,7 +1,7 @@
 package com.rkm.tasky.network.fakes
 
 import com.rkm.tasky.network.authentication.abstraction.AuthenticationManager
-import com.rkm.tasky.network.model.dto.asSessionInfo
+import com.rkm.tasky.network.authentication.mapper.asSessionInfo
 import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.util.result.EmptyResult
 import com.rkm.tasky.util.result.asEmptyDataResult

@@ -2,9 +2,8 @@ package com.rkm.tasky.network.repository.implementation
 
 import com.rkm.tasky.di.IoDispatcher
 import com.rkm.tasky.network.datasource.TaskyAuthorizationRemoteDateSource
-import com.rkm.tasky.network.model.dto.AccessTokenDTO
 import com.rkm.tasky.network.model.request.AccessTokenRequest
-import com.rkm.tasky.network.model.response.asAccessTokenDTO
+import com.rkm.tasky.network.model.response.AccessTokenDTO
 import com.rkm.tasky.network.repository.abstraction.AuthorizationRepository
 import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.network.util.safeCall
@@ -31,7 +30,7 @@ class AuthorizationRepositoryImpl @Inject constructor(
             )
         }
         return@withContext when (result) {
-            is Result.Success -> Result.Success(result.data.asAccessTokenDTO())
+            is Result.Success -> Result.Success(result.data)
             is Result.Error -> result
         }
     }

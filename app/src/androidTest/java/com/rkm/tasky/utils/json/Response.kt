@@ -2,7 +2,7 @@ package com.rkm.tasky.utils.json
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.gson.Gson
-import com.rkm.tasky.network.model.response.ReminderResponse
+import com.rkm.tasky.network.model.response.ReminderDTO
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -11,8 +11,8 @@ private const val reminderResponse = "ReminderResponse.json"
 
 private val gson = Gson()
 
-fun reminderResponseToPojo(): ReminderResponse {
-    return gson.fromJson(loadJsonFromAsset(reminderResponse), ReminderResponse::class.java)
+fun reminderResponseToPojo(): ReminderDTO {
+    return gson.fromJson(loadJsonFromAsset(reminderResponse), ReminderDTO::class.java)
 }
 
 fun reminderResponseToString(): String {

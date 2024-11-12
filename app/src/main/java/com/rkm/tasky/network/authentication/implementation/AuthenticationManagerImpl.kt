@@ -2,7 +2,7 @@ package com.rkm.tasky.network.authentication.implementation
 
 import com.rkm.tasky.di.IoDispatcher
 import com.rkm.tasky.network.authentication.abstraction.AuthenticationManager
-import com.rkm.tasky.network.model.dto.asSessionInfo
+import com.rkm.tasky.network.authentication.mapper.asSessionInfo
 import com.rkm.tasky.network.repository.abstraction.AuthenticationRepository
 import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.util.result.EmptyResult

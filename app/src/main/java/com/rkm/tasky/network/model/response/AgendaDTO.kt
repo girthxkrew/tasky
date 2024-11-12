@@ -2,8 +2,8 @@ package com.rkm.tasky.network.model.response
 
 import com.rkm.tasky.network.model.TaskRemote
 
-data class AgendaResponse(
-    val events: List<EventResponse>,
+data class AgendaDTO(
+    val events: List<EventDTO>,
     val taskRemote: List<TaskRemote>,
-    val reminderRemotes: List<ReminderResponse>
+    val reminderRemotes: List<ReminderDTO>
 )

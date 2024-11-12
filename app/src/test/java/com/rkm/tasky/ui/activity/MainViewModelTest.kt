@@ -1,11 +1,10 @@
 package com.rkm.tasky.ui.activity
 
 import app.cash.turbine.test
+import com.rkm.tasky.network.authentication.mapper.asSessionInfo
 import com.rkm.tasky.network.fakes.AuthorizationManagerFake
 import com.rkm.tasky.network.fakes.AuthorizationRepositoryFake
 import com.rkm.tasky.network.fakes.SessionStorageFake
-import com.rkm.tasky.network.model.dto.asSessionInfo
-import com.rkm.tasky.network.model.response.asLoginDTO
 import com.rkm.tasky.resources.response.loginUserResponseToPojo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,7 +46,7 @@ class MainViewModelTest {
 
     @Test
     fun `check for authentication with successful response`() = runTest {
-        sessionStorageFake.setSession(loginUserResponseToPojo().asLoginDTO().asSessionInfo())
+        sessionStorageFake.setSession(loginUserResponseToPojo().asSessionInfo())
         viewModel = MainViewModel(manager)
         viewModel.authState.test {
             assertEquals(awaitItem(), AuthState.Loading)
@@ -57,7 +56,7 @@ class MainViewModelTest {
 
     @Test
     fun `check for authentication with error response`() = runTest {
-        sessionStorageFake.setSession(loginUserResponseToPojo().asLoginDTO().asSessionInfo())
+        sessionStorageFake.setSession(loginUserResponseToPojo().asSessionInfo())
         repository.setHasError(true)
         viewModel = MainViewModel(manager)
         viewModel.authState.test {

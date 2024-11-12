@@ -1,8 +1,8 @@
 package com.rkm.tasky.resources.response
 
 import com.google.gson.Gson
-import com.rkm.tasky.network.model.response.AccessTokenResponse
-import com.rkm.tasky.network.model.response.LoginUserResponse
+import com.rkm.tasky.network.model.response.AccessTokenDTO
+import com.rkm.tasky.network.model.response.LoginUserDTO
 import java.io.File
 
 private const val errorMessage = "src/test/java/com/rkm/tasky/resources/response/ErrorMessage.json"
@@ -11,18 +11,18 @@ private const val loginUserResponse = "src/test/java/com/rkm/tasky/resources/res
 
 private val gson = Gson()
 
-fun loginUserResponseToPojo(): LoginUserResponse {
+fun loginUserResponseToPojo(): LoginUserDTO {
     val string = File(loginUserResponse).readText()
-    return gson.fromJson(string, LoginUserResponse::class.java)
+    return gson.fromJson(string, LoginUserDTO::class.java)
 }
 
 fun loginUserResponseToString(): String {
     return File(loginUserResponse).readText()
 }
 
-fun getNewAccessTokenResponseToPojo(): AccessTokenResponse {
+fun getNewAccessTokenResponseToPojo(): AccessTokenDTO {
     val string = File(getNewAccessTokenResponse).readText()
-    return gson.fromJson(string, AccessTokenResponse::class.java)
+    return gson.fromJson(string, AccessTokenDTO::class.java)
 }
 
 fun getNewAccessTokenResponseToString(): String {

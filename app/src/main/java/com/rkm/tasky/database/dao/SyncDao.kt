@@ -12,7 +12,7 @@ interface SyncDao {
     @Query("SELECT * FROM sync")
     suspend fun getAllSyncItems(): List<SyncEntity>
 
-    @Query("SELECT * FROM sync WHERE id = :id")
+    @Query("SELECT * FROM sync WHERE itemId = :id")
     suspend fun getSyncItemById(id: String): SyncEntity
 
     @Upsert

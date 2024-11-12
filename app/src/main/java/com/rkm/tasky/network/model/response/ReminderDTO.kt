@@ -2,7 +2,7 @@ package com.rkm.tasky.network.model.response
 
 import com.google.gson.annotations.SerializedName
 
-data class ReminderResponse(
+data class ReminderDTO(
     @SerializedName("id")
     val id: String,
     @SerializedName("title")

@@ -1,7 +1,6 @@
 package com.rkm.tasky.network.fakes
 
-import com.rkm.tasky.network.model.dto.AccessTokenDTO
-import com.rkm.tasky.network.model.response.asAccessTokenDTO
+import com.rkm.tasky.network.model.response.AccessTokenDTO
 import com.rkm.tasky.network.repository.abstraction.AuthorizationRepository
 import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.resources.response.getNewAccessTokenResponseToPojo
@@ -17,7 +16,7 @@ class AuthorizationRepositoryFake: AuthorizationRepository {
         refreshToken: String,
         userId: String
     ): Result<AccessTokenDTO, NetworkError.APIError> {
-        return if(!hasError) Result.Success(getNewAccessTokenResponseToPojo().asAccessTokenDTO())
+        return if(!hasError) Result.Success(getNewAccessTokenResponseToPojo())
         else Result.Error(NetworkError.APIError.UNAUTHORIZED)
     }
 

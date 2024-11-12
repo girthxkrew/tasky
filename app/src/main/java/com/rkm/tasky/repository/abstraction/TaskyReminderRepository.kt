@@ -1,7 +1,7 @@
 package com.rkm.tasky.repository.abstraction
 
 import com.rkm.tasky.network.util.NetworkError
-import com.rkm.tasky.repository.model.Reminder
+import com.rkm.tasky.feature.reminder.model.Reminder
 import com.rkm.tasky.util.result.EmptyResult
 import com.rkm.tasky.util.result.Result
 

@@ -7,19 +7,23 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.rkm.tasky.database.TaskyDatabase
 import com.rkm.tasky.database.dao.ReminderDao
 import com.rkm.tasky.database.dao.SyncDao
+import com.rkm.tasky.database.model.SyncItemType
+import com.rkm.tasky.database.model.SyncUserAction
 import com.rkm.tasky.network.datasource.TaskyReminderRemoteDataSource
-import com.rkm.tasky.network.model.dto.asReminderDTO
 import com.rkm.tasky.repository.mapper.asReminder
+import com.rkm.tasky.repository.mapper.asReminderEntity
 import com.rkm.tasky.util.result.Result
+import com.rkm.tasky.utils.json.errorMessageToString
 import com.rkm.tasky.utils.json.reminderResponseToPojo
 import com.rkm.tasky.utils.json.reminderResponseToString
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -43,27 +47,107 @@ class TaskyReminderRepositoryImplTest {
     @Before
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Context>()
+        db = Room.inMemoryDatabaseBuilder(context, TaskyDatabase::class.java).build()
         server = MockWebServer()
-        server.start(8080)
+        server.start()
+
         retrofit = Retrofit.Builder()
-            .baseUrl(server.url("http://127.0.0.1:8080"))
+            .baseUrl(server.url("/"))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         remoteDataSource = retrofit.create(TaskyReminderRemoteDataSource::class.java)
-        db = Room.inMemoryDatabaseBuilder(context, TaskyDatabase::class.java).build()
         syncDataSource = db.syncDao()
         localDataSource = db.reminderDao()
         repository = TaskyReminderRepositoryImpl(remoteDataSource, localDataSource, syncDataSource, dispatcher)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getReminderFromRemoteDataSourceSuccess() = runTest(dispatcher) {
         val response = MockResponse().setResponseCode(200).setBody(reminderResponseToString())
         server.enqueue(response)
         val result = repository.getReminder(id)
         assertTrue(result is Result.Success)
-        assertEquals((result as Result.Success).data, reminderResponseToPojo().asReminderDTO().asReminder())
+        assertEquals((result as Result.Success).data, reminderResponseToPojo().asReminder())
+    }
+
+    @Test
+    fun getReminderFromRemoteDataSourceFailure() = runTest(dispatcher) {
+        localDataSource.upsertReminder(reminderResponseToPojo().asReminderEntity())
+        val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
+        server.enqueue(response)
+        val result = repository.getReminder(id)
+        assertTrue(result is Result.Success)
+        assertEquals((result as Result.Success).data, localDataSource.getReminderById(id)!!.asReminder())
+    }
+
+    @Test
+    fun createReminderFromRemoteDataSourceSuccess() = runTest(dispatcher) {
+        val response = MockResponse().setResponseCode(200)
+        server.enqueue(response)
+        val result = repository.createReminder(reminderResponseToPojo().asReminder())
+        assertTrue(result is Result.Success)
+        assertNotNull(localDataSource.getReminderById(id))
+    }
+
+    @Test
+    fun createReminderFromRemoteDataSourceFailure() = runTest(dispatcher) {
+        val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
+        server.enqueue(response)
+        val result = repository.createReminder(reminderResponseToPojo().asReminder())
+        assertTrue(result is Result.Error)
+        assertNotNull(localDataSource.getReminderById(id))
+        assertNotNull(syncDataSource.getSyncItemById(id))
+        assertTrue(syncDataSource.getSyncItemById(id).item == SyncItemType.REMINDER)
+        assertTrue(syncDataSource.getSyncItemById(id).action == SyncUserAction.CREATE)
+    }
+
+    @Test
+    fun updateReminderFromRemoteDataSourceSuccess() = runTest(dispatcher) {
+        val reminder = reminderResponseToPojo().copy(title = "new title")
+        localDataSource.upsertReminder(reminderResponseToPojo().asReminderEntity())
+        val response = MockResponse().setResponseCode(200)
+        server.enqueue(response)
+        assertEquals(localDataSource.getReminderById(id), reminderResponseToPojo().asReminderEntity())
+        val result = repository.updateReminder(reminder.asReminder())
+        assertTrue(result is Result.Success)
+        assertTrue(localDataSource.getReminderById(id)!!.title == "new title")
+    }
+
+    @Test
+    fun updateReminderFromRemoteDataSourceFailure() = runTest(dispatcher) {
+        val reminder = reminderResponseToPojo().copy(title = "new title")
+        localDataSource.upsertReminder(reminderResponseToPojo().asReminderEntity())
+        val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
+        server.enqueue(response)
+        val result = repository.updateReminder(reminder.asReminder())
+        assertTrue(result is Result.Error)
+        assertEquals(localDataSource.getReminderById(id)!!.title, "new title")
+        assertNotNull(syncDataSource.getSyncItemById(id))
+        assertTrue(syncDataSource.getSyncItemById(id).item == SyncItemType.REMINDER)
+        assertTrue(syncDataSource.getSyncItemById(id).action == SyncUserAction.UPDATE)
+    }
+
+    @Test
+    fun deleteReminderFromRemoteDataSourceSuccess() = runTest(dispatcher) {
+        localDataSource.upsertReminder(reminderResponseToPojo().asReminderEntity())
+        val response = MockResponse().setResponseCode(200)
+        server.enqueue(response)
+        val result = repository.deleteReminder(reminderResponseToPojo().asReminder())
+        assertTrue(result is Result.Success)
+        assertNull(localDataSource.getReminderById(id))
+    }
+
+    @Test
+    fun deleteReminderFromRemoteDataSourceFailure() = runTest(dispatcher) {
+        localDataSource.upsertReminder(reminderResponseToPojo().asReminderEntity())
+        val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
+        server.enqueue(response)
+        val result = repository.deleteReminder(reminderResponseToPojo().asReminder())
+        assertTrue(result is Result.Error)
+        assertNull(localDataSource.getReminderById(id))
+        assertNotNull(syncDataSource.getSyncItemById(id))
+        assertTrue(syncDataSource.getSyncItemById(id).item == SyncItemType.REMINDER)
+        assertTrue(syncDataSource.getSyncItemById(id).action == SyncUserAction.DELETE)
     }
 
     @After
