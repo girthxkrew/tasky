@@ -42,5 +42,5 @@ fun Long.toLocalDateTime(): LocalDateTime {
 }
 
 fun LocalDateTime.toLong(): Long {
-    return this.toInstant(timezone).toEpochMilliseconds() * 1000
+    return this.toInstant(timezone).toEpochMilliseconds()
 }

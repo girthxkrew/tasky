@@ -5,6 +5,7 @@ import com.rkm.tasky.network.authorization.abstraction.AuthorizationManager
 import com.rkm.tasky.network.datasource.TaskyAuthorizationRemoteDateSource
 import com.rkm.tasky.network.datasource.TaskyReminderRemoteDataSource
 import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
+import com.rkm.tasky.network.datasource.TaskyTaskRemoteDataSource
 import com.rkm.tasky.network.interceptor.TaskyApiKeyInterceptor
 import com.rkm.tasky.network.interceptor.TaskyAuthorizationInterceptor
 import dagger.Lazy
@@ -57,8 +58,14 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun providesTaskReminderRemoteDataSource(retrofit: Retrofit): TaskyReminderRemoteDataSource {
+    fun providesTaskyReminderRemoteDataSource(retrofit: Retrofit): TaskyReminderRemoteDataSource {
         return retrofit.create(TaskyReminderRemoteDataSource::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesTaskyTaskRemoteDataSource(retrofit: Retrofit): TaskyTaskRemoteDataSource {
+        return retrofit.create(TaskyTaskRemoteDataSource::class.java)
     }
 
     @Provides
