@@ -2,6 +2,7 @@ package com.rkm.tasky.repository.implementation
 
 import com.rkm.tasky.database.dao.ReminderDao
 import com.rkm.tasky.database.dao.SyncDao
+import com.rkm.tasky.database.error.DatabaseError
 import com.rkm.tasky.database.model.SyncEntity
 import com.rkm.tasky.database.model.SyncItemType
 import com.rkm.tasky.database.model.SyncUserAction
@@ -14,6 +15,7 @@ import com.rkm.tasky.repository.mapper.asReminder
 import com.rkm.tasky.repository.mapper.asReminderEntity
 import com.rkm.tasky.repository.mapper.asReminderRequest
 import com.rkm.tasky.feature.reminder.model.Reminder
+import com.rkm.tasky.network.model.response.TaskDTO
 import com.rkm.tasky.util.result.EmptyResult
 import com.rkm.tasky.util.result.Result
 import com.rkm.tasky.util.result.onFailure
@@ -27,12 +29,11 @@ class TaskyReminderRepositoryImpl @Inject constructor(
     private val syncDataSource: SyncDao,
     @IoDispatcher private val  dispatcher: CoroutineDispatcher
 ): TaskyReminderRepository {
-    override suspend fun getReminder(id: String): Result<Reminder?, NetworkError.APIError> = withContext(dispatcher) {
-        val result = safeCall { remoteDataSource.getReminder(id) }
-        result.onFailure {
-            return@withContext Result.Success(localDataSource.getReminderById(id)?.asReminder())
+    override suspend fun getReminder(id: String): Result<Reminder, DatabaseError.ItemError> = withContext(dispatcher) {
+        return@withContext when(val result = localDataSource.getReminderById(id)) {
+            null -> Result.Error(DatabaseError.ItemError.ITEM_DOES_NOT_EXIST)
+            else -> Result.Success(result.asReminder())
         }
-        return@withContext Result.Success((result as Result.Success).data.asReminder())
     }
 
     override suspend fun createReminder(reminder: Reminder): EmptyResult<NetworkError.APIError> = withContext(dispatcher) {

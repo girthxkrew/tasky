@@ -15,7 +15,6 @@ import com.rkm.tasky.repository.mapper.asReminderEntity
 import com.rkm.tasky.util.result.Result
 import com.rkm.tasky.utils.json.errorMessageToString
 import com.rkm.tasky.utils.json.reminderResponseToPojo
-import com.rkm.tasky.utils.json.reminderResponseToString
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
@@ -62,26 +61,15 @@ class TaskyReminderRepositoryImplTest {
     }
 
     @Test
-    fun getReminderFromRemoteDataSourceSuccess() = runTest(dispatcher) {
-        val response = MockResponse().setResponseCode(200).setBody(reminderResponseToString())
-        server.enqueue(response)
-        val result = repository.getReminder(id)
-        assertTrue(result is Result.Success)
-        assertEquals((result as Result.Success).data, reminderResponseToPojo().asReminder())
-    }
-
-    @Test
-    fun getReminderFromRemoteDataSourceFailure() = runTest(dispatcher) {
+    fun getReminderRepositorySuccess() = runTest(dispatcher) {
         localDataSource.upsertReminder(reminderResponseToPojo().asReminderEntity())
-        val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
-        server.enqueue(response)
         val result = repository.getReminder(id)
         assertTrue(result is Result.Success)
         assertEquals((result as Result.Success).data, localDataSource.getReminderById(id)!!.asReminder())
     }
 
     @Test
-    fun createReminderFromRemoteDataSourceSuccess() = runTest(dispatcher) {
+    fun createReminderRepositorySuccess() = runTest(dispatcher) {
         val response = MockResponse().setResponseCode(200)
         server.enqueue(response)
         val result = repository.createReminder(reminderResponseToPojo().asReminder())
@@ -90,7 +78,7 @@ class TaskyReminderRepositoryImplTest {
     }
 
     @Test
-    fun createReminderFromRemoteDataSourceFailure() = runTest(dispatcher) {
+    fun createReminderRepositoryFailure() = runTest(dispatcher) {
         val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
         server.enqueue(response)
         val result = repository.createReminder(reminderResponseToPojo().asReminder())
@@ -102,7 +90,7 @@ class TaskyReminderRepositoryImplTest {
     }
 
     @Test
-    fun updateReminderFromRemoteDataSourceSuccess() = runTest(dispatcher) {
+    fun updateReminderRepositorySuccess() = runTest(dispatcher) {
         val reminder = reminderResponseToPojo().copy(title = "new title")
         localDataSource.upsertReminder(reminderResponseToPojo().asReminderEntity())
         val response = MockResponse().setResponseCode(200)
@@ -114,7 +102,7 @@ class TaskyReminderRepositoryImplTest {
     }
 
     @Test
-    fun updateReminderFromRemoteDataSourceFailure() = runTest(dispatcher) {
+    fun updateReminderRepositoryFailure() = runTest(dispatcher) {
         val reminder = reminderResponseToPojo().copy(title = "new title")
         localDataSource.upsertReminder(reminderResponseToPojo().asReminderEntity())
         val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
@@ -128,7 +116,7 @@ class TaskyReminderRepositoryImplTest {
     }
 
     @Test
-    fun deleteReminderFromRemoteDataSourceSuccess() = runTest(dispatcher) {
+    fun deleteReminderRepositorySuccess() = runTest(dispatcher) {
         localDataSource.upsertReminder(reminderResponseToPojo().asReminderEntity())
         val response = MockResponse().setResponseCode(200)
         server.enqueue(response)
@@ -138,7 +126,7 @@ class TaskyReminderRepositoryImplTest {
     }
 
     @Test
-    fun deleteReminderFromRemoteDataSourceFailure() = runTest(dispatcher) {
+    fun deleteReminderRepositoryFailure() = runTest(dispatcher) {
         localDataSource.upsertReminder(reminderResponseToPojo().asReminderEntity())
         val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
         server.enqueue(response)

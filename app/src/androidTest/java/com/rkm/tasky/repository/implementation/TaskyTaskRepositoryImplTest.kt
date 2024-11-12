@@ -60,26 +60,15 @@ class TaskyTaskRepositoryImplTest {
     }
 
     @Test
-    fun getTaskFromRemoteDataSourceSuccess() = runTest(dispatcher) {
-        val response = MockResponse().setResponseCode(200).setBody(taskResponseToString())
-        server.enqueue(response)
-        val result = repository.getTask(id)
-        assertTrue(result is Result.Success)
-        assertEquals((result as Result.Success).data, taskResponseToPojo().asTask())
-    }
-
-    @Test
-    fun getTaskFromRemoteDataSourceFailure() = runTest(dispatcher) {
+    fun getTaskRepositorySuccess() = runTest(dispatcher) {
         localDataSource.upsertTask(taskResponseToPojo().asTaskEntity())
-        val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
-        server.enqueue(response)
         val result = repository.getTask(id)
         assertTrue(result is Result.Success)
         assertEquals((result as Result.Success).data, localDataSource.getTaskById(id)!!.asTask())
     }
 
     @Test
-    fun createTaskFromRemoteDataSourceSuccess() = runTest(dispatcher) {
+    fun createTaskRepositorySuccess() = runTest(dispatcher) {
         val response = MockResponse().setResponseCode(200)
         server.enqueue(response)
         val result = repository.createTask(taskResponseToPojo().asTask())
@@ -88,7 +77,7 @@ class TaskyTaskRepositoryImplTest {
     }
 
     @Test
-    fun createTaskFromRemoteDataSourceFailure() = runTest(dispatcher) {
+    fun createTaskRepositoryFailure() = runTest(dispatcher) {
         val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
         server.enqueue(response)
         val result = repository.createTask(taskResponseToPojo().asTask())
@@ -100,7 +89,7 @@ class TaskyTaskRepositoryImplTest {
     }
 
     @Test
-    fun updateTaskFromRemoteDataSourceSuccess() = runTest(dispatcher) {
+    fun updateTaskRepositorySuccess() = runTest(dispatcher) {
         val task = taskResponseToPojo().copy(title = "new title")
         localDataSource.upsertTask(taskResponseToPojo().asTaskEntity())
         val response = MockResponse().setResponseCode(200)
@@ -112,7 +101,7 @@ class TaskyTaskRepositoryImplTest {
     }
 
     @Test
-    fun updateTaskFromRemoteDataSourceFailure() = runTest(dispatcher) {
+    fun updateTaskRepositoryFailure() = runTest(dispatcher) {
         val task = taskResponseToPojo().copy(title = "new title")
         localDataSource.upsertTask(taskResponseToPojo().asTaskEntity())
         val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
@@ -126,7 +115,7 @@ class TaskyTaskRepositoryImplTest {
     }
 
     @Test
-    fun deleteTaskFromRemoteDataSourceSuccess() = runTest(dispatcher) {
+    fun deleteTaskRepositorySuccess() = runTest(dispatcher) {
         localDataSource.upsertTask(taskResponseToPojo().asTaskEntity())
         val response = MockResponse().setResponseCode(200)
         server.enqueue(response)
@@ -136,7 +125,7 @@ class TaskyTaskRepositoryImplTest {
     }
 
     @Test
-    fun deleteTaskFromRemoteDataSourceFailure() = runTest(dispatcher) {
+    fun deleteTaskRepositoryFailure() = runTest(dispatcher) {
         localDataSource.upsertTask(taskResponseToPojo().asTaskEntity())
         val response = MockResponse().setResponseCode(401).setBody(errorMessageToString())
         server.enqueue(response)

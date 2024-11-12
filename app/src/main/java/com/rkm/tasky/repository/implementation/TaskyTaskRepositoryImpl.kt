@@ -2,6 +2,7 @@ package com.rkm.tasky.repository.implementation
 
 import com.rkm.tasky.database.dao.SyncDao
 import com.rkm.tasky.database.dao.TaskDao
+import com.rkm.tasky.database.error.DatabaseError
 import com.rkm.tasky.database.model.SyncEntity
 import com.rkm.tasky.database.model.SyncItemType
 import com.rkm.tasky.database.model.SyncUserAction
@@ -27,12 +28,11 @@ class TaskyTaskRepositoryImpl @Inject constructor(
     private val syncDataSource: SyncDao,
     @IoDispatcher private val  dispatcher: CoroutineDispatcher
 ): TaskyTaskRepository {
-    override suspend fun getTask(id: String): Result<Task?, NetworkError.APIError> = withContext(dispatcher){
-        val results = safeCall { remoteDataSource.getTask(id) }
-        results.onFailure {
-            return@withContext Result.Success(localDataSource.getTaskById(id)?.asTask())
-        }
-        return@withContext Result.Success((results as Result.Success).data.asTask())
+    override suspend fun getTask(id: String): Result<Task?, DatabaseError.ItemError> = withContext(dispatcher){
+       return@withContext when(val result = localDataSource.getTaskById(id)) {
+           null -> Result.Error(DatabaseError.ItemError.ITEM_DOES_NOT_EXIST)
+           else -> Result.Success(result.asTask())
+       }
     }
 
     override suspend fun createTask(task: Task): EmptyResult<NetworkError.APIError> {
