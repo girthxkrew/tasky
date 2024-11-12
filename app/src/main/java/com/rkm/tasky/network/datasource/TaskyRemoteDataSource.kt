@@ -1,7 +1,6 @@
 package com.rkm.tasky.network.datasource
 
 import RequestType
-import com.rkm.tasky.network.model.TaskRemote
 import com.rkm.tasky.network.model.request.CreateEventRequest
 import com.rkm.tasky.network.model.request.SyncAgendaRequest
 import com.rkm.tasky.network.model.request.UpdateEventRequest
@@ -78,29 +77,4 @@ interface TaskyRemoteDataSource {
         @Query("eventId") eventId: String,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
     ): Response<Unit>
-
-    @GET("/task")
-    suspend fun getTask(
-        @Query("taskId") taskId: String,
-        @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<TaskRemote>
-
-    @DELETE("/task")
-    suspend fun deleteTask(
-        @Query("taskId") taskId: String,
-        @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<Unit>
-
-    @PUT("/task")
-    suspend fun updateTask(
-        @Body taskRemoteRequest: TaskRemote,
-        @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<Unit>
-
-    @POST("/task")
-    suspend fun createTask(
-        @Body taskRemoteRequest: TaskRemote,
-        @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<Unit>
-
 }

@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.rkm.tasky.database.TaskyDatabase
 import com.rkm.tasky.database.dao.ReminderDao
 import com.rkm.tasky.database.dao.SyncDao
+import com.rkm.tasky.database.dao.TaskDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,6 +39,12 @@ object DatabaseModule {
     @Singleton
     fun providesSyncDao(db: TaskyDatabase): SyncDao {
         return db.syncDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesTaskDao(db: TaskyDatabase): TaskDao {
+        return db.taskDao()
     }
 
 }
