@@ -34,4 +34,7 @@
     <string name="edit_screen_toolbar_title">EDIT TITLE</string>
     <string name="edit_screen_toolbar_description">EDIT DESCRIPTION</string>
     <string name="edit_screen_save">Save</string>
+    <string name="item_screen_save">Save</string>
+    <string name="reminder_screen_top_app_bar_title">EDIT REMINDER</string>
+    <string name="reminder_title">Reminder</string>
 </resources>

@@ -17,9 +17,13 @@ fun getMonth(date: Long): String {
     return day.month.name
 }
 
-fun getCurrentDay(): Long {
+fun getCurrentDayInLong(): Long {
     return Clock.System.todayIn(timezone)
         .atStartOfDayIn(TimeZone.currentSystemDefault()).epochSeconds * 1000
+}
+
+fun getCurrentDayInLocalDateTime(): LocalDateTime {
+    return Clock.System.now().toLocalDateTime(timezone)
 }
 
 fun getDayName(date: Long): String {

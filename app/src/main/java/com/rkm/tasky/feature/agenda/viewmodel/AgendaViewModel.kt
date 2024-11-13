@@ -1,8 +1,7 @@
 package com.rkm.tasky.feature.agenda.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.rkm.tasky.feature.agenda.screen.dayselector.DateItem
-import com.rkm.tasky.util.date.getCurrentDay
+import com.rkm.tasky.util.date.getCurrentDayInLong
 import com.rkm.tasky.util.date.getMonth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,7 +42,7 @@ class AgendaViewModel @Inject constructor(
     }
 
     private fun setCurrentDay() {
-        val day = getCurrentDay()
+        val day = getCurrentDayInLong()
         _selectedMonth.update { getMonth(day) }
         _selectedDate.update { day }
     }

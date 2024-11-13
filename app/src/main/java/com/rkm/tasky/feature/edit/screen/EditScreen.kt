@@ -3,7 +3,6 @@
 package com.rkm.tasky.feature.edit.screen
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,17 +15,13 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,7 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rkm.tasky.R
 import com.rkm.tasky.feature.edit.viewmodel.EditScreenViewModel
 import com.rkm.tasky.navigation.EditActionType
-import com.rkm.tasky.ui.theme.EditScreenDivider
+import com.rkm.tasky.ui.theme.DividerColor
 import com.rkm.tasky.ui.theme.EditScreenTopAppBarColor
 import com.rkm.tasky.ui.theme.EditScreenTopBarAppTitleTextColor
 import com.rkm.tasky.ui.theme.EditScreenTopBarSaveTextColor
@@ -103,7 +98,7 @@ private fun EditScreen(
         HorizontalDivider(
             modifier = Modifier.padding(
                 horizontal = 16.dp),
-            color = EditScreenDivider,
+            color = DividerColor,
             thickness = 2.dp
         )
 

@@ -33,13 +33,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rkm.tasky.R
 import com.rkm.tasky.feature.agenda.screen.dayselector.DateItem
 import com.rkm.tasky.feature.agenda.screen.dayselector.DateSelector
-import com.rkm.tasky.feature.agenda.screen.dayselector.TimeSpan
 import com.rkm.tasky.feature.agenda.screen.dayselector.rememberDateSelectorState
 import com.rkm.tasky.feature.agenda.viewmodel.AgendaViewModel
-import com.rkm.tasky.ui.theme.AgendaMainBodyBackgroundColor
-import com.rkm.tasky.ui.theme.AgendaMainBodyForegroundColor
-import com.rkm.tasky.ui.theme.AgendaTopBarBackgroundColor
-import com.rkm.tasky.ui.theme.AgendaTopBarTitleColor
+import com.rkm.tasky.ui.theme.ItemMainBodyBackgroundColor
+import com.rkm.tasky.ui.theme.ItemMainBodyForegroundColor
+import com.rkm.tasky.ui.theme.TopBarBackgroundColor
+import com.rkm.tasky.ui.theme.TopBarTitleColor
 
 @Composable
 fun AgendaScreenRoot(
@@ -84,16 +83,16 @@ private fun AgendaScreen(
                 title = { TopBarDateSelector(month = selectedMonth, onClick = onShowDatePicker) },
                 modifier = modifier.statusBarsPadding(),
                 colors = TopAppBarDefaults.topAppBarColors(
-                    titleContentColor = AgendaTopBarTitleColor,
-                    containerColor = AgendaTopBarBackgroundColor
+                    titleContentColor = TopBarTitleColor,
+                    containerColor = TopBarBackgroundColor
                 )
             )
             LazyColumn(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(AgendaMainBodyBackgroundColor)
+                    .background(ItemMainBodyBackgroundColor)
                     .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
-                    .background(AgendaMainBodyForegroundColor)
+                    .background(ItemMainBodyForegroundColor)
             ) {
                 item {
                     DateSelector(
