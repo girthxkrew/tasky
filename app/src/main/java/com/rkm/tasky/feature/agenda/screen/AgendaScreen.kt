@@ -12,34 +12,28 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.rkm.tasky.R
 import com.rkm.tasky.feature.agenda.screen.dayselector.DateItem
 import com.rkm.tasky.feature.agenda.screen.dayselector.DateSelector
-import com.rkm.tasky.feature.agenda.screen.dayselector.TimeSpan
 import com.rkm.tasky.feature.agenda.screen.dayselector.rememberDateSelectorState
 import com.rkm.tasky.feature.agenda.viewmodel.AgendaViewModel
-import com.rkm.tasky.ui.theme.AgendaMainBodyBackgroundColor
-import com.rkm.tasky.ui.theme.AgendaMainBodyForegroundColor
-import com.rkm.tasky.ui.theme.AgendaTopBarBackgroundColor
-import com.rkm.tasky.ui.theme.AgendaTopBarTitleColor
+import com.rkm.tasky.ui.component.DatePickerModal
+import com.rkm.tasky.ui.theme.ItemMainBodyBackgroundColor
+import com.rkm.tasky.ui.theme.ItemMainBodyForegroundColor
+import com.rkm.tasky.ui.theme.TopBarBackgroundColor
+import com.rkm.tasky.ui.theme.TopBarTitleColor
 
 @Composable
 fun AgendaScreenRoot(
@@ -84,16 +78,16 @@ private fun AgendaScreen(
                 title = { TopBarDateSelector(month = selectedMonth, onClick = onShowDatePicker) },
                 modifier = modifier.statusBarsPadding(),
                 colors = TopAppBarDefaults.topAppBarColors(
-                    titleContentColor = AgendaTopBarTitleColor,
-                    containerColor = AgendaTopBarBackgroundColor
+                    titleContentColor = TopBarTitleColor,
+                    containerColor = TopBarBackgroundColor
                 )
             )
             LazyColumn(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(AgendaMainBodyBackgroundColor)
+                    .background(ItemMainBodyBackgroundColor)
                     .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
-                    .background(AgendaMainBodyForegroundColor)
+                    .background(ItemMainBodyForegroundColor)
             ) {
                 item {
                     DateSelector(
@@ -106,14 +100,15 @@ private fun AgendaScreen(
         }
 
         if (showDialog) {
-            DatePickerModal(
-                selectedDate = selectedDate,
-                onDateSelected = {
-                    updateSelectedDate(it)
-                    state.selectedDate = it
-                },
-                onDismiss = onShowDatePicker
-            )
+            //Todo: fix datepickermodal here to use LocalDate
+//            DatePickerModal(
+//                selectedDate = selectedDate,
+//                onDateSelected = {
+//                    updateSelectedDate(it)
+//                    state.selectedDate = it
+//                },
+//                onDismiss = onShowDatePicker
+//            )
         }
     }
 }
@@ -130,37 +125,6 @@ private fun TopBarDateSelector(
             onClick()
         })
 
-}
-
-@Composable
-private fun DatePickerModal(
-    selectedDate: Long,
-    onDateSelected: (Long) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate)
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    datePickerState.selectedDateMillis?.let {
-                        onDateSelected(it)
-                    }
-                    onDismiss()
-                }
-            ) {
-                Text(text = stringResource(R.string.agenda_datepicker_modal_confirm))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = stringResource(R.string.agenda_datepicker_modal_dismiss))
-            }
-        }
-    ) {
-        DatePicker(state = datePickerState)
-    }
 }
 
 @Preview(
