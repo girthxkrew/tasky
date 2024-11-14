@@ -50,12 +50,14 @@ val EventColorId = Color(0xFF88e788)
 val ReminderColorId = Color(0xFFFAFAFA)
 
 // Reminder
-val ReminderStroke = Color(0xFFD3D3D3)
-val ReminderTitleTextColor = Color(0xFF696969)
-val ReminderItemTitle = Color(0xFF000000)
-val ReminderItemDesc = Color(0xFF000000)
+val ReminderSquareStroke = Color(0xFFD3D3D3)
 
-//ItemBackgroundColor
+//Item
+val ItemTypeTitleTextColor = Color(0xFF696969)
+val ItemTitleTextColor = Color(0xFF000000)
+val ItemDescTextColor = Color(0xFF000000)
+val ItemTimeTextColor = Color(0xFF000000)
+val ItemDateTextColor = Color(0xFF000000)
 val ItemBackgroundColor = Color(0xFFFFFFFF)
 val ItemMainBodyBackgroundColor = Color(0xFF000000)
 val ItemMainBodyForegroundColor = Color(0xFFFFFFFF)

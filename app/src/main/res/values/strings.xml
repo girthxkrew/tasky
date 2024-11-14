@@ -37,4 +37,5 @@
     <string name="item_screen_save">Save</string>
     <string name="reminder_screen_top_app_bar_title">EDIT REMINDER</string>
     <string name="reminder_title">Reminder</string>
+    <string name="item_start_time">At</string>
 </resources>
