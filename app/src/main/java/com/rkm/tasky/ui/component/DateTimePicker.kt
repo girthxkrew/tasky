@@ -14,6 +14,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.rkm.tasky.R
+import com.rkm.tasky.util.date.convertTime
 import com.rkm.tasky.util.date.toLocalDateTime
 import com.rkm.tasky.util.date.toLong
 import kotlinx.datetime.LocalDate
@@ -81,15 +82,4 @@ fun TimePickerModal(
         },
         text = { TimePicker(timePickerState) }
     )
-}
-
-private fun convertTime(hour: Int, minute: Int, isAfternoon: Boolean): LocalTime {
-    var newHour = hour
-    if(isAfternoon && hour != 12) {
-        newHour += 12
-    } else if(!isAfternoon && hour == 12) {
-        newHour = 0
-    }
-
-    return LocalTime(newHour, minute)
 }

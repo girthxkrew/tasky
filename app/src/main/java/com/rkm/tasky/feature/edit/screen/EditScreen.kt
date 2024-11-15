@@ -32,7 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rkm.tasky.R
 import com.rkm.tasky.feature.edit.viewmodel.EditScreenViewModel
 import com.rkm.tasky.navigation.EditActionType
-import com.rkm.tasky.ui.theme.DividerColor
+import com.rkm.tasky.ui.theme.ItemDetailDividerColor
 import com.rkm.tasky.ui.theme.EditScreenTopAppBarColor
 import com.rkm.tasky.ui.theme.EditScreenTopBarAppTitleTextColor
 import com.rkm.tasky.ui.theme.EditScreenTopBarSaveTextColor
@@ -98,7 +98,7 @@ private fun EditScreen(
         HorizontalDivider(
             modifier = Modifier.padding(
                 horizontal = 16.dp),
-            color = DividerColor,
+            color = ItemDetailDividerColor,
             thickness = 2.dp
         )
 

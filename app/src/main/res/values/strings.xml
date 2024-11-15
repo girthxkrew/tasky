@@ -35,7 +35,13 @@
     <string name="edit_screen_toolbar_description">EDIT DESCRIPTION</string>
     <string name="edit_screen_save">Save</string>
     <string name="item_screen_save">Save</string>
-    <string name="reminder_screen_top_app_bar_title">EDIT REMINDER</string>
+    <string name="item_detail_top_app_bar_title">EDIT %s</string>
     <string name="reminder_title">Reminder</string>
     <string name="item_start_time">At</string>
+    <string name="item_detail_delete">DELETE %s</string>
+    <string name="reminder_option_one">10 minutes before</string>
+    <string name="reminder_option_two">30 minute before</string>
+    <string name="reminder_option_three">1 hour before</string>
+    <string name="reminder_option_four">6 hours before</string>
+    <string name="reminder_option_five">1 day before</string>
 </resources>
