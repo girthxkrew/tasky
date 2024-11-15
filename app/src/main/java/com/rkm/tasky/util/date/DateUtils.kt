@@ -1,22 +1,25 @@
+@file:OptIn(FormatStringsInDatetimeFormats::class)
+
 package com.rkm.tasky.util.date
 
 import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
-import kotlinx.datetime.minus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 
+
 private val timezone = TimeZone.currentSystemDefault()
+
 private val timeFormat = LocalTime.Format {
     amPmHour(padding = Padding.ZERO)
     char(':')
@@ -61,9 +64,9 @@ fun getDayOfTheMonth(date: Long): Int {
     return day.dayOfMonth
 }
 
-fun getReminderTime(date: Long, options: ReminderOptions): Long {
+fun getReminderTime(date: Long, unit: ReminderBeforeDuration): Long {
     val reminder = Instant.fromEpochMilliseconds(date)
-    return reminder.minus(options.time, options.unit, timezone).toEpochMilliseconds()
+    return reminder.minus(unit.duration).toEpochMilliseconds()
 }
 
 fun Long.toLocalDateTime(): LocalDateTime {
@@ -87,13 +90,13 @@ fun LocalDate.toUiString(): String {
     return dateFormat.format(this)
 }
 
-sealed class ReminderOptions(
-    open val time: Int,
-    open val unit: DateTimeUnit
-) {
-    data class TenMinutes(override val time: Int = 10, override val unit: DateTimeUnit = DateTimeUnit.MINUTE): ReminderOptions(time, unit)
-    data class ThirtyMinutes(override val time: Int = 30, override val unit: DateTimeUnit = DateTimeUnit.MINUTE): ReminderOptions(time, unit)
-    data class OneHour(override val time: Int = 1, override val unit: DateTimeUnit = DateTimeUnit.HOUR): ReminderOptions(time, unit)
-    data class SixHour(override val time: Int = 6, override val unit: DateTimeUnit = DateTimeUnit.HOUR): ReminderOptions(time, unit)
-    data class OneDay(override val time: Int = 1, override val unit: DateTimeUnit = DateTimeUnit.DAY): ReminderOptions(time, unit)
+fun convertTime(hour: Int, minute: Int, isAfternoon: Boolean): LocalTime {
+    var newHour = hour
+    if(isAfternoon && hour != 12) {
+        newHour += 12
+    } else if(!isAfternoon && hour == 12) {
+        newHour = 0
+    }
+
+    return LocalTime(newHour, minute)
 }

@@ -21,9 +21,6 @@ val TextFieldCheckColor = Color(0xFF259f70)
 
 val LoginSignUpTextColor = Color(0xFF7788F8)
 
-//Divider
-val DividerColor = Color(0xFFE6E6E6)
-
 //Field Caret
 val EditFieldColorCaret = Color(0xFF000000)
 
@@ -52,7 +49,7 @@ val ReminderColorId = Color(0xFFFAFAFA)
 // Reminder
 val ReminderSquareStroke = Color(0xFFD3D3D3)
 
-//Item
+//ItemDetail
 val ItemTypeTitleTextColor = Color(0xFF696969)
 val ItemTitleTextColor = Color(0xFF000000)
 val ItemDescTextColor = Color(0xFF000000)
@@ -61,6 +58,13 @@ val ItemDateTextColor = Color(0xFF000000)
 val ItemBackgroundColor = Color(0xFFFFFFFF)
 val ItemMainBodyBackgroundColor = Color(0xFF000000)
 val ItemMainBodyForegroundColor = Color(0xFFFFFFFF)
+val ItemIconNotificationBackgroundColor = Color(0xFFD3D3D3)
+val ItemIconNotificationBellColor = Color(0xFF696969)
+val ItemDetailDividerColor = Color(0xFFE6E6E6)
+val ItemDetailReminderDividerColor = Color(0xFFE6E6E6)
+val ItemDetailContainerColor = Color(0xFFE6E6E6)
+val ItemDetailDeleteTextColor = Color(0xFFA9A9A9)
+
 
 //RadioButtonIcon
 val RadioButtonOutlineColor = Color(0xFF000000)

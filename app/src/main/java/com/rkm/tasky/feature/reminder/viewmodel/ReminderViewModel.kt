@@ -6,6 +6,8 @@ import com.rkm.tasky.di.ApplicationCoroutineScope
 import com.rkm.tasky.feature.common.Mode
 import com.rkm.tasky.feature.reminder.screen.ItemUiState
 import com.rkm.tasky.repository.abstraction.TaskyReminderRepository
+import com.rkm.tasky.ui.component.ReminderDropDownMenuUiState
+import com.rkm.tasky.util.date.ReminderBeforeDuration
 import com.rkm.tasky.util.date.getCurrentDayInLocalDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +33,9 @@ class ReminderViewModel @Inject constructor(
 
     private val _reminder = MutableStateFlow(ReminderUiModel())
     val reminder = _reminder.asStateFlow()
+
+    private val _dropDownState = MutableStateFlow(ReminderDropDownMenuUiState())
+    val dropDownState = _dropDownState.asStateFlow()
 
     fun onEdit() {
         _itemUiState.update { it.copy(isEditable = !it.isEditable) }
@@ -58,6 +63,14 @@ class ReminderViewModel @Inject constructor(
 
     fun updateTime(time: LocalTime) {
         _reminder.update { it.copy(time = time) }
+    }
+
+    fun onExpanded() {
+        _dropDownState.update { it.copy(isExpanded = !it.isExpanded) }
+    }
+
+    fun onSelectedDuration(duration: ReminderBeforeDuration) {
+        _dropDownState.update { it.copy(selectedDuration = duration) }
     }
 }
 

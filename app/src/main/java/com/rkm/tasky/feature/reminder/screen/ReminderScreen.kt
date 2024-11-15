@@ -1,67 +1,40 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.rkm.tasky.feature.reminder.screen
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.rkm.tasky.R
+import com.rkm.tasky.feature.common.ScreenType
 import com.rkm.tasky.feature.reminder.viewmodel.ReminderUiModel
 import com.rkm.tasky.feature.reminder.viewmodel.ReminderViewModel
 import com.rkm.tasky.navigation.EditActionType
 import com.rkm.tasky.ui.component.DatePickerModal
+import com.rkm.tasky.ui.component.ItemDetailBody
+import com.rkm.tasky.ui.component.ItemDetailDateTimePicker
+import com.rkm.tasky.ui.component.ItemDetailDeleteTextBox
+import com.rkm.tasky.ui.component.ItemDetailDescription
+import com.rkm.tasky.ui.component.ItemDetailDivider
+import com.rkm.tasky.ui.component.ItemDetailTitle
+import com.rkm.tasky.ui.component.ItemDetailTopBar
+import com.rkm.tasky.ui.component.ItemDetailTypeTitle
+import com.rkm.tasky.ui.component.ReminderDropDownMenu
+import com.rkm.tasky.ui.component.ReminderDropDownMenuActions
+import com.rkm.tasky.ui.component.ReminderDropDownMenuUiState
 import com.rkm.tasky.ui.component.TimePickerModal
-import com.rkm.tasky.ui.theme.DividerColor
-import com.rkm.tasky.ui.theme.EditFieldColorCaret
-import com.rkm.tasky.ui.theme.ItemDateTextColor
-import com.rkm.tasky.ui.theme.ItemMainBodyBackgroundColor
-import com.rkm.tasky.ui.theme.ItemMainBodyForegroundColor
-import com.rkm.tasky.ui.theme.RadioButtonOutlineColor
 import com.rkm.tasky.ui.theme.ReminderColorId
-import com.rkm.tasky.ui.theme.ItemDescTextColor
-import com.rkm.tasky.ui.theme.ItemTimeTextColor
-import com.rkm.tasky.ui.theme.ItemTitleTextColor
 import com.rkm.tasky.ui.theme.ReminderSquareStroke
-import com.rkm.tasky.ui.theme.ItemTypeTitleTextColor
-import com.rkm.tasky.ui.theme.TopBarBackgroundColor
-import com.rkm.tasky.ui.theme.TopBarIconColor
-import com.rkm.tasky.ui.theme.TopBarTitleColor
 import com.rkm.tasky.util.date.toUiString
 
 
@@ -74,6 +47,12 @@ fun ReminderScreenRoot(
 ) {
     val itemUiState by viewModel.itemUiState.collectAsStateWithLifecycle()
     val reminder by viewModel.reminder.collectAsStateWithLifecycle()
+    val dropDownState by viewModel.dropDownState.collectAsStateWithLifecycle()
+
+    val dropDownActions = ReminderDropDownMenuActions(
+        onExpanded = viewModel::onExpanded,
+        onSelectedDuration = viewModel::onSelectedDuration
+    )
 
     val actions = ItemScreenActions(
         onTimeClick = viewModel::showDateDialog,
@@ -90,16 +69,20 @@ fun ReminderScreenRoot(
         modifier = modifier,
         reminder = reminder,
         state = itemUiState,
-        actions = actions
+        dropDownMenuUiState = dropDownState,
+        actions = actions,
+        dropDownActions = dropDownActions
     )
 }
 
 @Composable
-private fun ReminderScreen(
+internal fun ReminderScreen(
     modifier: Modifier,
     reminder: ReminderUiModel,
     state: ItemUiState,
-    actions: ItemScreenActions
+    dropDownMenuUiState: ReminderDropDownMenuUiState,
+    actions: ItemScreenActions,
+    dropDownActions: ReminderDropDownMenuActions
 ) {
     Box(
         modifier = modifier
@@ -128,325 +111,83 @@ private fun ReminderScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            CenterAlignedTopAppBar(
-                title = { TopBarTitle(if (state.isEditable) stringResource(R.string.reminder_screen_top_app_bar_title)
-                    else "") },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = TopBarBackgroundColor
-                ),
-                navigationIcon = {
-                    IconButton(onClick = actions.onCloseClick) {
-                        Icon(
-                            painter = painterResource(R.drawable.close_icon),
-                            tint = TopBarIconColor,
-                            contentDescription = null
-                        )
-                    }
-                },
-                actions = {
-                    if (state.isEditable) {
-                        TextButton(onClick = actions.onSaveClick) {
-                            Text(
-                                text = stringResource(R.string.item_screen_save),
-                                style = MaterialTheme.typography.titleLarge,
-                                color = TopBarTitleColor,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    } else {
-                        IconButton(onClick = actions.onEditClick) {
-                            Icon(
-                                painter = painterResource(R.drawable.edit_icon),
-                                tint = TopBarIconColor,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                }
+
+            ItemDetailTopBar(
+                selectedDate = reminder.date.toUiString(),
+                type = ScreenType.REMINDER,
+                isEditable = state.isEditable,
+                onCloseClick = actions.onCloseClick,
+                onEditClick = actions.onEditClick,
+                onSaveClick = actions.onSaveClick
             )
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(ItemMainBodyBackgroundColor)
-                    .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
-                    .background(ItemMainBodyForegroundColor)
+            ItemDetailBody(
+                modifier = Modifier.weight(1f)
             ) {
 
-                Row(
+                ItemDetailTypeTitle(
                     modifier = Modifier.padding(top = 24.dp, start = 24.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Canvas(
-                        Modifier.size(25.dp)
-                    ) {
-                        drawRect(
-                            color = ReminderColorId,
-                            size = size,
-                        )
-
-                        drawRect(
-                            color = ReminderSquareStroke,
-                            size = size,
-                            style = Stroke(width = 1.dp.toPx())
-                        )
-                    }
-                    Text(
-                        modifier = Modifier.padding(start = 12.dp),
-                        text = stringResource(R.string.reminder_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = ItemTypeTitleTextColor
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .padding(top = 24.dp, start = 24.dp, end = 24.dp)
-                        .fillMaxWidth()
-                        .clickable {
-                            if (state.isEditable) {
-                                actions.onEditField(EditActionType.Title)
-                            }
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        modifier = Modifier.wrapContentSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(25.dp),
-                            painter = painterResource(R.drawable.radio_button_icon),
-                            tint = RadioButtonOutlineColor,
-                            contentDescription = null
-                        )
-
-                        Text(
-                            modifier = Modifier.padding(12.dp),
-                            text = reminder.title,
-                            color = ItemTitleTextColor,
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    if(state.isEditable) {
-                        Icon(
-                            modifier = Modifier.size(25.dp),
-                            painter = painterResource(R.drawable.edit_field_icon),
-                            tint = EditFieldColorCaret,
-                            contentDescription = null
-                        )
-                    }
-                }
-
-                HorizontalDivider(
-                    Modifier.padding(top = 8.dp, start = 24.dp, end = 24.dp),
-                    thickness = 2.dp,
-                    color = DividerColor
+                    rectangleColor = ReminderColorId,
+                    rectangleOutlineColor = ReminderSquareStroke,
+                    type = ScreenType.REMINDER
                 )
 
-                Row(
+                ItemDetailTitle(
+                    modifier = Modifier
+                        .padding(top = 24.dp, start = 24.dp, end = 24.dp)
+                        .fillMaxWidth(),
+                    isEditable = state.isEditable,
+                    title = reminder.title,
+                    onEditClick = { actions.onEditField(EditActionType.Title) }
+                )
+
+                ItemDetailDivider(modifier = Modifier.padding(top = 8.dp, start = 24.dp, end = 24.dp))
+
+                ItemDetailDescription(
                     modifier = Modifier
                         .padding(top = 16.dp, start = 24.dp, end = 24.dp)
                         .fillMaxWidth()
-                        .height(75.dp)
-                        .clickable {
-                            if (state.isEditable) {
-                                actions.onEditField(EditActionType.Description)
-                            }
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        modifier = Modifier.weight(1f),
-                        text = reminder.desc,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = ItemDescTextColor,
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis
-                    )
-
-                    if(state.isEditable) {
-                        Icon(
-                            modifier = Modifier.size(25.dp),
-                            painter = painterResource(R.drawable.edit_field_icon),
-                            tint = EditFieldColorCaret,
-                            contentDescription = null
-                        )
-                    }
-                }
-
-                HorizontalDivider(
-                    Modifier.padding(top = 16.dp, start = 24.dp, end = 24.dp),
-                    thickness = 2.dp,
-                    color = DividerColor
+                        .height(75.dp),
+                    isEditable = state.isEditable,
+                    desc = reminder.desc,
+                    onEditClick = { actions.onEditField(EditActionType.Description) }
                 )
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
+                ItemDetailDivider(modifier = Modifier.padding(top = 8.dp, start = 24.dp, end = 24.dp))
+
+                ItemDetailDateTimePicker(
+                    modifier = Modifier.fillMaxWidth()
                         .height(50.dp)
                         .padding(top = 16.dp, start = 24.dp, end = 24.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        modifier = Modifier.weight(1f).clickable {
-                            if (state.isEditable) {
-                                actions.onTimeClick
-                            }
-                        }
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(end = 32.dp),
-                            text = stringResource(R.string.item_start_time),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = ItemTimeTextColor,
-                        )
-                        Text(
-                            text = reminder.time.toUiString(),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = ItemTimeTextColor,
-                        )
-                    }
+                    isEditable = state.isEditable,
+                    time = reminder.time.toUiString(),
+                    date = reminder.date.toUiString(),
+                    onTimeClick = { actions.onTimeClick },
+                    onDateClick = {actions.onDateClick }
+                )
 
-                    Text(
-                        modifier = Modifier.weight(1f).clickable {
-                            actions.onDateClick
-                        },
-                        text = reminder.date.toUiString(),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = ItemDateTextColor,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                ItemDetailDivider(modifier = Modifier.padding(top = 8.dp, start = 24.dp, end = 24.dp))
 
-                HorizontalDivider(
-                    Modifier.padding(top = 16.dp, start = 24.dp, end = 24.dp),
-                    thickness = 2.dp,
-                    color = DividerColor
+                ReminderDropDownMenu(
+                    dropDownMenuUiState,
+                    dropDownActions,
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, start = 24.dp, end = 24.dp)
+                )
+
+                Spacer(Modifier.weight(1f))
+
+                ItemDetailDivider(modifier = Modifier.padding(top = 8.dp, start = 24.dp, end = 24.dp))
+
+                ItemDetailDeleteTextBox(
+                    modifier = Modifier.fillMaxWidth().height(75.dp).padding(top = 8.dp, start = 24.dp, end = 24.dp),
+                    type = ScreenType.REMINDER,
+                    onDeleteClick = actions.onDeleteClick
                 )
 
             }
         }
 
     }
-}
-
-@Composable
-private fun TopBarTitle(
-    date: String
-) {
-    Text(
-        text = date,
-        color = TopBarTitleColor,
-        style = MaterialTheme.typography.titleLarge
-    )
-}
-
-
-@Preview(
-    showSystemUi = true
-)
-@Composable
-private fun PreviewNotEditableReminderScreen() {
-    val reminder = ReminderUiModel("Project X", desc = "This is a description")
-    val state = ItemUiState()
-    val actions = ItemScreenActions(
-        onTimeClick = {},
-        onDateClick = {},
-        onSaveClick = {},
-        onEditClick = {},
-        onCloseClick = {},
-        onDeleteClick = {},
-        onEditField = {},
-        updateDate = {},
-        updateTime = {}
-    )
-    ReminderScreen(
-        Modifier,
-        reminder,
-        state,
-        actions
-    )
-}
-
-@Preview(
-    showSystemUi = true
-)
-@Composable
-private fun PreviewEditableReminderScreen() {
-    val reminder = ReminderUiModel("Project X", desc = "This is a description This is a description This is a description This is a description This is a description This is a description th")
-    val state = ItemUiState(isEditable = true)
-    val actions = ItemScreenActions(
-        onTimeClick = {},
-        onDateClick = {},
-        onSaveClick = {},
-        onEditClick = {},
-        onCloseClick = {},
-        onDeleteClick = {},
-        onEditField = {},
-        updateDate = {},
-        updateTime = {}
-    )
-    ReminderScreen(
-        Modifier,
-        reminder,
-        state,
-        actions
-        )
-}
-
-@Preview(
-    showSystemUi = true
-)
-@Composable
-private fun PreviewDateDialogReminderScreen() {
-    val reminder = ReminderUiModel("Project X", desc = "This is a description This is a description This is a description This is a description This is a description This is a description th")
-    val state = ItemUiState(isEditable = true, showDateDialog = true)
-    val actions = ItemScreenActions(
-        onTimeClick = {},
-        onDateClick = {},
-        onSaveClick = {},
-        onEditClick = {},
-        onCloseClick = {},
-        onDeleteClick = {},
-        onEditField = {},
-        updateDate = {},
-        updateTime = {}
-    )
-    ReminderScreen(
-        Modifier,
-        reminder,
-        state,
-        actions
-    )
-}
-@Preview(
-    showSystemUi = true
-)
-@Composable
-private fun PreviewTimeDialogReminderScreen() {
-    val reminder = ReminderUiModel("Project X", desc = "This is a description This is a description This is a description This is a description This is a description This is a description th")
-    val state = ItemUiState(isEditable = true, showTimeDialog = true)
-    val actions = ItemScreenActions(
-        onTimeClick = {},
-        onDateClick = {},
-        onSaveClick = {},
-        onEditClick = {},
-        onCloseClick = {},
-        onDeleteClick = {},
-        onEditField = {},
-        updateDate = {},
-        updateTime = {}
-    )
-    ReminderScreen(
-        Modifier,
-        reminder,
-        state,
-        actions
-    )
 }
