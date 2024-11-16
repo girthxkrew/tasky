@@ -1,23 +1,27 @@
 package com.rkm.tasky.navigation
 
-import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.rkm.tasky.R
 import com.rkm.tasky.feature.agenda.screen.AgendaScreenRoot
 import com.rkm.tasky.feature.agenda.viewmodel.AgendaViewModel
+import com.rkm.tasky.feature.common.Mode
+import com.rkm.tasky.feature.edit.screen.EditActionType
 import com.rkm.tasky.feature.edit.screen.EditScreenRoot
 import com.rkm.tasky.feature.edit.viewmodel.EditScreenViewModel
 import com.rkm.tasky.feature.login.screen.LoginScreenRoot
 import com.rkm.tasky.feature.login.viewmodel.LoginViewModel
 import com.rkm.tasky.feature.registration.screen.RegistrationScreenRoot
 import com.rkm.tasky.feature.registration.viewmodel.RegistrationViewModel
+import com.rkm.tasky.feature.reminder.screen.ReminderScreenEvents
+import com.rkm.tasky.feature.reminder.screen.ReminderScreenRoot
+import com.rkm.tasky.feature.reminder.viewmodel.ReminderViewModel
 import com.rkm.tasky.ui.activity.AuthState
 import kotlinx.serialization.Serializable
 
@@ -37,12 +41,56 @@ fun AppNavigation(
             composable<Destination.Agenda> {
                 AgendaScreenRoot(
                     modifier = modifier,
-                    viewModel = hiltViewModel<AgendaViewModel>()
+                    viewModel = hiltViewModel<AgendaViewModel>(),
+                    onReminderClick = { id, mode, date ->
+                        navController.navigate(Destination.Reminder(id = id, mode = mode, date = date))
+                    }
+                )
+            }
+
+            composable<Destination.Reminder> {
+
+                val title = it.savedStateHandle.getStateFlow(EditActionType.TITLE.name, "").collectAsStateWithLifecycle().value
+                val desc = it.savedStateHandle.getStateFlow(EditActionType.DESCRIPTION.name, "").collectAsStateWithLifecycle().value
+
+                val events = ReminderScreenEvents(
+                    onNavigateBack = {
+                        navController.navigate(Destination.Agenda) {
+                            popUpTo(Destination.Agenda) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    onEditField = { text, action ->
+                        navController
+                            .navigate(route = Destination.Edit(text, action))
+                    },
+                    title = title,
+                    desc = desc
+                )
+
+                ReminderScreenRoot(
+                    modifier = modifier,
+                    viewModel = hiltViewModel<ReminderViewModel>(),
+                    events = events
                 )
             }
 
             composable<Destination.Edit> {
-                TODO("Add Logic to handle navigation")
+                EditScreenRoot(
+                    modifier = modifier,
+                    viewModel = hiltViewModel<EditScreenViewModel>(),
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    onSavePressed = { text, action ->
+                        navController.
+                            previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set(action, text)
+                        navController.popBackStack()
+                    }
+                )
             }
         }
 
@@ -85,23 +133,21 @@ sealed class Destination {
     data object Authentication : Destination()
 
     @Serializable
-    object Login : Destination()
+    data object Login : Destination()
 
     @Serializable
-    object Registration : Destination()
+    data object Registration : Destination()
 
     @Serializable
-    object Home : Destination()
+    data object Home : Destination()
 
     @Serializable
-    object Agenda : Destination()
+    data object Agenda : Destination()
 
     @Serializable
-    data class Edit(val text: String, val action: EditActionType) : Destination()
+    data class Reminder(val id: String = "", val mode: String = Mode.CREATE.name, val date: String) : Destination()
+
+    @Serializable
+    data class Edit(val text: String, val action: String) : Destination()
 }
 
-@Serializable
-sealed class EditActionType(@StringRes val id: Int) {
-    data object Title : EditActionType(R.string.edit_screen_toolbar_title)
-    data object Description : EditActionType(R.string.edit_screen_toolbar_description)
-}

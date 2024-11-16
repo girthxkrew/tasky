@@ -113,13 +113,11 @@ private fun IconWithBackground(
 
 }
 
-@Stable
 data class ReminderDropDownMenuUiState(
     val isExpanded: Boolean = false,
     val selectedDuration: ReminderBeforeDuration = ReminderBeforeDuration.TEN_MINUTES
 )
 
-@Stable
 data class ReminderDropDownMenuActions(
     val onExpanded: () -> Unit,
     val onSelectedDuration: (ReminderBeforeDuration) -> Unit

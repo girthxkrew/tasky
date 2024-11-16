@@ -1,6 +1,6 @@
 package com.rkm.tasky.feature.common
 
-enum class Mode(isEditable: Boolean) {
+enum class Mode(val isEditable: Boolean) {
     CREATE(true),
     VIEW(false),
     UPDATE(true),

@@ -49,10 +49,10 @@ internal class DateSelectorStateImpl(
             },
             restore = { value ->
                 DateSelectorStateImpl(
-                    initialSelectedDate = value[0] as Long,
+                    initialSelectedDate = value[1] as Long,
                     timeSpan = timeSpan
                 ).apply {
-                   this.selectedIndex = value[1] as Int
+                   this.selectedIndex = value[0] as Int
                 }
             }
 
