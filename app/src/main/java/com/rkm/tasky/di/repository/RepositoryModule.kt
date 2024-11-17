@@ -16,9 +16,9 @@ abstract class RepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun providesTaskyReminderRepository(repository: TaskyReminderRepositoryImpl): TaskyReminderRepository
+    abstract fun bindsTaskyReminderRepository(repository: TaskyReminderRepositoryImpl): TaskyReminderRepository
 
     @Singleton
     @Binds
-    abstract fun providesTaskyTaskRepository(repository: TaskyTaskRepositoryImpl): TaskyTaskRepository
+    abstract fun bindsTaskyTaskRepository(repository: TaskyTaskRepositoryImpl): TaskyTaskRepository
 }

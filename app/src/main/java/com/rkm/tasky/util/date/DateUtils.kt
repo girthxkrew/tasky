@@ -16,9 +16,12 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 
-private val timezone = TimeZone.currentSystemDefault()
+private val timezone = TimeZone.UTC
 
 private val timeFormat = LocalTime.Format {
     amPmHour(padding = Padding.ZERO)
@@ -50,20 +53,6 @@ fun getCurrentDayInLocalDateTime(): LocalDateTime {
     return Clock.System.now().toLocalDateTime(timezone)
 }
 
-fun getDayName(date: Long): String {
-    val day = Instant.fromEpochMilliseconds(date)
-        .toLocalDateTime(timezone)
-
-    return day.dayOfWeek.name
-}
-
-fun getDayOfTheMonth(date: Long): Int {
-    val day = Instant.fromEpochMilliseconds(date)
-        .toLocalDateTime(timezone)
-
-    return day.dayOfMonth
-}
-
 fun getReminderTime(date: Long, unit: ReminderBeforeDuration): Long {
     val reminder = Instant.fromEpochMilliseconds(date)
     return reminder.minus(unit.duration).toEpochMilliseconds()
@@ -90,13 +79,7 @@ fun LocalDate.toUiString(): String {
     return dateFormat.format(this)
 }
 
-fun convertTime(hour: Int, minute: Int, isAfternoon: Boolean): LocalTime {
-    var newHour = hour
-    if(isAfternoon && hour != 12) {
-        newHour += 12
-    } else if(!isAfternoon && hour == 12) {
-        newHour = 0
-    }
-
-    return LocalTime(newHour, minute)
+fun getReminderBeforeDuration(time: Long, remindAt: Long): ReminderBeforeDuration {
+    val result = Instant.fromEpochMilliseconds(time).minus(Instant.fromEpochMilliseconds(remindAt))
+    return result.toReminderBeforeDuration()
 }

@@ -1,6 +1,5 @@
 package com.rkm.tasky.network.model.request
 
-import java.util.UUID
 
 data class UpdateEventRequest(
     val id: String,

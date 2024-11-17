@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -29,16 +30,19 @@ import com.rkm.tasky.feature.agenda.screen.dayselector.DateItem
 import com.rkm.tasky.feature.agenda.screen.dayselector.DateSelector
 import com.rkm.tasky.feature.agenda.screen.dayselector.rememberDateSelectorState
 import com.rkm.tasky.feature.agenda.viewmodel.AgendaViewModel
+import com.rkm.tasky.feature.common.Mode
 import com.rkm.tasky.ui.component.DatePickerModal
 import com.rkm.tasky.ui.theme.ItemMainBodyBackgroundColor
 import com.rkm.tasky.ui.theme.ItemMainBodyForegroundColor
 import com.rkm.tasky.ui.theme.TopBarBackgroundColor
 import com.rkm.tasky.ui.theme.TopBarTitleColor
+import com.rkm.tasky.util.date.toLocalDateTime
 
 @Composable
 fun AgendaScreenRoot(
     modifier: Modifier,
-    viewModel: AgendaViewModel = hiltViewModel()
+    viewModel: AgendaViewModel = hiltViewModel(),
+    onReminderClick: (String, String, String) -> Unit
 ) {
     val showDialog by viewModel.showDialog.collectAsStateWithLifecycle()
     val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
@@ -51,7 +55,8 @@ fun AgendaScreenRoot(
         selectedMonth = selectedMonth,
         updateSelectedDate = viewModel::updateSelectedDate,
         onDateSelected = viewModel::loadDate,
-        onShowDatePicker = viewModel::updateShowDialog
+        onShowDatePicker = viewModel::updateShowDialog,
+        onReminderClick = onReminderClick
     )
 }
 
@@ -63,7 +68,8 @@ private fun AgendaScreen(
     selectedMonth: String,
     updateSelectedDate: (Long) -> Unit,
     onDateSelected: (Long) -> Unit,
-    onShowDatePicker: () -> Unit
+    onShowDatePicker: () -> Unit,
+    onReminderClick: (String, String, String) -> Unit,
 ) {
 
     val state = rememberDateSelectorState(selectedDate)
@@ -97,6 +103,18 @@ private fun AgendaScreen(
                     )
                 }
             }
+        }
+
+        Button(
+            onClick = {
+                onReminderClick(
+                    "2033ecda-9dd1-44fa-bbc6-df500fc04292",
+                    Mode.VIEW.name,
+                    selectedDate.toLocalDateTime().toString()
+                )
+            }
+        ) {
+            Text("Reminder Screen flow")
         }
 
         if (showDialog) {
@@ -148,6 +166,7 @@ private fun PreviewAgendaScreen() {
         selectedDate = 0L,
         updateSelectedDate = {},
         onDateSelected = {},
-        onShowDatePicker = {}
+        onShowDatePicker = {},
+        onReminderClick = {_,_,_ -> }
     )
 }

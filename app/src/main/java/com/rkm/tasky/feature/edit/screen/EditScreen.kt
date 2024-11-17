@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,7 +32,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rkm.tasky.R
 import com.rkm.tasky.feature.edit.viewmodel.EditScreenViewModel
-import com.rkm.tasky.navigation.EditActionType
 import com.rkm.tasky.ui.theme.ItemDetailDividerColor
 import com.rkm.tasky.ui.theme.EditScreenTopAppBarColor
 import com.rkm.tasky.ui.theme.EditScreenTopBarAppTitleTextColor
@@ -42,7 +42,7 @@ fun EditScreenRoot(
     modifier: Modifier,
     viewModel: EditScreenViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onSavePressed: () -> Unit
+    onSavePressed: (String, String) -> Unit
 ) {
     val text by viewModel.text.collectAsStateWithLifecycle()
 
@@ -63,8 +63,10 @@ private fun EditScreen(
     onTextUpdate: (String) -> Unit,
     action: EditActionType,
     onNavigateBack: () -> Unit,
-    onSavePressed: () -> Unit
+    onSavePressed: (String, String) -> Unit
 ) {
+
+    val keyboard = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -76,7 +78,10 @@ private fun EditScreen(
                 containerColor = EditScreenTopAppBarColor
             ),
             navigationIcon = {
-                IconButton( onClick = onNavigateBack) {
+                IconButton( onClick = {
+                    keyboard?.hide()
+                    onNavigateBack()
+                }) {
                     Icon(
                         modifier = Modifier.fillMaxSize(0.5f),
                         painter = painterResource(R.drawable.edit_screen_back),
@@ -85,7 +90,10 @@ private fun EditScreen(
                 }
             },
             actions = {
-                TextButton(onClick = onSavePressed) {
+                TextButton(onClick = {
+                    keyboard?.hide()
+                    onSavePressed(text, action.name)
+                }) {
                     Text(
                         text = stringResource(R.string.edit_screen_save),
                         style = MaterialTheme.typography.titleMedium,
@@ -109,8 +117,8 @@ private fun EditScreen(
             value = text,
             onValueChange = onTextUpdate,
             textStyle = when(action) {
-                is EditActionType.Title -> MaterialTheme.typography.bodyLarge
-                is EditActionType.Description -> MaterialTheme.typography.bodyMedium
+                EditActionType.TITLE -> MaterialTheme.typography.bodyLarge
+                EditActionType.DESCRIPTION -> MaterialTheme.typography.bodyMedium
             }
         )
     }
@@ -136,8 +144,8 @@ private fun PreviewEditScreen() {
         Modifier.fillMaxSize(),
         "Project NeXt",
         {},
-        EditActionType.Title,
+        EditActionType.DESCRIPTION,
         {},
-        {}
+        {_, _ -> }
     )
 }

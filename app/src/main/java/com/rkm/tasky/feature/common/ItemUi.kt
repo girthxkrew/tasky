@@ -1,7 +1,6 @@
-package com.rkm.tasky.feature.reminder.screen
+package com.rkm.tasky.feature.common
 
 import androidx.compose.runtime.Stable
-import com.rkm.tasky.navigation.EditActionType
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
@@ -9,7 +8,8 @@ import kotlinx.datetime.LocalTime
 data class ItemUiState(
     val isEditable: Boolean = false,
     val showTimeDialog: Boolean = false,
-    val showDateDialog: Boolean = false
+    val showDateDialog: Boolean = false,
+    val mode: Mode = Mode.CREATE
 )
 
 @Stable
@@ -20,7 +20,7 @@ data class ItemScreenActions(
     val onEditClick: () -> Unit,
     val onCloseClick: () -> Unit,
     val onDeleteClick: () -> Unit,
-    val onEditField: (EditActionType) -> Unit,
+    val onEditField: (String, String) -> Unit,
     val updateDate: (LocalDate) -> Unit,
     val updateTime: (LocalTime) -> Unit
 )

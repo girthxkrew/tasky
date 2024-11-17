@@ -14,7 +14,6 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.rkm.tasky.R
-import com.rkm.tasky.util.date.convertTime
 import com.rkm.tasky.util.date.toLocalDateTime
 import com.rkm.tasky.util.date.toLong
 import kotlinx.datetime.LocalDate
@@ -28,7 +27,7 @@ fun DatePickerModal(
 ) {
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate.toLong())
     DatePickerDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(
                 onClick = {
@@ -42,7 +41,7 @@ fun DatePickerModal(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = { onDismiss() }) {
                 Text(text = stringResource(R.string.agenda_datepicker_modal_dismiss))
             }
         }
@@ -64,11 +63,11 @@ fun TimePickerModal(
     )
 
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(
                 onClick = {
-                    onTimeSelected(convertTime(timePickerState.hour, timePickerState.minute, timePickerState.isAfternoon))
+                    onTimeSelected(LocalTime(timePickerState.hour, timePickerState.minute))
                     onDismiss()
                 }
             ) {
@@ -76,7 +75,7 @@ fun TimePickerModal(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = { onDismiss() }) {
                 Text(text = stringResource(R.string.agenda_datepicker_modal_dismiss))
             }
         },

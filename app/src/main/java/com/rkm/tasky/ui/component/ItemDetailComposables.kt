@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rkm.tasky.R
-import com.rkm.tasky.feature.common.ScreenType
+import com.rkm.tasky.feature.common.AgendaItemType
 import com.rkm.tasky.feature.common.toUiString
 import com.rkm.tasky.ui.theme.EditFieldColorCaret
 import com.rkm.tasky.ui.theme.ItemDateTextColor
@@ -41,6 +41,8 @@ import com.rkm.tasky.ui.theme.ItemDetailDeleteTextColor
 import com.rkm.tasky.ui.theme.ItemDetailDividerColor
 import com.rkm.tasky.ui.theme.ItemMainBodyBackgroundColor
 import com.rkm.tasky.ui.theme.ItemMainBodyForegroundColor
+import com.rkm.tasky.ui.theme.ItemNoDescTextColor
+import com.rkm.tasky.ui.theme.ItemNoTitleTextColor
 import com.rkm.tasky.ui.theme.ItemTimeTextColor
 import com.rkm.tasky.ui.theme.ItemTitleTextColor
 import com.rkm.tasky.ui.theme.ItemTypeTitleTextColor
@@ -54,7 +56,7 @@ import com.rkm.tasky.ui.theme.TopBarTitleColor
 fun ItemDetailTopBar(
     modifier: Modifier = Modifier,
     selectedDate: String,
-    type: ScreenType,
+    type: AgendaItemType,
     isEditable: Boolean,
     onSaveClick: () -> Unit,
     onEditClick: () -> Unit,
@@ -86,7 +88,7 @@ fun ItemDetailTopBar(
             if (isEditable) {
                 TextButton(onClick = onSaveClick) {
                     Text(
-                        text = stringResource(R.string.item_screen_save),
+                        text = stringResource(R.string.item_detail_save),
                         style = MaterialTheme.typography.titleLarge,
                         color = TopBarTitleColor,
                         fontWeight = FontWeight.Bold
@@ -137,7 +139,7 @@ fun ItemDetailTypeTitle(
     modifier: Modifier,
     rectangleColor: Color,
     rectangleOutlineColor: Color,
-    type: ScreenType
+    type: AgendaItemType
 ) {
     Row(
         modifier = modifier,
@@ -198,8 +200,8 @@ fun ItemDetailTitle(
 
             Text(
                 modifier = Modifier.padding(12.dp),
-                text = title,
-                color = ItemTitleTextColor,
+                text = if(title.isEmpty()) stringResource(R.string.item_detail_no_title) else title,
+                color = if(title.isEmpty()) ItemNoTitleTextColor else ItemTitleTextColor,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -246,9 +248,9 @@ fun ItemDetailDescription(
     ) {
         Text(
             modifier = Modifier.weight(1f),
-            text = desc,
+            text = desc.ifEmpty { stringResource(R.string.item_detail_no_desc) },
             style = MaterialTheme.typography.bodyLarge,
-            color = ItemDescTextColor,
+            color = if(desc.isEmpty()) ItemNoDescTextColor else ItemDescTextColor,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis
         )
@@ -288,7 +290,7 @@ fun ItemDetailDateTimePicker(
         ) {
             Text(
                 modifier = Modifier.padding(end = 32.dp),
-                text = stringResource(R.string.item_start_time),
+                text = stringResource(R.string.item_detail_start_time),
                 style = MaterialTheme.typography.bodyLarge,
                 color = ItemTimeTextColor,
             )
@@ -316,7 +318,7 @@ fun ItemDetailDateTimePicker(
 @Composable
 fun ItemDetailDeleteTextBox(
     modifier: Modifier,
-    type: ScreenType,
+    type: AgendaItemType,
     onDeleteClick: () -> Unit
 ) {
     Text(

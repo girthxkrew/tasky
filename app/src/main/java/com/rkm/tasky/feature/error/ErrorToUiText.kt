@@ -1,6 +1,7 @@
 package com.rkm.tasky.feature.error
 
 import com.rkm.tasky.R
+import com.rkm.tasky.feature.reminder.error.ItemError
 import com.rkm.tasky.network.util.NetworkError
 
 fun errorToUiMessage(error: NetworkError.APIError): Int {
@@ -17,5 +18,12 @@ fun errorToUiMessage(error: NetworkError.APIError): Int {
         NetworkError.APIError.SERIALIZATION ->  R.string.api_error_serialization
         NetworkError.APIError.UNKNOWN ->  R.string.api_error_unknown
         NetworkError.APIError.NO_SESSION_INFO ->  R.string.api_error_no_session_info
+    }
+}
+
+fun errorToUiMessage(error: ItemError.UiError): Int {
+    return when (error) {
+        ItemError.UiError.NO_TITLE -> R.string.item_detail_no_title_error
+        ItemError.UiError.UNKNOWN_ERROR -> R.string.item_detail_unknown_error
     }
 }
