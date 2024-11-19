@@ -9,4 +9,5 @@ plugins {
     alias(libs.plugins.compose.plugin) apply false
     alias(libs.plugins.room.plugin) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.kotlin.parcelize) apply false
 }

@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp.plugin)
     alias(libs.plugins.room.plugin)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {

@@ -30,7 +30,7 @@ cerealization = "1.7.3"
 splashscreen = "1.0.1"
 datetime = "0.6.1"
 desugar = "2.1.2"
-junitJunit = "4.12"
+parcelize = "2.0.10"
 
 
 [libraries]
@@ -75,7 +75,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref="splashscreen" }
 android-tools-desugar = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
-junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
+junit-junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -87,3 +87,4 @@ ksp-plugin = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 compose-plugin = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 room-plugin = { id = "androidx.room", version.ref = "room" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "parcelize" }

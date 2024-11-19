@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Tasky</string>
+    <string name="notification_channel_name">Tasky Reminders</string>
+    <string name="notification_channel_desc">Show notifications for reminders!</string>
     <string name="login_screen_greeting">Welcome Back!</string>
     <string name="text_field_email_hint">Email address</string>
     <string name="text_field_name_hint">Name</string>
