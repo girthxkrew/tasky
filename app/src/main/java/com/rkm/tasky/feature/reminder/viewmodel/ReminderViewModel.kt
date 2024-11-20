@@ -181,7 +181,10 @@ class ReminderViewModel @Inject constructor(
     }
 
     fun onDelete() {
-
+        scope.launch {
+            repository.deleteReminder(oldReminder)
+            _reminderScreenEventChannel.send(ReminderUiEvent.ReminderDeleteEvent)
+        }
     }
 
     private fun setUpReminder() {

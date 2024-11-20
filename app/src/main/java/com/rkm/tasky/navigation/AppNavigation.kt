@@ -50,8 +50,8 @@ fun AppNavigation(
 
             composable<Destination.Reminder> {
 
-                val title = it.savedStateHandle.getStateFlow(EditActionType.TITLE.name, "").collectAsStateWithLifecycle().value
-                val desc = it.savedStateHandle.getStateFlow(EditActionType.DESCRIPTION.name, "").collectAsStateWithLifecycle().value
+                val title = it.savedStateHandle.get<String>(EditActionType.TITLE.name)
+                val desc = it.savedStateHandle.get<String>(EditActionType.DESCRIPTION.name)
 
                 val events = ReminderScreenEvents(
                     onNavigateBack = {
@@ -64,15 +64,15 @@ fun AppNavigation(
                     onEditField = { text, action ->
                         navController
                             .navigate(route = Destination.Edit(text, action))
-                    },
-                    title = title,
-                    desc = desc
+                    }
                 )
 
                 ReminderScreenRoot(
                     modifier = modifier,
                     viewModel = hiltViewModel<ReminderViewModel>(),
-                    events = events
+                    events = events,
+                    title = title,
+                    desc = desc
                 )
             }
 
