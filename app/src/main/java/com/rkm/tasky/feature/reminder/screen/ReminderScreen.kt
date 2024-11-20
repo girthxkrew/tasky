@@ -52,9 +52,7 @@ import kotlinx.coroutines.launch
 
 data class ReminderScreenEvents(
     val onNavigateBack: () -> Unit,
-    val onEditField: (text: String, action: String) -> Unit,
-    val title: String,
-    val desc: String
+    val onEditField: (text: String, action: String) -> Unit
 )
 
 @Composable
@@ -62,6 +60,8 @@ fun ReminderScreenRoot(
     modifier: Modifier,
     viewModel: ReminderViewModel = hiltViewModel(),
     events: ReminderScreenEvents,
+    title: String?,
+    desc: String?
 ) {
     val itemUiState by viewModel.itemUiState.collectAsStateWithLifecycle()
     val reminder by viewModel.reminder.collectAsStateWithLifecycle()
@@ -98,18 +98,18 @@ fun ReminderScreenRoot(
     )
 
     LaunchedEffect(
-        events.title
+        title
     ) {
-        if(events.title.isNotEmpty()) {
-            viewModel.onUpdateTitle(events.title)
+        if(title != null) {
+            viewModel.onUpdateTitle(title)
         }
     }
 
     LaunchedEffect(
-        events.desc
+        desc
     ) {
-        if(events.desc.isNotEmpty()) {
-            viewModel.onUpdateDescription(events.desc)
+        if(desc != null) {
+            viewModel.onUpdateDescription(desc)
         }
     }
 
@@ -132,6 +132,7 @@ fun ReminderScreenRoot(
                         )
                     )
                 }
+
                 ReminderUiEvent.ReminderDeleteEvent -> {
                     SnackBarController.sendEvent(
                         event = SnackBarEvent(
@@ -139,6 +140,7 @@ fun ReminderScreenRoot(
                         )
                     )
                 }
+
                 ReminderUiEvent.ReminderUpdateEvent -> {
                     SnackBarController.sendEvent(
                         event = SnackBarEvent(
@@ -265,7 +267,10 @@ internal fun ReminderScreen(
                             .height(75.dp)
                             .padding(top = 8.dp, start = 24.dp, end = 24.dp),
                         type = AgendaItemType.REMINDER,
-                        onDeleteClick = actions.onDeleteClick
+                        onDeleteClick = {
+                            actions.onDeleteClick
+                            actions.onCloseClick
+                        }
                     )
                 }
             }

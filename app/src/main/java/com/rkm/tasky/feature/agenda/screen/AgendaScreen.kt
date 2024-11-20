@@ -42,7 +42,7 @@ import com.rkm.tasky.util.date.toLocalDateTime
 fun AgendaScreenRoot(
     modifier: Modifier,
     viewModel: AgendaViewModel = hiltViewModel(),
-    onReminderClick: (String, String, String) -> Unit
+    onReminderClick: (id: String, mode: String, date: String) -> Unit
 ) {
     val showDialog by viewModel.showDialog.collectAsStateWithLifecycle()
     val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
@@ -69,7 +69,7 @@ private fun AgendaScreen(
     updateSelectedDate: (Long) -> Unit,
     onDateSelected: (Long) -> Unit,
     onShowDatePicker: () -> Unit,
-    onReminderClick: (String, String, String) -> Unit,
+    onReminderClick: (id: String, mode: String, date: String) -> Unit,
 ) {
 
     val state = rememberDateSelectorState(selectedDate)

@@ -20,7 +20,7 @@ data class ItemScreenActions(
     val onEditClick: () -> Unit,
     val onCloseClick: () -> Unit,
     val onDeleteClick: () -> Unit,
-    val onEditField: (String, String) -> Unit,
+    val onEditField: (text: String, type: String) -> Unit,
     val updateDate: (LocalDate) -> Unit,
     val updateTime: (LocalTime) -> Unit
 )
