@@ -6,6 +6,7 @@ import com.rkm.tasky.feature.common.AgendaItemType
 import com.rkm.tasky.feature.reminder.model.Reminder
 import com.rkm.tasky.feature.task.model.Task
 import com.rkm.tasky.util.date.toLocalDateTime
+import com.rkm.tasky.util.date.toLong
 
 fun Reminder.toReminderAlarm(): ReminderAlarm {
     return ReminderAlarm(
@@ -44,6 +45,26 @@ fun TaskEntity.toReminderAlarm(): ReminderAlarm {
         desc = this.description,
         time = this.remindAt.toLocalDateTime(),
         type = AgendaItemType.TASK
+    )
+}
+
+fun ReminderAlarmParcelable.toReminderAlarm(): ReminderAlarm {
+    return ReminderAlarm(
+        id = this.id,
+        title = this.title,
+        desc = this.desc,
+        time = this.time.toLocalDateTime(),
+        type = AgendaItemType.valueOf(type)
+    )
+}
+
+fun ReminderAlarm.toParcelable(): ReminderAlarmParcelable {
+    return ReminderAlarmParcelable(
+        id = this.id,
+        title = this.title,
+        desc = this.desc,
+        time = this.time.toLong(),
+        type = this.type.name
     )
 }
 

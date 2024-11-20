@@ -7,6 +7,7 @@ import android.content.Intent
 import com.rkm.tasky.alarm.abstraction.ReminderAlarmManager
 import com.rkm.tasky.alarm.broadcastreceivers.ReminderReceiver
 import com.rkm.tasky.alarm.model.ReminderAlarm
+import com.rkm.tasky.alarm.model.toParcelable
 import com.rkm.tasky.util.date.toLong
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -18,7 +19,7 @@ class ReminderAlarmManagerImpl @Inject constructor(
     override fun scheduleReminder(alarms: List<ReminderAlarm>) {
         alarms.forEach {
             val intent = Intent(context, ReminderReceiver::class.java).apply {
-                putExtra(REMINDER_ALARM_KEY, it)
+                putExtra(REMINDER_ALARM_KEY, it.toParcelable())
             }
 
             val pendingIntent = PendingIntent.getBroadcast(
