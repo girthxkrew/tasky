@@ -3,6 +3,9 @@ package com.rkm.tasky.di.database
 import android.content.Context
 import androidx.room.Room
 import com.rkm.tasky.database.TaskyDatabase
+import com.rkm.tasky.database.dao.AttendeeDao
+import com.rkm.tasky.database.dao.EventDao
+import com.rkm.tasky.database.dao.PhotoDao
 import com.rkm.tasky.database.dao.ReminderDao
 import com.rkm.tasky.database.dao.SyncDao
 import com.rkm.tasky.database.dao.TaskDao
@@ -45,6 +48,24 @@ object DatabaseModule {
     @Singleton
     fun providesTaskDao(db: TaskyDatabase): TaskDao {
         return db.taskDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesEventDao(db: TaskyDatabase): EventDao {
+        return db.eventDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesAttendeeDao(db: TaskyDatabase): AttendeeDao {
+        return db.attendeeDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesPhotosDao(db: TaskyDatabase): PhotoDao {
+        return db.photoDao()
     }
 
 }
