@@ -9,7 +9,9 @@ import com.rkm.tasky.database.dao.PhotoDao
 import com.rkm.tasky.database.dao.ReminderDao
 import com.rkm.tasky.database.dao.SyncDao
 import com.rkm.tasky.database.dao.TaskDao
+import com.rkm.tasky.database.model.AttendeeEntity
 import com.rkm.tasky.database.model.EventEntity
+import com.rkm.tasky.database.model.PhotoEntity
 import com.rkm.tasky.database.model.ReminderEntity
 import com.rkm.tasky.database.model.SyncConverter
 import com.rkm.tasky.database.model.SyncEntity
@@ -20,7 +22,9 @@ import com.rkm.tasky.database.model.TaskEntity
         TaskEntity::class,
         EventEntity::class,
         ReminderEntity::class,
-        SyncEntity::class
+        SyncEntity::class,
+        AttendeeEntity::class,
+        PhotoEntity::class,
     ],
     version = 1
 )

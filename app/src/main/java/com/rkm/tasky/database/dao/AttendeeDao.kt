@@ -13,7 +13,7 @@ interface AttendeeDao {
     suspend fun getAttendeeByEventId(id: String): List<AttendeeEntity>
 
     @Upsert
-    suspend fun upsertAttendee(attendees: List<AttendeeEntity>)
+    suspend fun upsertAttendees(attendees: List<AttendeeEntity>)
 
     @Delete
     suspend fun deleteAttendees(attendees: List<AttendeeEntity>)

@@ -1,10 +1,12 @@
 package com.rkm.tasky.database.dao
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.rkm.tasky.database.model.PhotoEntity
 
+@Dao
 interface PhotoDao {
 
     @Query("SELECT * FROM photos WHERE eventId = :id")
@@ -14,5 +16,5 @@ interface PhotoDao {
     suspend fun upsertPhotos(photos: List<PhotoEntity>)
 
     @Delete
-    suspend fun deletePhotos(photos: List<PhotoEntity>)
+    suspend fun deletePhotos(photo: PhotoEntity)
 }
