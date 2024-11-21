@@ -2,6 +2,7 @@ package com.rkm.tasky.database.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -11,10 +12,10 @@ import androidx.room.PrimaryKey
             entity = EventEntity::class,
             parentColumns = ["id"],
             childColumns = ["eventId"],
-            onDelete = ForeignKey.CASCADE,
-            onUpdate = ForeignKey.CASCADE
+            onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["eventId"])]
 )
 data class AttendeeEntity(
     @PrimaryKey

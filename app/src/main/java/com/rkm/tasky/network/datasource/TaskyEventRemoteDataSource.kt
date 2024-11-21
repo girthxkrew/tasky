@@ -43,6 +43,6 @@ interface TaskyEventRemoteDataSource {
         @Part("update_event_request") updateEventRequest: UpdateEventRequest,
         @Part photos: List<MultipartBody.Part>,
         @Tag authorization: RequestType = RequestType.AUTHORIZATION
-    ): Response<Unit>
+    ): Response<EventDTO>
 
 }
