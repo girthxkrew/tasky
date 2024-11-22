@@ -19,8 +19,12 @@ import com.rkm.tasky.repository.mapper.asAttendeeEntity
 import com.rkm.tasky.repository.mapper.asCreateEventRequest
 import com.rkm.tasky.repository.mapper.asEventEntity
 import com.rkm.tasky.repository.mapper.asPhotoEntity
+import com.rkm.tasky.repository.mapper.asSyncCreateEventRequest
+import com.rkm.tasky.repository.mapper.asSyncUpdateEventRequest
 import com.rkm.tasky.repository.mapper.asUpdateEventRequest
 import com.rkm.tasky.repository.mapper.toEvent
+import com.rkm.tasky.sync.repository.abstraction.SyncCreateEventRepository
+import com.rkm.tasky.sync.repository.abstraction.SyncUpdateEventRepository
 import com.rkm.tasky.util.result.EmptyResult
 import com.rkm.tasky.util.result.Result
 import com.rkm.tasky.util.result.asEmptyDataResult
@@ -35,6 +39,8 @@ class TaskyEventRepositoryImpl @Inject constructor(
     private val localDataSource: EventDao,
     private val attendeeLocalDataSource: AttendeeDao,
     private val photoLocalDataSource: PhotoDao,
+    private val syncCreateEventDataSource: SyncCreateEventRepository,
+    private val syncUpdateEventDataSource: SyncUpdateEventRepository,
     private val syncDataSource: SyncDao,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : TaskyEventRepository {
@@ -61,13 +67,7 @@ class TaskyEventRepositoryImpl @Inject constructor(
             }
 
             result.onFailure {
-                syncDataSource.upsertSyncItem(
-                    SyncEntity(
-                        action = SyncUserAction.CREATE,
-                        item = SyncItemType.EVENT,
-                        itemId = event.id
-                    )
-                )
+                syncCreateEventDataSource.upsertEvent(event.asSyncCreateEventRequest())
             }
 
             return@withContext result.asEmptyDataResult()
@@ -88,13 +88,7 @@ class TaskyEventRepositoryImpl @Inject constructor(
             }
 
             result.onFailure {
-                syncDataSource.upsertSyncItem(
-                    SyncEntity(
-                        action = SyncUserAction.UPDATE,
-                        item = SyncItemType.EVENT,
-                        itemId = event.id
-                    )
-                )
+                syncUpdateEventDataSource.upsertEvent(event.asSyncUpdateEventRequest())
             }
 
             return@withContext result.asEmptyDataResult()
@@ -103,10 +97,12 @@ class TaskyEventRepositoryImpl @Inject constructor(
     override suspend fun deleteEvent(event: Event): EmptyResult<NetworkError.APIError> = withContext(dispatcher) {
         val result = safeCall { remoteDataSource.deleteEvent(event.id) }
         result.onFailure {
-            SyncEntity(
-                action = SyncUserAction.DELETE,
-                item = SyncItemType.EVENT,
-                itemId = event.id
+            syncDataSource.upsertSyncItem(
+                SyncEntity(
+                    action = SyncUserAction.DELETE,
+                    item = SyncItemType.EVENT,
+                    itemId = event.id
+                )
             )
         }
         localDataSource.deleteEvent(event.asEventEntity())
