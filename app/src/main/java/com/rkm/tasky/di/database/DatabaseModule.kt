@@ -7,7 +7,12 @@ import com.rkm.tasky.database.dao.AttendeeDao
 import com.rkm.tasky.database.dao.EventDao
 import com.rkm.tasky.database.dao.PhotoDao
 import com.rkm.tasky.database.dao.ReminderDao
+import com.rkm.tasky.database.dao.SyncAttendeeDao
+import com.rkm.tasky.database.dao.SyncCreateEventDao
 import com.rkm.tasky.database.dao.SyncDao
+import com.rkm.tasky.database.dao.SyncDeletePhotoDao
+import com.rkm.tasky.database.dao.SyncUpdateEventDao
+import com.rkm.tasky.database.dao.SyncUploadPhotoDao
 import com.rkm.tasky.database.dao.TaskDao
 import dagger.Module
 import dagger.Provides
@@ -68,4 +73,33 @@ object DatabaseModule {
         return db.photoDao()
     }
 
+    @Provides
+    @Singleton
+    fun providesSyncAttendeeDao(db: TaskyDatabase): SyncAttendeeDao {
+        return db.syncAttendeeDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesSyncCreateEventDao(db: TaskyDatabase): SyncCreateEventDao {
+        return db.syncCreateEventDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesSyncDeletePhotoDao(db: TaskyDatabase): SyncDeletePhotoDao{
+        return db.syncDeletePhotoDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesSyncUpdateEventDao(db: TaskyDatabase): SyncUpdateEventDao {
+        return db.syncUpdateEventDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesSyncUploadPhotoDao(db: TaskyDatabase): SyncUploadPhotoDao {
+        return db.syncUploadPhotoDao()
+    }
 }

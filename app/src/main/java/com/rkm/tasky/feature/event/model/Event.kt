@@ -11,10 +11,10 @@ data class Event(
     val isUserEventCreator: Boolean,
     val isUserGoing: Boolean = false,
     val attendees: List<Attendee>,
-    val attendeesGoing: List<String> = emptyList(),
     val photos: List<Photo>,
     val deletedPhotoKeys: List<String> = emptyList(),
-    val photosToUpload: List<ByteArray> = emptyList()
+    val photosToUpload: List<ByteArray> = emptyList(),
+    val photosToUploadFilePaths: List<String> = emptyList()
 )
 data class Attendee(
     val email: String,

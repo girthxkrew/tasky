@@ -18,6 +18,6 @@ interface SyncDao {
     @Upsert
     suspend fun upsertSyncItem(item: SyncEntity)
 
-    @Delete
-    suspend fun deleteSyncItem(item: SyncEntity)
+    @Query("DELETE FROM sync WHERE itemId = :id")
+    suspend fun deleteSyncItem(id: String)
 }

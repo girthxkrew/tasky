@@ -10,6 +10,8 @@ import com.rkm.tasky.feature.event.model.Photo
 import com.rkm.tasky.network.model.request.CreateEventRequest
 import com.rkm.tasky.network.model.request.UpdateEventRequest
 import com.rkm.tasky.network.model.response.EventDTO
+import com.rkm.tasky.sync.model.CreateEventSyncRequest
+import com.rkm.tasky.sync.model.UpdateEventSyncRequest
 
 fun EventWithDetails.toEvent(): Event {
     return Event(
@@ -34,7 +36,7 @@ fun Event.asCreateEventRequest(): CreateEventRequest {
         from = this.from,
         to = this.to,
         remindAt = this.remindAt,
-        attendeeIds = this.attendeesGoing
+        attendeeIds = this.attendees.map { it.userId }
     )
 }
 
@@ -46,7 +48,7 @@ fun Event.asUpdateEventRequest(): UpdateEventRequest {
         from = this.from,
         to = this.to,
         remindAt = this.remindAt,
-        attendeeIds = this.attendeesGoing,
+        attendeeIds = this.attendees.map { it.userId },
         deletedPhotoKeys = this.deletedPhotoKeys,
         isGoing = this.isUserGoing
     )
@@ -112,5 +114,33 @@ fun EventDTO.Photo.asPhotoEntity(id: String): PhotoEntity {
         key = this.key,
         url = this.url,
         eventId = id
+    )
+}
+
+fun Event.asSyncCreateEventRequest(): CreateEventSyncRequest {
+    return CreateEventSyncRequest(
+        id = this.id,
+        title = this.title,
+        description = this.description,
+        from = this.from,
+        to = this.to,
+        remindAt = this.remindAt,
+        attendees = this.attendees.map { attendee -> attendee.userId },
+        photos = this.photosToUploadFilePaths
+    )
+}
+
+fun Event.asSyncUpdateEventRequest(): UpdateEventSyncRequest {
+    return UpdateEventSyncRequest(
+        id = this.id,
+        title = this.title,
+        description = this.description,
+        from = this.from,
+        to = this.to,
+        remindAt = this.remindAt,
+        attendees = this.attendees.map { attendee -> attendee.userId },
+        deletedPhotoKeys = this.deletedPhotoKeys,
+        isGoing = this.isUserGoing,
+        photos = this.photosToUploadFilePaths
     )
 }
