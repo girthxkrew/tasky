@@ -15,6 +15,6 @@ interface PhotoDao {
     @Upsert
     suspend fun upsertPhotos(photos: List<PhotoEntity>)
 
-    @Delete
-    suspend fun deletePhotos(photo: PhotoEntity)
+    @Query("DELETE FROM photos WHERE `key` IN (:keys)")
+    suspend fun deletePhotos(keys: List<String>)
 }

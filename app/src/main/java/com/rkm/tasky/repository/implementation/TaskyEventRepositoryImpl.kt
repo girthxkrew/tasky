@@ -91,6 +91,7 @@ class TaskyEventRepositoryImpl @Inject constructor(
                 syncUpdateEventDataSource.upsertEvent(event.asSyncUpdateEventRequest())
             }
 
+            photoLocalDataSource.deletePhotos(event.deletedPhotoKeys)
             return@withContext result.asEmptyDataResult()
         }
 

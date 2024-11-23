@@ -9,8 +9,8 @@ import com.rkm.tasky.database.model.AttendeeEntity
 @Dao
 interface AttendeeDao {
 
-    @Query("SELECT * FROM ATTENDEES where eventId = :id")
-    suspend fun getAttendeeByEventId(id: String): List<AttendeeEntity>
+    @Query("SELECT * FROM ATTENDEES where eventId IN (:ids)")
+    suspend fun getAttendeesByEventId(ids: List<String>): List<AttendeeEntity>
 
     @Upsert
     suspend fun upsertAttendees(attendees: List<AttendeeEntity>)

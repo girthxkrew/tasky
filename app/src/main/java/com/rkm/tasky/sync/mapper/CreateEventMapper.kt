@@ -2,7 +2,9 @@ package com.rkm.tasky.sync.mapper
 
 import com.rkm.tasky.database.model.SyncAttendeeEntity
 import com.rkm.tasky.database.model.SyncCreateEventEntity
+import com.rkm.tasky.database.model.SyncCreateEventWithDetails
 import com.rkm.tasky.database.model.SyncUploadPhotoEntity
+import com.rkm.tasky.network.model.request.CreateEventRequest
 import com.rkm.tasky.sync.model.CreateEventSyncRequest
 
 fun CreateEventSyncRequest.asSyncCreateEventEntity(): SyncCreateEventEntity {
@@ -32,4 +34,16 @@ fun CreateEventSyncRequest.asUploadPhotosEntity(): List<SyncUploadPhotoEntity> {
             filePath = photo
         )
     }
+}
+
+fun SyncCreateEventWithDetails.asCreateEventRequest(): CreateEventRequest {
+    return CreateEventRequest(
+        id = this.event.id,
+        title = this.event.title,
+        description = this.event.description,
+        from = this.event.from,
+        to = this.event.to,
+        remindAt = this.event.remindAt,
+        attendeeIds = this.attendees.map { it.userId }
+    )
 }

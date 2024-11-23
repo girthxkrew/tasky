@@ -8,6 +8,7 @@ import com.rkm.tasky.database.dao.SyncUploadPhotoDao
 import com.rkm.tasky.database.error.DatabaseError
 import com.rkm.tasky.database.model.SyncEntity
 import com.rkm.tasky.database.model.SyncItemType
+import com.rkm.tasky.database.model.SyncUpdateEventWithDetails
 import com.rkm.tasky.database.model.SyncUploadPhotoEntity
 import com.rkm.tasky.database.model.SyncUserAction
 import com.rkm.tasky.di.IoDispatcher
@@ -29,10 +30,12 @@ class SyncUpdateEventRepositoryImpl @Inject constructor(
     private val uploadPhotoDataSource: SyncUploadPhotoDao,
     private val eventDataSource: SyncUpdateEventDao,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-): SyncUpdateEventRepository {
-    override suspend fun getEvent(id: String): Result<UpdateEventSyncRequest, DatabaseError.ItemError> {
-        TODO("Not yet implemented")
-    }
+) : SyncUpdateEventRepository {
+    override suspend fun getEvents(ids: List<String>): Result<List<SyncUpdateEventWithDetails>, DatabaseError.ItemError> =
+        withContext(dispatcher) {
+            val result = eventDataSource.getEventDetailsById(ids)
+            return@withContext Result.Success(result)
+        }
 
     override suspend fun upsertEvent(event: UpdateEventSyncRequest) = withContext(dispatcher) {
         syncDataSource.upsertSyncItem(
@@ -48,11 +51,11 @@ class SyncUpdateEventRepositoryImpl @Inject constructor(
         eventDataSource.upsertEvent(event.asSyncUpdateEventEntity())
     }
 
-    override suspend fun deleteEvent(id: String) = withContext(dispatcher) {
-        syncDataSource.deleteSyncItem(id)
-        attendeesDataSource.deleteAttendeesById(id)
-        deletedPhotosDataSource.deletePhotoKeysByEventId(id)
-        uploadPhotoDataSource.deletePhotosByEventId(id)
-        eventDataSource.deleteEventById(id)
+    override suspend fun deleteEvents(ids: List<String>) = withContext(dispatcher) {
+        syncDataSource.deleteSyncItems(ids)
+        attendeesDataSource.deleteAttendeesById(ids)
+        deletedPhotosDataSource.deletePhotoKeysByEventId(ids)
+        uploadPhotoDataSource.deletePhotosByEventId(ids)
+        eventDataSource.deleteEventsById(ids)
     }
 }

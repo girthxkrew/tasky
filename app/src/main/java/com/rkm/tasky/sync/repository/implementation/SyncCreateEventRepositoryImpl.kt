@@ -5,6 +5,7 @@ import com.rkm.tasky.database.dao.SyncCreateEventDao
 import com.rkm.tasky.database.dao.SyncDao
 import com.rkm.tasky.database.dao.SyncUploadPhotoDao
 import com.rkm.tasky.database.error.DatabaseError
+import com.rkm.tasky.database.model.SyncCreateEventWithDetails
 import com.rkm.tasky.database.model.SyncEntity
 import com.rkm.tasky.database.model.SyncItemType
 import com.rkm.tasky.database.model.SyncUserAction
@@ -25,10 +26,12 @@ class SyncCreateEventRepositoryImpl @Inject constructor(
     private val photoDataSource: SyncUploadPhotoDao,
     private val eventDataSource: SyncCreateEventDao,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-): SyncCreateEventRepository {
-    override suspend fun getEvent(id: String): Result<CreateEventSyncRequest, DatabaseError.ItemError> {
-        TODO("Not yet implemented")
-    }
+) : SyncCreateEventRepository {
+    override suspend fun getEvents(ids: List<String>): Result<List<SyncCreateEventWithDetails>, DatabaseError.ItemError> =
+        withContext(dispatcher) {
+            val result = eventDataSource.getEventDetailsById(ids)
+            return@withContext Result.Success(result)
+        }
 
     override suspend fun upsertEvent(event: CreateEventSyncRequest) = withContext(dispatcher) {
         syncDataSource.upsertSyncItem(
@@ -43,10 +46,10 @@ class SyncCreateEventRepositoryImpl @Inject constructor(
         eventDataSource.upsertEvent(event.asSyncCreateEventEntity())
     }
 
-    override suspend fun deleteEvent(id: String) = withContext(dispatcher) {
-        syncDataSource.deleteSyncItem(id)
-        attendeeDataSource.deleteAttendeesById(id)
-        photoDataSource.deletePhotosByEventId(id)
-        eventDataSource.deleteEventById(id)
+    override suspend fun deleteEvents(ids: List<String>) = withContext(dispatcher) {
+        syncDataSource.deleteSyncItems(ids)
+        attendeeDataSource.deleteAttendeesById(ids)
+        photoDataSource.deletePhotosByEventId(ids)
+        eventDataSource.deleteEventsById(ids)
     }
 }
