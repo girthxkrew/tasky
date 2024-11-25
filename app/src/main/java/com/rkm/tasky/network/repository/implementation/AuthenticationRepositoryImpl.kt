@@ -2,8 +2,6 @@ package com.rkm.tasky.network.repository.implementation
 
 import com.rkm.tasky.di.IoDispatcher
 import com.rkm.tasky.network.datasource.TaskyAuthenticationRemoteDataSource
-import com.rkm.tasky.network.datasource.TaskyRemoteDataSource
-import com.rkm.tasky.network.model.request.AccessTokenRequest
 import com.rkm.tasky.network.model.request.LoginUserRequest
 import com.rkm.tasky.network.model.request.RegisterUserRequest
 import com.rkm.tasky.network.model.response.LoginUserDTO

@@ -9,6 +9,9 @@ import com.rkm.tasky.database.model.ReminderEntity
 @Dao
 interface ReminderDao {
 
+    @Query("SELECT * FROM reminders WHERE id in (:ids)")
+    suspend fun getRemindersById(ids: List<String>): List<ReminderEntity>?
+
     @Query("SELECT * FROM reminders WHERE id = :id")
     suspend fun getReminderById(id: String): ReminderEntity?
 

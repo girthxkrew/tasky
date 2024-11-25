@@ -14,6 +14,6 @@ interface SyncAttendeeDao {
     @Upsert
     suspend fun upsertAttendees(attendees: List<SyncAttendeeEntity>)
 
-    @Query("DELETE from sync_attendee WHERE eventId = :id ")
-    suspend fun deleteAttendeesById(id: String)
+    @Query("DELETE from sync_attendee WHERE eventId IN (:ids) ")
+    suspend fun deleteAttendeesById(ids: List<String>)
 }

@@ -8,12 +8,12 @@ import com.rkm.tasky.database.model.SyncUploadPhotoEntity
 @Dao
 interface SyncUploadPhotoDao {
 
-    @Query("SELECT * FROM sync_upload_photos WHERE eventId = :id")
-    suspend fun getPhotosByEventId(id: String): List<SyncUploadPhotoEntity>
+    @Query("SELECT * FROM sync_upload_photos WHERE eventId IN (:ids)")
+    suspend fun getPhotosByEventId(ids: List<String>): List<SyncUploadPhotoEntity>
 
     @Upsert
     suspend fun upsertPhotos(photos: List<SyncUploadPhotoEntity>)
 
-    @Query("DELETE FROM sync_upload_photos WHERE eventId = :id")
-    suspend fun deletePhotosByEventId(id: String)
+    @Query("DELETE FROM sync_upload_photos WHERE eventId IN (:ids)")
+    suspend fun deletePhotosByEventId(ids: List<String>)
 }
