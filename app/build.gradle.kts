@@ -109,6 +109,9 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room)
     implementation(libs.androidx.datastore)
+    implementation(libs.androidx.work.manager)
+    implementation(libs.androidx.hilt.work.manager)
+    ksp(libs.androidx.hilt.work.manager.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.androidx.room.test.helpers)
     testImplementation(libs.robolectric)
@@ -122,6 +125,7 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.mock.web.server)
+    androidTestImplementation(libs.androidx.work.manager.testing)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

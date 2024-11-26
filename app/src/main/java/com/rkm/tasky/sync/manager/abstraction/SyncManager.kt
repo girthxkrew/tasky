@@ -5,6 +5,6 @@ import com.rkm.tasky.util.result.EmptyResult
 
 interface SyncManager {
     suspend fun syncDeletedItems(): EmptyResult<NetworkError.APIError>
-    suspend fun syncUpdatedItem(): EmptyResult<NetworkError.APIError>
+    suspend fun syncUpdatedItems(): EmptyResult<NetworkError.APIError>
     suspend fun syncCreatedItems(): EmptyResult<NetworkError.APIError>
 }

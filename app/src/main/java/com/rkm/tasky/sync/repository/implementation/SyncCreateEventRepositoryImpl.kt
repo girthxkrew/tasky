@@ -17,6 +17,10 @@ import com.rkm.tasky.sync.model.CreateEventSyncRequest
 import com.rkm.tasky.sync.repository.abstraction.SyncCreateEventRepository
 import com.rkm.tasky.util.result.Result
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -34,22 +38,26 @@ class SyncCreateEventRepositoryImpl @Inject constructor(
         }
 
     override suspend fun upsertEvent(event: CreateEventSyncRequest) = withContext(dispatcher) {
-        syncDataSource.upsertSyncItem(
-            SyncEntity(
-                action = SyncUserAction.CREATE,
-                item = SyncItemType.EVENT,
-                itemId = event.id
-            )
-        )
-        attendeeDataSource.upsertAttendees(event.asSyncAttendeeEntity())
-        photoDataSource.upsertPhotos(event.asUploadPhotosEntity())
-        eventDataSource.upsertEvent(event.asSyncCreateEventEntity())
+        listOf(
+            launch { syncDataSource.upsertSyncItem(
+                SyncEntity(
+                    action = SyncUserAction.CREATE,
+                    item = SyncItemType.EVENT,
+                    itemId = event.id
+                )
+            ) },
+            launch { attendeeDataSource.upsertAttendees(event.asSyncAttendeeEntity()) },
+            launch { photoDataSource.upsertPhotos(event.asUploadPhotosEntity()) },
+            launch { eventDataSource.upsertEvent(event.asSyncCreateEventEntity()) }
+        ).joinAll()
     }
 
     override suspend fun deleteEvents(ids: List<String>) = withContext(dispatcher) {
-        syncDataSource.deleteSyncItems(ids)
-        attendeeDataSource.deleteAttendeesById(ids)
-        photoDataSource.deletePhotosByEventId(ids)
-        eventDataSource.deleteEventsById(ids)
+        listOf(
+            launch { syncDataSource.deleteSyncItems(ids) },
+            launch { attendeeDataSource.deleteAttendeesById(ids) },
+            launch { photoDataSource.deletePhotosByEventId(ids) },
+            launch { eventDataSource.deleteEventsById(ids) }
+        ).joinAll()
     }
 }

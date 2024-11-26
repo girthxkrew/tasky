@@ -1,5 +1,7 @@
 package com.rkm.tasky.di.sync
 
+import com.rkm.tasky.sync.manager.abstraction.SyncManager
+import com.rkm.tasky.sync.manager.implementation.SyncManagerImpl
 import com.rkm.tasky.sync.repository.abstraction.SyncCreateEventRepository
 import com.rkm.tasky.sync.repository.abstraction.SyncUpdateEventRepository
 import com.rkm.tasky.sync.repository.implementation.SyncCreateEventRepositoryImpl
@@ -21,4 +23,8 @@ abstract class SyncRepositoryModule {
     @Singleton
     @Binds
     abstract fun bindsSyncUpdateEventRepository(repository: SyncUpdateEventRepositoryImpl): SyncUpdateEventRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindsSyncManager(manager: SyncManagerImpl): SyncManager
 }
