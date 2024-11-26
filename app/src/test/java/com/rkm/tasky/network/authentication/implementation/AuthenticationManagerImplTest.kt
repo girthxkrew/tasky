@@ -1,5 +1,6 @@
 package com.rkm.tasky.network.authentication.implementation
 
+import androidx.work.WorkManager
 import com.rkm.tasky.network.fakes.AuthenticationRepositoryFake
 import com.rkm.tasky.network.fakes.SessionStorageFake
 import com.rkm.tasky.util.result.Result
@@ -14,6 +15,7 @@ import org.junit.Assert.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.mock
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthenticationManagerImplTest {
@@ -22,13 +24,15 @@ class AuthenticationManagerImplTest {
     private lateinit var authManager: AuthenticationManagerImpl
     private lateinit var authRepository: AuthenticationRepositoryFake
     private lateinit var sessionStorage: SessionStorageFake
+    private lateinit var workManager: WorkManager
 
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
+        workManager = mock()
         authRepository = AuthenticationRepositoryFake()
         sessionStorage = SessionStorageFake()
-        authManager = AuthenticationManagerImpl(authRepository, sessionStorage, dispatcher)
+        authManager = AuthenticationManagerImpl(authRepository, sessionStorage, workManager ,dispatcher)
     }
 
     @Test
