@@ -15,6 +15,8 @@ sealed interface NetworkError : Error {
         SERVER_ERROR,
         SERIALIZATION,
         UNKNOWN,
-        NO_SESSION_INFO
+        NO_SESSION_INFO,
+        RETRY,
+        UPLOAD_FAILED
     }
 }

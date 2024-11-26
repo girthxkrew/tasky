@@ -40,28 +40,29 @@ class SyncUpdateEventRepositoryImpl @Inject constructor(
         }
 
     override suspend fun upsertEvent(event: UpdateEventSyncRequest) = withContext(dispatcher) {
-        listOf(
-            launch { syncDataSource.upsertSyncItem(
-                SyncEntity(
-                    action = SyncUserAction.UPDATE,
-                    item = SyncItemType.EVENT,
-                    itemId = event.id
-                )
-            ) },
-            launch { attendeesDataSource.upsertAttendees(event.asSyncAttendeeEntity()) },
-            launch { deletedPhotosDataSource.upsertPhotoKeys(event.asSyncDeletePhotoEntity()) },
-            launch { uploadPhotoDataSource.upsertPhotos(event.asSyncUploadPhotosEntity()) },
-            launch { eventDataSource.upsertEvent(event.asSyncUpdateEventEntity()) }
-        ).joinAll()
+        eventDataSource.upsertEventDetailsByIds(
+            event = event.asSyncUpdateEventEntity(),
+            attendees = event.asSyncAttendeeEntity(),
+            photos = event.asSyncUploadPhotosEntity(),
+            photoKeys = event.asSyncDeletePhotoEntity(),
+            syncEntity = SyncEntity(
+                action = SyncUserAction.UPDATE,
+                item = SyncItemType.EVENT,
+                itemId = event.id
+            ),
+            syncDao = syncDataSource,
+            attendeeDao = attendeesDataSource,
+            photoDao = uploadPhotoDataSource,
+            deletePhotoDao = deletedPhotosDataSource
+        )
     }
 
     override suspend fun deleteEvents(ids: List<String>) = withContext(dispatcher) {
-        listOf(
-            launch { syncDataSource.deleteSyncItems(ids) },
-            launch { attendeesDataSource.deleteAttendeesById(ids) },
-            launch { deletedPhotosDataSource.deletePhotoKeysByEventId(ids) },
-            launch { uploadPhotoDataSource.deletePhotosByEventId(ids) },
-            launch { eventDataSource.deleteEventsById(ids) }
-        ).joinAll()
+        eventDataSource.deleteEventDetailsByIds(
+            ids,
+            attendeesDataSource,
+            uploadPhotoDataSource,
+            deletedPhotosDataSource
+        )
     }
 }

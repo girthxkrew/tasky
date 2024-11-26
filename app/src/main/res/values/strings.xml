@@ -28,6 +28,8 @@
     <string name="api_error_serialization">An error occurred while processing data. Please try again.</string>
     <string name="api_error_unknown">An unexpected error occurred. Please try again.</string>
     <string name="api_error_no_session_info">Session information is missing. Please log in again.</string>
+    <string name="api_error_retry">Retry</string>
+    <string name="api_error_upload_failed">Uploaded failed</string>
     <string name="agenda_datepicker_modal_confirm">OK</string>
     <string name="agenda_datepicker_modal_dismiss">Cancel</string>
     <string name="event">Event</string>
