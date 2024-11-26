@@ -15,7 +15,7 @@ interface SyncDao {
     suspend fun getSyncItemById(id: String): SyncEntity
 
     @Query("SELECT * FROM sync WHERE `action` = :action")
-    suspend fun getSyncItemsByAction(action: String): List<SyncEntity>?
+    suspend fun getSyncItemsByAction(action: String): List<SyncEntity>
 
     @Upsert
     suspend fun upsertSyncItem(item: SyncEntity)

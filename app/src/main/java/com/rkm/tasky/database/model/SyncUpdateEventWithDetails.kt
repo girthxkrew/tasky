@@ -9,7 +9,7 @@ data class SyncUpdateEventWithDetails(
         parentColumn = "id",
         entityColumn = "eventId"
     )
-    val uploadPhotos: List<SyncUploadPhotoEntity>,
+    val photos: List<SyncUploadPhotoEntity>,
     @Relation(
         parentColumn = "id",
         entityColumn = "eventId"

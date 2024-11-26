@@ -20,6 +20,8 @@ import com.rkm.tasky.sync.model.UpdateEventSyncRequest
 import com.rkm.tasky.sync.repository.abstraction.SyncUpdateEventRepository
 import com.rkm.tasky.util.result.Result
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -38,24 +40,28 @@ class SyncUpdateEventRepositoryImpl @Inject constructor(
         }
 
     override suspend fun upsertEvent(event: UpdateEventSyncRequest) = withContext(dispatcher) {
-        syncDataSource.upsertSyncItem(
-            SyncEntity(
-                action = SyncUserAction.UPDATE,
-                item = SyncItemType.EVENT,
-                itemId = event.id
-            )
-        )
-        attendeesDataSource.upsertAttendees(event.asSyncAttendeeEntity())
-        deletedPhotosDataSource.upsertPhotoKeys(event.asSyncDeletePhotoEntity())
-        uploadPhotoDataSource.upsertPhotos(event.asSyncUploadPhotosEntity())
-        eventDataSource.upsertEvent(event.asSyncUpdateEventEntity())
+        listOf(
+            launch { syncDataSource.upsertSyncItem(
+                SyncEntity(
+                    action = SyncUserAction.UPDATE,
+                    item = SyncItemType.EVENT,
+                    itemId = event.id
+                )
+            ) },
+            launch { attendeesDataSource.upsertAttendees(event.asSyncAttendeeEntity()) },
+            launch { deletedPhotosDataSource.upsertPhotoKeys(event.asSyncDeletePhotoEntity()) },
+            launch { uploadPhotoDataSource.upsertPhotos(event.asSyncUploadPhotosEntity()) },
+            launch { eventDataSource.upsertEvent(event.asSyncUpdateEventEntity()) }
+        ).joinAll()
     }
 
     override suspend fun deleteEvents(ids: List<String>) = withContext(dispatcher) {
-        syncDataSource.deleteSyncItems(ids)
-        attendeesDataSource.deleteAttendeesById(ids)
-        deletedPhotosDataSource.deletePhotoKeysByEventId(ids)
-        uploadPhotoDataSource.deletePhotosByEventId(ids)
-        eventDataSource.deleteEventsById(ids)
+        listOf(
+            launch { syncDataSource.deleteSyncItems(ids) },
+            launch { attendeesDataSource.deleteAttendeesById(ids) },
+            launch { deletedPhotosDataSource.deletePhotoKeysByEventId(ids) },
+            launch { uploadPhotoDataSource.deletePhotosByEventId(ids) },
+            launch { eventDataSource.deleteEventsById(ids) }
+        ).joinAll()
     }
 }
