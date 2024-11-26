@@ -40,7 +40,7 @@ interface EventDao {
         if(oldAttendees.isNotEmpty()) {
             attendeeDao.deleteAttendees(oldAttendees.subtract(attendees).toList())
         }
-        attendeeDao.upsertAttendees(oldAttendees)
+        attendeeDao.upsertAttendees(attendees)
         val oldPhotos = photoDao.getPhotosByEventId(listOf(event.id))
         if(oldPhotos.isNotEmpty()) {
             photoDao.deletePhotos(oldPhotos.subtract(photos).map { it.key })
