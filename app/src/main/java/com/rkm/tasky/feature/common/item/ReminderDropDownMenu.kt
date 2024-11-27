@@ -35,6 +35,7 @@ import com.rkm.tasky.util.date.ReminderBeforeDuration
 fun ReminderDropDownMenu(
     state: ReminderDropDownMenuUiState,
     actions: ReminderDropDownMenuActions,
+    isEditable: Boolean,
     modifier: Modifier = Modifier
 ) {
 
@@ -45,7 +46,8 @@ fun ReminderDropDownMenu(
         onExpandedChange = { actions.onExpanded() }
     ) {
         TextField(
-            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
+            modifier = Modifier
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = isEditable)
                 .fillMaxWidth(),
             value = stringResource(state.selectedDuration.toUiString()),
             onValueChange = {},
@@ -141,7 +143,8 @@ private fun ReminderClosedDropDownPreview() {
     val actions = ReminderDropDownMenuActions({}, {})
     ReminderDropDownMenu(
         state = ReminderDropDownMenuUiState(),
-        actions = actions
+        actions = actions,
+        false,
     )
 }
 
@@ -153,7 +156,8 @@ private fun ReminderOpenDropDownPreview() {
     val actions = ReminderDropDownMenuActions({}, {})
     ReminderDropDownMenu(
         state = ReminderDropDownMenuUiState(isExpanded = true, ReminderBeforeDuration.ONE_HOUR),
-        actions = actions
+        actions = actions,
+        true
     )
 }
 

@@ -249,6 +249,7 @@ internal fun TaskScreen(
                 ReminderDropDownMenu(
                     dropDownMenuUiState,
                     dropDownActions,
+                    state.isEditable,
                     Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp, start = 24.dp, end = 24.dp)
