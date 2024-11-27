@@ -25,6 +25,9 @@ interface EventDao {
     @Upsert
     suspend fun upsertEvent(event: EventEntity)
 
+    @Upsert
+    suspend fun upsertEvents(events: List<EventEntity>)
+
     @Delete
     suspend fun deleteEvent(event: EventEntity)
 

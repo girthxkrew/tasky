@@ -17,4 +17,7 @@ interface AttendeeDao {
 
     @Delete
     suspend fun deleteAttendees(attendees: List<AttendeeEntity>)
+
+    @Query("DELETE FROM attendees WHERE userId = :userId AND eventId = :eventId" )
+    suspend fun deleteByUserIdAndEventId(userId: String, eventId: String)
 }

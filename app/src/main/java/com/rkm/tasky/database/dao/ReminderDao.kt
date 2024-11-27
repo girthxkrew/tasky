@@ -21,9 +21,13 @@ interface ReminderDao {
     @Upsert
     suspend fun upsertReminder(reminder: ReminderEntity)
 
+    @Upsert
+    suspend fun upsertReminders(reminders: List<ReminderEntity>)
+
     @Delete
     suspend fun deleteReminder(reminder: ReminderEntity)
 
-
+    @Query("DELETE FROM reminders WHERE id in (:ids)")
+    suspend fun deleteRemindersById(ids: List<String>)
 
 }
