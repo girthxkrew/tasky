@@ -116,8 +116,8 @@ private fun AgendaScreen(
             Button(
                 onClick = {
                     events.onReminderClick(
-                        "2033ecda-9dd1-44fa-bbc6-df500fc04292",
-                        Mode.VIEW.name,
+                        "",
+                        Mode.CREATE.name,
                         selectedDate.toLocalDateTime().toString()
                     )
                 }

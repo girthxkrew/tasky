@@ -46,7 +46,7 @@ fun getMonth(date: Long): String {
 
 fun getCurrentDayInLong(): Long {
     return Clock.System.todayIn(timezone)
-        .atStartOfDayIn(TimeZone.currentSystemDefault()).epochSeconds * 1000
+        .atStartOfDayIn(timezone).toEpochMilliseconds()
 }
 
 fun getCurrentDayInLocalDateTime(): LocalDateTime {
