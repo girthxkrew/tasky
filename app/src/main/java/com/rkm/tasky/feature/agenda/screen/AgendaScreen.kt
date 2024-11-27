@@ -38,25 +38,34 @@ import com.rkm.tasky.ui.theme.TopBarBackgroundColor
 import com.rkm.tasky.ui.theme.TopBarTitleColor
 import com.rkm.tasky.util.date.toLocalDateTime
 
+data class AgendaNavigationScreenEvents(
+    val onReminderClick: (id: String, mode: String, date: String) -> Unit,
+    val onTaskClick: (id: String, mode: String, date: String) -> Unit
+)
+
 @Composable
 fun AgendaScreenRoot(
     modifier: Modifier,
     viewModel: AgendaViewModel = hiltViewModel(),
-    onReminderClick: (id: String, mode: String, date: String) -> Unit
+    events: AgendaNavigationScreenEvents
 ) {
     val showDialog by viewModel.showDialog.collectAsStateWithLifecycle()
     val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
     val selectedMonth by viewModel.selectedMonth.collectAsStateWithLifecycle()
+
+    val actions = AgendaActions(
+        updateSelectedDate = viewModel::updateSelectedDate,
+        onDateSelected = viewModel::loadDate,
+        onShowDatePicker = viewModel::updateShowDialog
+    )
 
     AgendaScreen(
         modifier = modifier,
         showDialog = showDialog,
         selectedDate = selectedDate,
         selectedMonth = selectedMonth,
-        updateSelectedDate = viewModel::updateSelectedDate,
-        onDateSelected = viewModel::loadDate,
-        onShowDatePicker = viewModel::updateShowDialog,
-        onReminderClick = onReminderClick
+        actions = actions,
+        events = events
     )
 }
 
@@ -66,10 +75,8 @@ private fun AgendaScreen(
     showDialog: Boolean,
     selectedDate: Long,
     selectedMonth: String,
-    updateSelectedDate: (Long) -> Unit,
-    onDateSelected: (Long) -> Unit,
-    onShowDatePicker: () -> Unit,
-    onReminderClick: (id: String, mode: String, date: String) -> Unit,
+    actions: AgendaActions,
+    events: AgendaNavigationScreenEvents
 ) {
 
     val state = rememberDateSelectorState(selectedDate)
@@ -81,7 +88,7 @@ private fun AgendaScreen(
             modifier = modifier.fillMaxSize()
         ) {
             TopAppBar(
-                title = { TopBarDateSelector(month = selectedMonth, onClick = onShowDatePicker) },
+                title = { TopBarDateSelector(month = selectedMonth, onClick = actions.onShowDatePicker) },
                 modifier = modifier.statusBarsPadding(),
                 colors = TopAppBarDefaults.topAppBarColors(
                     titleContentColor = TopBarTitleColor,
@@ -99,22 +106,36 @@ private fun AgendaScreen(
                     DateSelector(
                         Modifier.padding(top = 16.dp),
                         state = state,
-                        onClick = onDateSelected
+                        onClick = actions.onDateSelected
                     )
                 }
             }
         }
 
-        Button(
-            onClick = {
-                onReminderClick(
-                    "2033ecda-9dd1-44fa-bbc6-df500fc04292",
-                    Mode.VIEW.name,
-                    selectedDate.toLocalDateTime().toString()
-                )
+        Column {
+            Button(
+                onClick = {
+                    events.onReminderClick(
+                        "2033ecda-9dd1-44fa-bbc6-df500fc04292",
+                        Mode.VIEW.name,
+                        selectedDate.toLocalDateTime().toString()
+                    )
+                }
+            ) {
+                Text("Reminder Screen flow")
             }
-        ) {
-            Text("Reminder Screen flow")
+
+            Button(
+                onClick = {
+                    events.onTaskClick(
+                        "3e235ec3-024a-4feb-86ec-7c60d244675e",
+                        Mode.VIEW.name,
+                        selectedDate.toLocalDateTime().toString()
+                    )
+                }
+            ) {
+                Text("Task Screen flow")
+            }
         }
 
         if (showDialog) {
@@ -159,14 +180,23 @@ private fun PreviewAgendaScreen() {
         DateItem(0L, "F", 9),
         DateItem(0L, "S", 10)
     )
+
+    val actions = AgendaActions(
+        updateSelectedDate = {},
+        onDateSelected = {},
+        onShowDatePicker = {}
+    )
+
+    val events = AgendaNavigationScreenEvents(
+        onReminderClick = {_, _, _ -> },
+        onTaskClick = {_, _, _ -> }
+    )
     AgendaScreen(
         Modifier,
         showDialog = false,
         selectedMonth = "DECEMBER",
         selectedDate = 0L,
-        updateSelectedDate = {},
-        onDateSelected = {},
-        onShowDatePicker = {},
-        onReminderClick = {_,_,_ -> }
+        actions = actions,
+        events = events
     )
 }

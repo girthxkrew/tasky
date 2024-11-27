@@ -1,5 +1,4 @@
-
-package com.rkm.tasky.feature.reminder.screen
+package com.rkm.tasky.feature.task.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,8 +25,6 @@ import com.rkm.tasky.feature.common.item.ItemUiState
 import com.rkm.tasky.feature.common.Mode
 import com.rkm.tasky.feature.common.AgendaItemType
 import com.rkm.tasky.feature.edit.screen.EditActionType
-import com.rkm.tasky.feature.reminder.viewmodel.ReminderUiModel
-import com.rkm.tasky.feature.reminder.viewmodel.ReminderViewModel
 import com.rkm.tasky.feature.snackbar.SnackBarController
 import com.rkm.tasky.feature.snackbar.SnackBarEvent
 import com.rkm.tasky.ui.component.DatePickerModal
@@ -43,34 +40,35 @@ import com.rkm.tasky.feature.common.item.ItemUiEvent
 import com.rkm.tasky.feature.common.item.ReminderDropDownMenu
 import com.rkm.tasky.feature.common.item.ReminderDropDownMenuActions
 import com.rkm.tasky.feature.common.item.ReminderDropDownMenuUiState
+import com.rkm.tasky.feature.task.viewmodel.TaskUiModel
+import com.rkm.tasky.feature.task.viewmodel.TaskViewModel
 import com.rkm.tasky.ui.component.TimePickerModal
 import com.rkm.tasky.ui.event.ObserveAsEvents
-import com.rkm.tasky.ui.theme.ReminderColorId
-import com.rkm.tasky.ui.theme.ReminderSquareStroke
+import com.rkm.tasky.ui.theme.TaskColorId
 import com.rkm.tasky.util.date.toUiString
 import kotlinx.coroutines.launch
 
-data class ReminderScreenEvents(
+data class TaskScreenEvents(
     val onNavigateBack: () -> Unit,
     val onEditField: (text: String, action: String) -> Unit
 )
 
 @Composable
-fun ReminderScreenRoot(
+fun TaskScreenRoot(
     modifier: Modifier,
-    viewModel: ReminderViewModel = hiltViewModel(),
-    events: ReminderScreenEvents,
+    viewModel: TaskViewModel = hiltViewModel(),
+    events: TaskScreenEvents,
     title: String?,
     desc: String?
 ) {
     val itemUiState by viewModel.itemUiState.collectAsStateWithLifecycle()
-    val reminder by viewModel.reminder.collectAsStateWithLifecycle()
+    val task by viewModel.task.collectAsStateWithLifecycle()
     val dropDownState by viewModel.dropDownState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val createdString = stringResource(R.string.item_detail_create_success, stringResource(R.string.reminder))
-    val updatedString = stringResource(R.string.item_detail_update_success, stringResource(R.string.reminder))
-    val deletedString = stringResource(R.string.item_detail_delete_success, stringResource(R.string.reminder))
+    val createdString = stringResource(R.string.item_detail_create_success, stringResource(R.string.task))
+    val updatedString = stringResource(R.string.item_detail_update_success, stringResource(R.string.task))
+    val deletedString = stringResource(R.string.item_detail_delete_success, stringResource(R.string.task))
 
     val dropDownActions = ReminderDropDownMenuActions(
         onExpanded = viewModel::onExpanded,
@@ -88,9 +86,9 @@ fun ReminderScreenRoot(
         updateDate = viewModel::updateDate,
         updateTime = viewModel::updateTime
     )
-    ReminderScreen(
+    TaskScreen(
         modifier = modifier,
-        reminder = reminder,
+        task = task,
         state = itemUiState,
         dropDownMenuUiState = dropDownState,
         actions = actions,
@@ -113,7 +111,7 @@ fun ReminderScreenRoot(
         }
     }
 
-    ObserveAsEvents(viewModel.reminderScreenEventChannel) { event ->
+    ObserveAsEvents(viewModel.taskScreenEventChannel) { event ->
         scope.launch {
             when (event) {
                 is ItemUiEvent.ItemErrorEvent -> {
@@ -155,9 +153,9 @@ fun ReminderScreenRoot(
 
 
 @Composable
-internal fun ReminderScreen(
+internal fun TaskScreen(
     modifier: Modifier,
-    reminder: ReminderUiModel,
+    task: TaskUiModel,
     state: ItemUiState,
     dropDownMenuUiState: ReminderDropDownMenuUiState,
     actions: ItemScreenActions,
@@ -172,7 +170,7 @@ internal fun ReminderScreen(
 
         if(state.showDateDialog) {
             DatePickerModal(
-                selectedDate = reminder.date,
+                selectedDate = task.date,
                 onDateSelected = actions.updateDate,
                 onDismiss = actions.onDateClick
             )
@@ -180,7 +178,7 @@ internal fun ReminderScreen(
 
         if(state.showTimeDialog) {
             TimePickerModal(
-                selectedTime = reminder.time,
+                selectedTime = task.time,
                 onTimeSelected = actions.updateTime,
                 onDismiss = actions.onTimeClick
             )
@@ -192,8 +190,8 @@ internal fun ReminderScreen(
         ) {
 
             ItemDetailTopBar(
-                selectedDate = reminder.date.toUiString(),
-                type = AgendaItemType.REMINDER,
+                selectedDate = task.date.toUiString(),
+                type = AgendaItemType.TASK,
                 isEditable = state.isEditable,
                 onCloseClick = actions.onCloseClick,
                 onEditClick = actions.onEditClick,
@@ -206,9 +204,9 @@ internal fun ReminderScreen(
 
                 ItemDetailTypeTitle(
                     modifier = Modifier.padding(top = 24.dp, start = 24.dp),
-                    rectangleColor = ReminderColorId,
-                    rectangleOutlineColor = ReminderSquareStroke,
-                    type = AgendaItemType.REMINDER
+                    rectangleColor = TaskColorId,
+                    rectangleOutlineColor = TaskColorId,
+                    type = AgendaItemType.TASK
                 )
 
                 ItemDetailTitle(
@@ -216,8 +214,8 @@ internal fun ReminderScreen(
                         .padding(top = 24.dp, start = 24.dp, end = 24.dp)
                         .fillMaxWidth(),
                     isEditable = state.isEditable,
-                    title = reminder.title,
-                    onEditClick = { actions.onEditField(reminder.title, EditActionType.TITLE.name) }
+                    title = task.title,
+                    onEditClick = { actions.onEditField(task.title, EditActionType.TITLE.name) }
                 )
 
                 ItemDetailDivider(modifier = Modifier.padding(top = 8.dp, start = 24.dp, end = 24.dp))
@@ -228,8 +226,8 @@ internal fun ReminderScreen(
                         .fillMaxWidth()
                         .height(75.dp),
                     isEditable = state.isEditable,
-                    desc = reminder.desc,
-                    onEditClick = { actions.onEditField(reminder.desc, EditActionType.DESCRIPTION.name) }
+                    desc = task.desc,
+                    onEditClick = { actions.onEditField(task.desc, EditActionType.DESCRIPTION.name) }
                 )
 
                 ItemDetailDivider(modifier = Modifier.padding(top = 8.dp, start = 24.dp, end = 24.dp))
@@ -240,8 +238,8 @@ internal fun ReminderScreen(
                         .height(50.dp)
                         .padding(top = 16.dp, start = 24.dp, end = 24.dp),
                     isEditable = state.isEditable,
-                    time = reminder.time.toUiString(),
-                    date = reminder.date.toUiString(),
+                    time = task.time.toUiString(),
+                    date = task.date.toUiString(),
                     onTimeClick = { actions.onTimeClick() },
                     onDateClick = { actions.onDateClick() }
                 )
@@ -266,7 +264,7 @@ internal fun ReminderScreen(
                             .fillMaxWidth()
                             .height(75.dp)
                             .padding(top = 8.dp, start = 24.dp, end = 24.dp),
-                        type = AgendaItemType.REMINDER,
+                        type = AgendaItemType.TASK,
                         onDeleteClick = {
                             actions.onDeleteClick
                             actions.onCloseClick

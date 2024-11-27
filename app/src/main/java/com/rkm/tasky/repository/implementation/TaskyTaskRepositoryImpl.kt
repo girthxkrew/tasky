@@ -28,7 +28,7 @@ class TaskyTaskRepositoryImpl @Inject constructor(
     private val syncDataSource: SyncDao,
     @IoDispatcher private val  dispatcher: CoroutineDispatcher
 ): TaskyTaskRepository {
-    override suspend fun getTask(id: String): Result<Task?, DatabaseError.ItemError> = withContext(dispatcher){
+    override suspend fun getTask(id: String): Result<Task, DatabaseError.ItemError> = withContext(dispatcher){
        return@withContext when(val result = localDataSource.getTaskById(id)) {
            null -> Result.Error(DatabaseError.ItemError.ITEM_DOES_NOT_EXIST)
            else -> Result.Success(result.asTask())

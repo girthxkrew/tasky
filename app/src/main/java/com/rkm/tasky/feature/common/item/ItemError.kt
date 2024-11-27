@@ -1,4 +1,4 @@
-package com.rkm.tasky.feature.reminder.error
+package com.rkm.tasky.feature.common.item
 
 import com.rkm.tasky.util.result.Error
 
