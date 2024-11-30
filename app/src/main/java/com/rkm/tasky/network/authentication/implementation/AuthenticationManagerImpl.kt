@@ -10,7 +10,9 @@ import com.rkm.tasky.network.authentication.abstraction.AuthenticationManager
 import com.rkm.tasky.network.authentication.mapper.asSessionInfo
 import com.rkm.tasky.network.repository.abstraction.AuthenticationRepository
 import com.rkm.tasky.network.util.NetworkError
-import com.rkm.tasky.sync.worker.SyncWorker
+import com.rkm.tasky.sync.worker.CreateSyncWorker
+import com.rkm.tasky.sync.worker.DeleteSyncWorker
+import com.rkm.tasky.sync.worker.UpdateSyncWorker
 import com.rkm.tasky.util.result.EmptyResult
 import com.rkm.tasky.util.result.asEmptyDataResult
 import com.rkm.tasky.util.result.onSuccess
@@ -54,14 +56,29 @@ class AuthenticationManagerImpl @Inject constructor(
     private fun scheduleWork() {
         val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
             .setRequiresBatteryNotLow(true).build()
-        val periodicSyncWorkRequest = PeriodicWorkRequestBuilder<SyncWorker>(30, TimeUnit.MINUTES)
+        val periodicCreateSyncWorkRequest = PeriodicWorkRequestBuilder<CreateSyncWorker>(30, TimeUnit.MINUTES)
             .setConstraints(constraints)
-            .addTag(SyncWorker.SYNC_WORKER_TAG)
+            .build()
+        val periodicDeleteSyncWorkRequest = PeriodicWorkRequestBuilder<DeleteSyncWorker>(30, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .build()
+        val periodicUpdateSyncWorkRequest = PeriodicWorkRequestBuilder<UpdateSyncWorker>(30, TimeUnit.MINUTES)
+            .setConstraints(constraints)
             .build()
         workManager.enqueueUniquePeriodicWork(
-            SyncWorker.SYNC_WORKER_TAG,
+            CreateSyncWorker.CREATE_SYNC_WORKER_TAG,
             ExistingPeriodicWorkPolicy.UPDATE,
-            periodicSyncWorkRequest
+            periodicCreateSyncWorkRequest
+        )
+        workManager.enqueueUniquePeriodicWork(
+            DeleteSyncWorker.DELETE_SYNC_WORKER_TAG,
+            ExistingPeriodicWorkPolicy.UPDATE,
+            periodicDeleteSyncWorkRequest
+        )
+        workManager.enqueueUniquePeriodicWork(
+            UpdateSyncWorker.UPDATE_SYNC_WORKER_TAG,
+            ExistingPeriodicWorkPolicy.UPDATE,
+            periodicUpdateSyncWorkRequest
         )
     }
 }

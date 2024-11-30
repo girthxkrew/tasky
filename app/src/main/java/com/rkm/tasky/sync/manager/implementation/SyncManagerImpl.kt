@@ -1,11 +1,15 @@
 package com.rkm.tasky.sync.manager.implementation
 
+import com.rkm.tasky.database.dao.AttendeeDao
+import com.rkm.tasky.database.dao.EventDao
+import com.rkm.tasky.database.dao.PhotoDao
 import com.rkm.tasky.database.dao.ReminderDao
 import com.rkm.tasky.database.dao.SyncDao
 import com.rkm.tasky.database.dao.TaskDao
 import com.rkm.tasky.database.model.SyncItemType
 import com.rkm.tasky.database.model.SyncUserAction
 import com.rkm.tasky.di.IoDispatcher
+import com.rkm.tasky.feature.event.model.Event
 import com.rkm.tasky.network.datasource.TaskyAgendaRemoteDataSource
 import com.rkm.tasky.network.datasource.TaskyEventRemoteDataSource
 import com.rkm.tasky.network.datasource.TaskyReminderRemoteDataSource
@@ -13,6 +17,9 @@ import com.rkm.tasky.network.datasource.TaskyTaskRemoteDataSource
 import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.network.util.asMultiPartBody
 import com.rkm.tasky.network.util.safeCall
+import com.rkm.tasky.repository.mapper.asAttendeeEntity
+import com.rkm.tasky.repository.mapper.asEventEntity
+import com.rkm.tasky.repository.mapper.asPhotoEntity
 import com.rkm.tasky.sync.manager.abstraction.SyncManager
 import com.rkm.tasky.sync.mapper.asCreateEventRequest
 import com.rkm.tasky.sync.mapper.asReminderRequest
@@ -43,6 +50,9 @@ class SyncManagerImpl @Inject constructor(
     private val updateEventRepository: SyncUpdateEventRepository,
     private val taskLocalDataSource: TaskDao,
     private val reminderLocalDataSource: ReminderDao,
+    private val eventLocalDataSource: EventDao,
+    private val attendeeLocalDataSource: AttendeeDao,
+    private val photoLocalDataSource: PhotoDao,
     @IoDispatcher private val dispatcher: CoroutineDispatcher,
     private val imageProcessor: ImageProcessor
 ): SyncManager {
@@ -62,6 +72,8 @@ class SyncManagerImpl @Inject constructor(
 
     override suspend fun syncUpdatedItems(): EmptyResult<NetworkError.APIError> = withContext(dispatcher) {
         val syncItems = syncDataSource.getSyncItemsByAction(SyncUserAction.UPDATE.name)
+        val numOfItems = syncItems.size
+        var totalCalls = 0
         if(syncItems.isEmpty()) {
             return@withContext Result.Success(Unit).asEmptyDataResult()
         }
@@ -77,24 +89,40 @@ class SyncManagerImpl @Inject constructor(
         taskToSync.await().map { task ->
             launch {
                 val result = safeCall { taskRemoteDataSource.updateTask(task.asTaskRequest()) }
-                result.onSuccess { itemsToRemoveList.add(task.id) }
-            }.join()
-        }
+                result.onSuccess {
+                    itemsToRemoveList.add(task.id)
+                    totalCalls++
+                }
+            }
+        }.joinAll()
         reminderToSync.await().map { reminder ->
             launch {
                 val result = safeCall { reminderRemoteDataSource.updateReminder(reminder.asReminderRequest()) }
-                result.onSuccess { itemsToRemoveList.add(reminder.id) }
-            }.join()
-        }
+                result.onSuccess {
+                    itemsToRemoveList.add(reminder.id)
+                    totalCalls++
+                }
+            }
+        }.joinAll()
         val clearEventList = mutableListOf<String>()
         eventsToSync.await().onSuccess { events ->
             events.map { event ->
                 launch {
                     val photosToUpload = event.photos.mapNotNull { imageProcessor.getImageFromUri(it.filePath) }.asMultiPartBody()
                     val result = safeCall { eventRemoteDataSource.updateEvent(event.asUpdateEventRequest(), photosToUpload) }
-                    result.onSuccess {clearEventList.add(event.event.id)}
-                }.join()
-            }
+                    result.onSuccess {
+                        clearEventList.add(event.event.id)
+                        totalCalls++
+                        eventLocalDataSource.upsertAllEventInfo(
+                            event = it.asEventEntity(),
+                            attendees = it.attendees.map { attendee -> attendee.asAttendeeEntity() },
+                            photos = it.photos.map { photo -> photo.asPhotoEntity(it.id) },
+                            photoDao = photoLocalDataSource,
+                            attendeeDao = attendeeLocalDataSource
+                        )
+                    }
+                }
+            }.joinAll()
         }
 
         listOf(
@@ -102,11 +130,18 @@ class SyncManagerImpl @Inject constructor(
             launch { updateEventRepository.deleteEvents(clearEventList) },
         ).joinAll()
 
-        return@withContext Result.Success(taskToSync).asEmptyDataResult()
+        return@withContext when {
+            totalCalls == numOfItems -> Result.Success(Unit).asEmptyDataResult()
+            totalCalls == 0 -> Result.Error(NetworkError.APIError.UPLOAD_FAILED)
+            totalCalls < numOfItems -> Result.Error(NetworkError.APIError.RETRY)
+            else -> Result.Error(NetworkError.APIError.UNKNOWN)
+        }
     }
 
     override suspend fun syncCreatedItems(): EmptyResult<NetworkError.APIError> = withContext(dispatcher){
         val syncItems = syncDataSource.getSyncItemsByAction(SyncUserAction.CREATE.name)
+        val numOfItems = syncItems.size
+        var totalCalls = 0
         if(syncItems.isEmpty()) {
             return@withContext Result.Success(Unit).asEmptyDataResult()
         }
@@ -122,24 +157,40 @@ class SyncManagerImpl @Inject constructor(
         taskToSync.await().map { task ->
             launch {
                 val result = safeCall { taskRemoteDataSource.createTask(task.asTaskRequest()) }
-                result.onSuccess { itemsToRemoveList.add(task.id) }
-            }.join()
-        }
+                result.onSuccess {
+                    itemsToRemoveList.add(task.id)
+                    totalCalls++
+                }
+            }
+        }.joinAll()
         reminderToSync.await().map { reminder ->
             launch {
                 val result = safeCall { reminderRemoteDataSource.createReminder(reminder.asReminderRequest()) }
-                result.onSuccess { itemsToRemoveList.add(reminder.id) }
-            }.join()
-        }
+                result.onSuccess {
+                    itemsToRemoveList.add(reminder.id)
+                    totalCalls++
+                }
+            }
+        }.joinAll()
         val clearEventList = mutableListOf<String>()
         eventsToSync.await().onSuccess { events ->
             events.map { event ->
                 launch {
                     val photosToUpload = event.photos.mapNotNull { imageProcessor.getImageFromUri(it.filePath) }.asMultiPartBody()
                     val result = safeCall { eventRemoteDataSource.createEvent(event.asCreateEventRequest(), photosToUpload) }
-                    result.onSuccess {clearEventList.add(event.event.id)}
-                }.join()
-            }
+                    result.onSuccess {
+                        clearEventList.add(event.event.id)
+                        eventLocalDataSource.upsertAllEventInfo(
+                            event = it.asEventEntity(),
+                            attendees = it.attendees.map { attendee -> attendee.asAttendeeEntity() },
+                            photos = it.photos.map { photo -> photo.asPhotoEntity(it.id) },
+                            photoDao = photoLocalDataSource,
+                            attendeeDao = attendeeLocalDataSource
+                        )
+                        totalCalls++
+                    }
+                }
+            }.joinAll()
         }
 
         listOf(
@@ -147,6 +198,11 @@ class SyncManagerImpl @Inject constructor(
             launch { createEventRepository.deleteEvents(clearEventList) }
         ).joinAll()
 
-        return@withContext Result.Success(Unit).asEmptyDataResult()
+        return@withContext when {
+            totalCalls == numOfItems -> Result.Success(Unit).asEmptyDataResult()
+            totalCalls == 0 -> Result.Error(NetworkError.APIError.UPLOAD_FAILED)
+            totalCalls < numOfItems -> Result.Error(NetworkError.APIError.RETRY)
+            else -> Result.Error(NetworkError.APIError.UNKNOWN)
+        }
     }
 }

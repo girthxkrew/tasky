@@ -9,8 +9,8 @@ import com.rkm.tasky.database.model.PhotoEntity
 @Dao
 interface PhotoDao {
 
-    @Query("SELECT * FROM photos WHERE eventId = :id")
-    suspend fun getPhotosByEventId(id: String): List<PhotoEntity>
+    @Query("SELECT * FROM photos WHERE eventId = (:ids)")
+    suspend fun getPhotosByEventId(ids: List<String>): List<PhotoEntity>
 
     @Upsert
     suspend fun upsertPhotos(photos: List<PhotoEntity>)
