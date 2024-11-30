@@ -3,6 +3,7 @@ package com.rkm.tasky.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.rkm.tasky.database.dao.AgendaDao
 import com.rkm.tasky.database.dao.AttendeeDao
 import com.rkm.tasky.database.dao.EventDao
 import com.rkm.tasky.database.dao.PhotoDao
@@ -45,6 +46,7 @@ import com.rkm.tasky.database.model.TaskEntity
 )
 @TypeConverters(SyncConverter::class)
 abstract class TaskyDatabase : RoomDatabase() {
+    abstract fun agendaDao(): AgendaDao
     abstract fun taskDao(): TaskDao
     abstract fun reminderDao(): ReminderDao
     abstract fun syncDao(): SyncDao

@@ -25,7 +25,7 @@ interface EventDao {
     suspend fun getEventById(id: String): EventEntity
 
     @Upsert
-    suspend fun upsertEvent(event: EventEntity)
+    suspend fun upsertEvents(events: List<EventEntity>)
 
     @Transaction
     suspend fun upsertAllEventInfo(

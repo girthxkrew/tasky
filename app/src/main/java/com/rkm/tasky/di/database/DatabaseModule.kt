@@ -3,6 +3,7 @@ package com.rkm.tasky.di.database
 import android.content.Context
 import androidx.room.Room
 import com.rkm.tasky.database.TaskyDatabase
+import com.rkm.tasky.database.dao.AgendaDao
 import com.rkm.tasky.database.dao.AttendeeDao
 import com.rkm.tasky.database.dao.EventDao
 import com.rkm.tasky.database.dao.PhotoDao
@@ -35,6 +36,12 @@ object DatabaseModule {
             TaskyDatabase::class.java,
             DATABASE_NAME
         ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun providesAgendaDao(db: TaskyDatabase): AgendaDao {
+        return db.agendaDao()
     }
 
     @Provides

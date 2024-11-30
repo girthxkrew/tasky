@@ -109,6 +109,14 @@ fun EventDTO.Attendee.asAttendeeEntity(): AttendeeEntity {
     )
 }
 
+fun EventDTO.asEventWithDetails(): EventWithDetails {
+    return EventWithDetails(
+        event = this.asEventEntity(),
+        attendees = this.attendees.map { it.asAttendeeEntity() },
+        photos = this.photos.map { it.asPhotoEntity(this.id) }
+    )
+}
+
 fun EventDTO.Photo.asPhotoEntity(id: String): PhotoEntity {
     return PhotoEntity(
         key = this.key,
