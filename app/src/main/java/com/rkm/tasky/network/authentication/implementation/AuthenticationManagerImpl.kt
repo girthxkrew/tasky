@@ -10,9 +10,10 @@ import com.rkm.tasky.network.authentication.abstraction.AuthenticationManager
 import com.rkm.tasky.network.authentication.mapper.asSessionInfo
 import com.rkm.tasky.network.repository.abstraction.AuthenticationRepository
 import com.rkm.tasky.network.util.NetworkError
-import com.rkm.tasky.sync.worker.CreateSyncWorker
-import com.rkm.tasky.sync.worker.DeleteSyncWorker
-import com.rkm.tasky.sync.worker.UpdateSyncWorker
+import com.rkm.tasky.sync.worker.OfflineAgendaSyncWorker
+import com.rkm.tasky.sync.worker.OfflineAgendaSyncWorker.Companion.OFFLINE_AGENDA_SYNC_WORKER_TAG
+import com.rkm.tasky.sync.worker.RemoteAgendaSyncWorker
+import com.rkm.tasky.sync.worker.RemoteAgendaSyncWorker.Companion.REMOTE_AGENDA_SYNC_WORKER_TAG
 import com.rkm.tasky.util.result.EmptyResult
 import com.rkm.tasky.util.result.asEmptyDataResult
 import com.rkm.tasky.util.result.onSuccess
@@ -54,31 +55,28 @@ class AuthenticationManagerImpl @Inject constructor(
     }
 
     private fun scheduleWork() {
+
         val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
             .setRequiresBatteryNotLow(true).build()
-        val periodicCreateSyncWorkRequest = PeriodicWorkRequestBuilder<CreateSyncWorker>(30, TimeUnit.MINUTES)
+
+        val periodicOfflineSyncWorkRequest = PeriodicWorkRequestBuilder<OfflineAgendaSyncWorker>(30, TimeUnit.MINUTES)
             .setConstraints(constraints)
             .build()
-        val periodicDeleteSyncWorkRequest = PeriodicWorkRequestBuilder<DeleteSyncWorker>(30, TimeUnit.MINUTES)
+
+        val periodicRemoteSyncWorkRequest = PeriodicWorkRequestBuilder<RemoteAgendaSyncWorker>(30, TimeUnit.MINUTES)
             .setConstraints(constraints)
             .build()
-        val periodicUpdateSyncWorkRequest = PeriodicWorkRequestBuilder<UpdateSyncWorker>(30, TimeUnit.MINUTES)
-            .setConstraints(constraints)
-            .build()
+
         workManager.enqueueUniquePeriodicWork(
-            CreateSyncWorker.CREATE_SYNC_WORKER_TAG,
+            OFFLINE_AGENDA_SYNC_WORKER_TAG,
             ExistingPeriodicWorkPolicy.UPDATE,
-            periodicCreateSyncWorkRequest
+            periodicOfflineSyncWorkRequest
         )
+
         workManager.enqueueUniquePeriodicWork(
-            DeleteSyncWorker.DELETE_SYNC_WORKER_TAG,
+            REMOTE_AGENDA_SYNC_WORKER_TAG,
             ExistingPeriodicWorkPolicy.UPDATE,
-            periodicDeleteSyncWorkRequest
-        )
-        workManager.enqueueUniquePeriodicWork(
-            UpdateSyncWorker.UPDATE_SYNC_WORKER_TAG,
-            ExistingPeriodicWorkPolicy.UPDATE,
-            periodicUpdateSyncWorkRequest
+            periodicRemoteSyncWorkRequest
         )
     }
 }

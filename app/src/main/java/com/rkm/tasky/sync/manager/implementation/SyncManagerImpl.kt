@@ -1,15 +1,21 @@
 package com.rkm.tasky.sync.manager.implementation
 
+import androidx.room.withTransaction
+import com.rkm.tasky.database.TaskyDatabase
+import com.rkm.tasky.database.dao.AgendaDao
 import com.rkm.tasky.database.dao.AttendeeDao
 import com.rkm.tasky.database.dao.EventDao
 import com.rkm.tasky.database.dao.PhotoDao
 import com.rkm.tasky.database.dao.ReminderDao
 import com.rkm.tasky.database.dao.SyncDao
 import com.rkm.tasky.database.dao.TaskDao
+import com.rkm.tasky.database.model.AgendaDetails
+import com.rkm.tasky.database.model.AttendeeEntity
+import com.rkm.tasky.database.model.EventAttendeesAndPhotosToDelete
+import com.rkm.tasky.database.model.PhotoEntity
 import com.rkm.tasky.database.model.SyncItemType
 import com.rkm.tasky.database.model.SyncUserAction
 import com.rkm.tasky.di.IoDispatcher
-import com.rkm.tasky.feature.event.model.Event
 import com.rkm.tasky.network.datasource.TaskyAgendaRemoteDataSource
 import com.rkm.tasky.network.datasource.TaskyEventRemoteDataSource
 import com.rkm.tasky.network.datasource.TaskyReminderRemoteDataSource
@@ -19,7 +25,10 @@ import com.rkm.tasky.network.util.asMultiPartBody
 import com.rkm.tasky.network.util.safeCall
 import com.rkm.tasky.repository.mapper.asAttendeeEntity
 import com.rkm.tasky.repository.mapper.asEventEntity
+import com.rkm.tasky.repository.mapper.asEventWithDetails
 import com.rkm.tasky.repository.mapper.asPhotoEntity
+import com.rkm.tasky.repository.mapper.asReminderEntity
+import com.rkm.tasky.repository.mapper.asTaskEntity
 import com.rkm.tasky.sync.manager.abstraction.SyncManager
 import com.rkm.tasky.sync.mapper.asCreateEventRequest
 import com.rkm.tasky.sync.mapper.asReminderRequest
@@ -32,6 +41,7 @@ import com.rkm.tasky.util.image.ImageProcessor
 import com.rkm.tasky.util.result.EmptyResult
 import com.rkm.tasky.util.result.Result
 import com.rkm.tasky.util.result.asEmptyDataResult
+import com.rkm.tasky.util.result.onFailure
 import com.rkm.tasky.util.result.onSuccess
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
@@ -41,8 +51,10 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SyncManagerImpl @Inject constructor(
+    @IoDispatcher private val dispatcher: CoroutineDispatcher,
     private val syncDataSource: SyncDao,
     private val agendaRemoteDataSource: TaskyAgendaRemoteDataSource,
+    private val agendaLocalDataSource: AgendaDao,
     private val eventRemoteDataSource: TaskyEventRemoteDataSource,
     private val reminderRemoteDataSource: TaskyReminderRemoteDataSource,
     private val taskRemoteDataSource: TaskyTaskRemoteDataSource,
@@ -53,10 +65,10 @@ class SyncManagerImpl @Inject constructor(
     private val eventLocalDataSource: EventDao,
     private val attendeeLocalDataSource: AttendeeDao,
     private val photoLocalDataSource: PhotoDao,
-    @IoDispatcher private val dispatcher: CoroutineDispatcher,
+    private val db: TaskyDatabase,
     private val imageProcessor: ImageProcessor
 ): SyncManager {
-    override suspend fun syncDeletedItems(): EmptyResult<NetworkError.APIError> = withContext(dispatcher) {
+    override suspend fun syncLocalDeletedAgendaItems(): EmptyResult<NetworkError.APIError> = withContext(dispatcher) {
         val syncItems = syncDataSource.getSyncItemsByAction(SyncUserAction.DELETE.name)
         if(syncItems.isEmpty()) {
             return@withContext Result.Success(Unit).asEmptyDataResult()
@@ -70,7 +82,7 @@ class SyncManagerImpl @Inject constructor(
         return@withContext networkResult.asEmptyDataResult()
     }
 
-    override suspend fun syncUpdatedItems(): EmptyResult<NetworkError.APIError> = withContext(dispatcher) {
+    override suspend fun syncLocalUpdatedAgendaItems(): EmptyResult<NetworkError.APIError> = withContext(dispatcher) {
         val syncItems = syncDataSource.getSyncItemsByAction(SyncUserAction.UPDATE.name)
         val numOfItems = syncItems.size
         var totalCalls = 0
@@ -138,7 +150,7 @@ class SyncManagerImpl @Inject constructor(
         }
     }
 
-    override suspend fun syncCreatedItems(): EmptyResult<NetworkError.APIError> = withContext(dispatcher){
+    override suspend fun syncLocalCreatedAgendaItems(): EmptyResult<NetworkError.APIError> = withContext(dispatcher){
         val syncItems = syncDataSource.getSyncItemsByAction(SyncUserAction.CREATE.name)
         val numOfItems = syncItems.size
         var totalCalls = 0
@@ -204,5 +216,84 @@ class SyncManagerImpl @Inject constructor(
             totalCalls < numOfItems -> Result.Error(NetworkError.APIError.RETRY)
             else -> Result.Error(NetworkError.APIError.UNKNOWN)
         }
+    }
+
+    override suspend fun syncRemoteAgendaItems(): EmptyResult<NetworkError.APIError> = withContext(dispatcher) {
+
+        val agendaResults = safeCall { agendaRemoteDataSource.getFullAgenda() }
+
+        agendaResults.onFailure { error ->
+            return@withContext Result.Error(error)
+        }
+
+        val result = (agendaResults as Result.Success).data
+
+        val remoteEvents = result.events.map { it.asEventWithDetails() }
+        val remoteReminders = result.reminders.map { it.asReminderEntity() }
+        val remoteTasks = result.tasks.map { it.asTaskEntity() }
+
+        val localAgenda = agendaLocalDataSource.getAllAgendaItems()
+
+        val reminderToDelete = localAgenda.reminders.filter { localReminder ->
+            remoteReminders.none { remoteReminder -> remoteReminder.id == localReminder.id }
+        }
+
+        val tasksToDelete = localAgenda.tasks.filter { localTask ->
+            remoteTasks.none { remoteTask -> remoteTask.id == localTask.id }
+        }
+
+        val eventToDelete = localAgenda.events.filter { localEvent ->
+            remoteEvents.none { remoteEvent -> remoteEvent.event.id == localEvent.event.id }
+        }
+
+        val eventsMap = remoteEvents.associateBy { it.event.id }
+        val attendeesToDelete = mutableListOf<AttendeeEntity>()
+        val photosToDelete = mutableListOf<PhotoEntity>()
+
+        localAgenda.events.forEach { oldEvent ->
+            if(eventsMap.containsKey(oldEvent.event.id)) {
+                val newEvent = eventsMap[oldEvent.event.id]!!
+
+                attendeesToDelete += oldEvent.attendees.filter { oldAttendee ->
+                    newEvent.attendees.none { newAttendee -> newAttendee.userId == oldAttendee.userId }
+                }
+
+                photosToDelete += oldEvent.photos.filter { oldPhoto ->
+                    newEvent.photos.none { newPhoto -> newPhoto.key == oldPhoto.key }
+                }
+            }
+        }
+
+        val agendaItemsToDelete = AgendaDetails(
+            events = eventToDelete,
+            reminders = reminderToDelete,
+            tasks = tasksToDelete
+        )
+
+        val photosAndAttendeesToDelete = EventAttendeesAndPhotosToDelete(
+            attendees = attendeesToDelete,
+            photos = photosToDelete
+        )
+
+        val remoteAgenda = AgendaDetails(remoteEvents, remoteReminders, remoteTasks)
+
+        db.withTransaction {
+            reminderLocalDataSource.upsertReminders(remoteAgenda.reminders)
+            reminderLocalDataSource.deleteRemindersById(agendaItemsToDelete.reminders.map { it.id })
+            taskLocalDataSource.upsertTasks(remoteAgenda.tasks)
+            taskLocalDataSource.deleteTasksById(agendaItemsToDelete.tasks.map { it.id })
+            eventLocalDataSource.upsertEvents(remoteAgenda.events.map { event -> event.event })
+            remoteAgenda.events.forEach { details ->
+                attendeeLocalDataSource.upsertAttendees(details.attendees)
+                photoLocalDataSource.upsertPhotos(details.photos)
+            }
+            photosAndAttendeesToDelete.attendees.forEach { attendee ->
+                attendeeLocalDataSource.deleteByUserIdAndEventId(attendee.userId, attendee.eventId)
+            }
+            photoLocalDataSource.deletePhotos(photosAndAttendeesToDelete.photos.map { it.key })
+            eventLocalDataSource.deleteEventsByIds(agendaItemsToDelete.events.map { it.event.id })
+        }
+
+        return@withContext Result.Success(Unit).asEmptyDataResult()
     }
 }

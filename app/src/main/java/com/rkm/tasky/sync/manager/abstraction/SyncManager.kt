@@ -4,7 +4,8 @@ import com.rkm.tasky.network.util.NetworkError
 import com.rkm.tasky.util.result.EmptyResult
 
 interface SyncManager {
-    suspend fun syncDeletedItems(): EmptyResult<NetworkError.APIError>
-    suspend fun syncUpdatedItems(): EmptyResult<NetworkError.APIError>
-    suspend fun syncCreatedItems(): EmptyResult<NetworkError.APIError>
+    suspend fun syncLocalDeletedAgendaItems(): EmptyResult<NetworkError.APIError>
+    suspend fun syncLocalUpdatedAgendaItems(): EmptyResult<NetworkError.APIError>
+    suspend fun syncLocalCreatedAgendaItems(): EmptyResult<NetworkError.APIError>
+    suspend fun syncRemoteAgendaItems(): EmptyResult<NetworkError.APIError>
 }
