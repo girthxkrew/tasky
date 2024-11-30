@@ -25,6 +25,48 @@ class EventTest {
     private lateinit var eventDataSource: EventDao
     private lateinit var attendeeDataSource: AttendeeDao
     private lateinit var photoDataSource: PhotoDao
+    private val event = EventEntity(
+        id = "1",
+        title = "Test Event",
+        description = "Test Description",
+        from = 0L,
+        to = 0L,
+        remindAt = 0L,
+        host = "test2Id@gmail.com",
+        isUserEventCreator = true
+    )
+
+    private val attendees = listOf(
+        AttendeeEntity(
+            userId = "12",
+            email = "testId1@gmail.com",
+            fullName = "Bob Smith",
+            eventId = "1",
+            isGoing = true,
+            remindAt = 0L
+        ),
+        AttendeeEntity(
+            userId = "13",
+            email = "test2Id@gmail.com",
+            fullName = "Bobba Smith",
+            eventId = "1",
+            isGoing = true,
+            remindAt = 0L
+        )
+    )
+
+    private val photos = listOf(
+        PhotoEntity(
+            key = "2",
+            url = "www.google.com",
+            eventId = "1"
+        ),
+        PhotoEntity(
+            key = "3",
+            url = "www.google.com",
+            eventId = "1"
+        )
+    )
 
     @Before
     fun setUp() {
@@ -37,53 +79,10 @@ class EventTest {
 
     @Test
     fun getEventDetailsResults() = runTest {
-        val attendee1 = AttendeeEntity(
-            userId = "12",
-            email = "testId1@gmail.com",
-            fullName = "Bob Smith",
-            eventId = "1",
-            isGoing = true,
-            remindAt = 0L
-        )
-
-        val attendee2 = AttendeeEntity(
-            userId = "13",
-            email = "test2Id@gmail.com",
-            fullName = "Bobba Smith",
-            eventId = "1",
-            isGoing = true,
-            remindAt = 0L
-        )
-
-        val photo1 = PhotoEntity(
-            key = "2",
-            url = "www.google.com",
-            eventId = "1"
-        )
-
-        val photo2 = PhotoEntity(
-            key = "3",
-            url = "www.google.com",
-            eventId = "1"
-        )
-
-        val event = EventEntity(
-            id = "1",
-            title = "Test Event",
-            description = "Test Description",
-            from = 0L,
-            to = 0L,
-            remindAt = 0L,
-            host = "test2Id@gmail.com",
-            isUserEventCreator = true
-        )
-
-        val attendees = listOf(attendee1, attendee2)
-        val photos = listOf(photo1, photo2)
 
         eventDataSource.upsertEvent(event)
-        attendeeDataSource.upsertAttendees(listOf(attendee1, attendee2))
-        photoDataSource.upsertPhotos(listOf(photo1, photo2))
+        attendeeDataSource.upsertAttendees(attendees)
+        photoDataSource.upsertPhotos(photos)
 
         val result = eventDataSource.getAllEventDetails("1")
 
@@ -94,6 +93,173 @@ class EventTest {
 
         }
         assertTrue(result != null)
+    }
+
+    @Test
+    fun insertEventDetails() = runTest {
+        eventDataSource.upsertAllEventInfo(
+            event = event,
+            attendees = attendees,
+            photos = photos,
+            photoDao = photoDataSource,
+            attendeeDao = attendeeDataSource
+        )
+
+        val eventResult = eventDataSource.getEventById(event.id)
+        val attendeesResult = attendeeDataSource.getAttendeesByEventId(listOf(event.id))
+        val photosResult = photoDataSource.getPhotosByEventId(listOf(event.id))
+
+        assertEquals(eventResult, event)
+        assertEquals(attendees.toHashSet(), attendeesResult.toHashSet())
+        assertEquals(photos.toHashSet(), photosResult.toHashSet())
+    }
+
+    @Test
+    fun updateNewAttendeesAndPhotosEventDetails() = runTest {
+        val newAttendee = listOf(AttendeeEntity(
+            userId = "14",
+            email = "testId1@gmail.com",
+            fullName = "Bobber Smith",
+            eventId = "1",
+            isGoing = true,
+            remindAt = 0L
+        ))
+
+        val newPhotos = listOf(PhotoEntity(
+            key = "4",
+            url = "www.google.com",
+            eventId = "1"
+        ))
+
+        val newEvent = event.copy(title = "New Title")
+
+        eventDataSource.upsertAllEventInfo(
+            event = event,
+            attendees = attendees,
+            photos = photos,
+            photoDao = photoDataSource,
+            attendeeDao = attendeeDataSource
+        )
+
+        eventDataSource.upsertAllEventInfo(
+            event = newEvent,
+            attendees = newAttendee + attendees,
+            photos = newPhotos + photos,
+            photoDao = photoDataSource,
+            attendeeDao = attendeeDataSource
+        )
+
+        val eventResult = eventDataSource.getEventById(event.id)
+        val attendeesResult = attendeeDataSource.getAttendeesByEventId(listOf(event.id))
+        val photosResult = photoDataSource.getPhotosByEventId(listOf(event.id))
+
+        assertEquals(eventResult, newEvent)
+        assertEquals((newAttendee + attendees).toHashSet(), attendeesResult.toHashSet())
+        assertEquals((newPhotos + photos).toHashSet(), photosResult.toHashSet())
+    }
+
+    @Test
+    fun updateRemoveOneAttendeesAndPhotosEventDetails() = runTest {
+        val newAttendee = listOf(AttendeeEntity(
+            userId = "14",
+            email = "testId1@gmail.com",
+            fullName = "Bobber Smith",
+            eventId = "1",
+            isGoing = true,
+            remindAt = 0L
+        ))
+
+        val newPhotos = listOf(PhotoEntity(
+            key = "4",
+            url = "www.google.com",
+            eventId = "1"
+        ))
+
+        val newEvent = event.copy(title = "New Title")
+
+        eventDataSource.upsertAllEventInfo(
+            event = event,
+            attendees = attendees,
+            photos = photos,
+            photoDao = photoDataSource,
+            attendeeDao = attendeeDataSource
+        )
+
+        eventDataSource.upsertAllEventInfo(
+            event = newEvent,
+            attendees = newAttendee + attendees.last(),
+            photos = newPhotos + photos.last(),
+            photoDao = photoDataSource,
+            attendeeDao = attendeeDataSource
+        )
+
+        val eventResult = eventDataSource.getEventById(event.id)
+        val attendeesResult = attendeeDataSource.getAttendeesByEventId(listOf(event.id))
+        val photosResult = photoDataSource.getPhotosByEventId(listOf(event.id))
+
+        assertEquals(eventResult, newEvent)
+        assertEquals((newAttendee + attendees.last()).toHashSet(), attendeesResult.toHashSet())
+        assertEquals((newPhotos + photos.last()).toHashSet(), photosResult.toHashSet())
+    }
+
+    @Test
+    fun updatePassEmptyListEventDetails() = runTest {
+
+        val newEvent = event.copy(title = "New Title")
+
+        eventDataSource.upsertAllEventInfo(
+            event = event,
+            attendees = attendees,
+            photos = photos,
+            photoDao = photoDataSource,
+            attendeeDao = attendeeDataSource
+        )
+
+        eventDataSource.upsertAllEventInfo(
+            event = newEvent,
+            attendees = emptyList(),
+            photos = emptyList(),
+            photoDao = photoDataSource,
+            attendeeDao = attendeeDataSource
+        )
+
+        val eventResult = eventDataSource.getEventById(event.id)
+        val attendeesResult = attendeeDataSource.getAttendeesByEventId(listOf(event.id))
+        val photosResult = photoDataSource.getPhotosByEventId(listOf(event.id))
+
+        assertEquals(eventResult, newEvent)
+        assertTrue(attendeesResult.isEmpty())
+        assertTrue(photosResult.isEmpty())
+    }
+
+    @Test
+    fun updateSameAttendeesAndPhotosEventDetails() = runTest {
+
+        val newEvent = event.copy(title = "New Title")
+
+        eventDataSource.upsertAllEventInfo(
+            event = event,
+            attendees = attendees,
+            photos = photos,
+            photoDao = photoDataSource,
+            attendeeDao = attendeeDataSource
+        )
+
+        eventDataSource.upsertAllEventInfo(
+            event = newEvent,
+            attendees = attendees,
+            photos = photos,
+            photoDao = photoDataSource,
+            attendeeDao = attendeeDataSource
+        )
+
+        val eventResult = eventDataSource.getEventById(event.id)
+        val attendeesResult = attendeeDataSource.getAttendeesByEventId(listOf(event.id))
+        val photosResult = photoDataSource.getPhotosByEventId(listOf(event.id))
+
+        assertEquals(eventResult, newEvent)
+        assertEquals(attendees.toHashSet(), attendeesResult.toHashSet())
+        assertEquals(photos.toHashSet(), photosResult.toHashSet())
     }
 
     @After

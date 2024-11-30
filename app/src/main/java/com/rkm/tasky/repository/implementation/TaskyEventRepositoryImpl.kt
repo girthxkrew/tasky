@@ -61,9 +61,13 @@ class TaskyEventRepositoryImpl @Inject constructor(
                 )
             }
             result.onSuccess {
-                localDataSource.upsertEvent(it.asEventEntity())
-                attendeeLocalDataSource.upsertAttendees(it.attendees.map { attendee -> attendee.asAttendeeEntity() })
-                photoLocalDataSource.upsertPhotos(it.photos.map { photo -> photo.asPhotoEntity(it.id) })
+                localDataSource.upsertAllEventInfo(
+                    event = it.asEventEntity(),
+                    attendees = it.attendees.map { attendee -> attendee.asAttendeeEntity() },
+                    photos = it.photos.map { photo -> photo.asPhotoEntity(it.id) },
+                    photoDao = photoLocalDataSource,
+                    attendeeDao = attendeeLocalDataSource
+                )
             }
 
             result.onFailure {
@@ -82,9 +86,13 @@ class TaskyEventRepositoryImpl @Inject constructor(
                 )
             }
             result.onSuccess {
-                localDataSource.upsertEvent(it.asEventEntity())
-                attendeeLocalDataSource.upsertAttendees(it.attendees.map { attendee -> attendee.asAttendeeEntity() })
-                photoLocalDataSource.upsertPhotos(it.photos.map { photo -> photo.asPhotoEntity(it.id) })
+                localDataSource.upsertAllEventInfo(
+                    event = it.asEventEntity(),
+                    attendees = it.attendees.map { attendee -> attendee.asAttendeeEntity() },
+                    photos = it.photos.map { photo -> photo.asPhotoEntity(it.id) },
+                    photoDao = photoLocalDataSource,
+                    attendeeDao = attendeeLocalDataSource
+                )
             }
 
             result.onFailure {

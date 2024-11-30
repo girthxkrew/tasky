@@ -18,6 +18,8 @@ fun errorToUiMessage(error: NetworkError.APIError): Int {
         NetworkError.APIError.SERIALIZATION ->  R.string.api_error_serialization
         NetworkError.APIError.UNKNOWN ->  R.string.api_error_unknown
         NetworkError.APIError.NO_SESSION_INFO ->  R.string.api_error_no_session_info
+        NetworkError.APIError.RETRY -> R.string.api_error_retry
+        NetworkError.APIError.UPLOAD_FAILED -> R.string.api_error_upload_failed
     }
 }
 

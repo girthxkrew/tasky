@@ -38,26 +38,26 @@ class SyncCreateEventRepositoryImpl @Inject constructor(
         }
 
     override suspend fun upsertEvent(event: CreateEventSyncRequest) = withContext(dispatcher) {
-        listOf(
-            launch { syncDataSource.upsertSyncItem(
-                SyncEntity(
-                    action = SyncUserAction.CREATE,
-                    item = SyncItemType.EVENT,
-                    itemId = event.id
-                )
-            ) },
-            launch { attendeeDataSource.upsertAttendees(event.asSyncAttendeeEntity()) },
-            launch { photoDataSource.upsertPhotos(event.asUploadPhotosEntity()) },
-            launch { eventDataSource.upsertEvent(event.asSyncCreateEventEntity()) }
-        ).joinAll()
+        eventDataSource.upsertEventDetailsById(
+            event = event.asSyncCreateEventEntity(),
+            attendees = event.asSyncAttendeeEntity(),
+            photos = event.asUploadPhotosEntity(),
+            syncEntity = SyncEntity(
+                action = SyncUserAction.CREATE,
+                item = SyncItemType.EVENT,
+                itemId = event.id
+            ),
+            syncDao = syncDataSource,
+            attendeeDao = attendeeDataSource,
+            photoDao = photoDataSource
+        )
     }
 
     override suspend fun deleteEvents(ids: List<String>) = withContext(dispatcher) {
-        listOf(
-            launch { syncDataSource.deleteSyncItems(ids) },
-            launch { attendeeDataSource.deleteAttendeesById(ids) },
-            launch { photoDataSource.deletePhotosByEventId(ids) },
-            launch { eventDataSource.deleteEventsById(ids) }
-        ).joinAll()
+        eventDataSource.deleteEventDetailsById(
+            ids,
+            attendeeDataSource,
+            photoDataSource
+        )
     }
 }
