@@ -1,8 +1,10 @@
 package com.rkm.tasky.alarm.model
 
+import com.rkm.tasky.database.model.EventEntity
 import com.rkm.tasky.database.model.ReminderEntity
 import com.rkm.tasky.database.model.TaskEntity
 import com.rkm.tasky.feature.common.AgendaItemType
+import com.rkm.tasky.feature.event.model.Event
 import com.rkm.tasky.feature.reminder.model.Reminder
 import com.rkm.tasky.feature.task.model.Task
 import com.rkm.tasky.util.date.toLocalDateTime
@@ -45,6 +47,26 @@ fun TaskEntity.toReminderAlarm(): ReminderAlarm {
         desc = this.description,
         time = this.remindAt.toLocalDateTime(),
         type = AgendaItemType.TASK
+    )
+}
+
+fun Event.toReminderAlarm(): ReminderAlarm {
+    return ReminderAlarm(
+        id = this.id,
+        title = this.title,
+        desc = this.description,
+        time = this.remindAt.toLocalDateTime(),
+        type = AgendaItemType.EVENT
+    ) 
+}
+
+fun EventEntity.toReminderAlarm(): ReminderAlarm {
+    return ReminderAlarm(
+        id = this.id,
+        title = this.title,
+        desc = this.description,
+        time = this.remindAt.toLocalDateTime(),
+        type = AgendaItemType.EVENT
     )
 }
 

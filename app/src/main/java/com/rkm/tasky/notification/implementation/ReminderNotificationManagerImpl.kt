@@ -15,8 +15,7 @@ import javax.inject.Inject
 
 class ReminderNotificationManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context
-) :
-    ReminderNotificationManager {
+): ReminderNotificationManager {
     override fun showReminderNotification(
         alarm: ReminderAlarm
     ) {
