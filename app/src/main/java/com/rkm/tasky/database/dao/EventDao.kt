@@ -25,6 +25,9 @@ interface EventDao {
     suspend fun getEventById(id: String): EventEntity
 
     @Upsert
+    suspend fun upsertEvent(event: EventEntity)
+
+    @Upsert
     suspend fun upsertEvents(events: List<EventEntity>)
 
     @Transaction
@@ -35,7 +38,7 @@ interface EventDao {
         photoDao: PhotoDao,
         attendeeDao: AttendeeDao,
     ) {
-        upsertEvent(event)
+        upsertEvent (event)
         val oldAttendees = attendeeDao.getAttendeesByEventId(listOf(event.id))
         if(oldAttendees.isNotEmpty()) {
             attendeeDao.deleteAttendees(oldAttendees.subtract(attendees).toList())
