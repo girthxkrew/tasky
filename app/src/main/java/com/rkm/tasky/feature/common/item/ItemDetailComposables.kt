@@ -1,4 +1,4 @@
-package com.rkm.tasky.ui.component
+package com.rkm.tasky.feature.common.item
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background

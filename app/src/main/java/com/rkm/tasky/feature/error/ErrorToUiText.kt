@@ -1,7 +1,7 @@
 package com.rkm.tasky.feature.error
 
 import com.rkm.tasky.R
-import com.rkm.tasky.feature.reminder.error.ItemError
+import com.rkm.tasky.feature.common.item.ItemError
 import com.rkm.tasky.network.util.NetworkError
 
 fun errorToUiMessage(error: NetworkError.APIError): Int {

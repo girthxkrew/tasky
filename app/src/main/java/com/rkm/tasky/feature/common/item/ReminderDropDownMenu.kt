@@ -1,4 +1,4 @@
-package com.rkm.tasky.ui.component
+package com.rkm.tasky.feature.common.item
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,7 +15,6 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +35,7 @@ import com.rkm.tasky.util.date.ReminderBeforeDuration
 fun ReminderDropDownMenu(
     state: ReminderDropDownMenuUiState,
     actions: ReminderDropDownMenuActions,
+    isEditable: Boolean,
     modifier: Modifier = Modifier
 ) {
 
@@ -46,7 +46,8 @@ fun ReminderDropDownMenu(
         onExpandedChange = { actions.onExpanded() }
     ) {
         TextField(
-            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
+            modifier = Modifier
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = isEditable)
                 .fillMaxWidth(),
             value = stringResource(state.selectedDuration.toUiString()),
             onValueChange = {},
@@ -142,7 +143,8 @@ private fun ReminderClosedDropDownPreview() {
     val actions = ReminderDropDownMenuActions({}, {})
     ReminderDropDownMenu(
         state = ReminderDropDownMenuUiState(),
-        actions = actions
+        actions = actions,
+        false,
     )
 }
 
@@ -154,7 +156,8 @@ private fun ReminderOpenDropDownPreview() {
     val actions = ReminderDropDownMenuActions({}, {})
     ReminderDropDownMenu(
         state = ReminderDropDownMenuUiState(isExpanded = true, ReminderBeforeDuration.ONE_HOUR),
-        actions = actions
+        actions = actions,
+        true
     )
 }
 

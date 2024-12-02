@@ -1,6 +1,8 @@
-package com.rkm.tasky.feature.common
+package com.rkm.tasky.feature.common.item
 
 import androidx.compose.runtime.Stable
+import com.rkm.tasky.feature.common.Mode
+import com.rkm.tasky.ui.component.UiText
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
@@ -24,3 +26,12 @@ data class ItemScreenActions(
     val updateDate: (LocalDate) -> Unit,
     val updateTime: (LocalTime) -> Unit
 )
+
+sealed interface ItemUiEvent {
+    data object ItemCreateEvent : ItemUiEvent
+    data object ItemUpdateEvent : ItemUiEvent
+    data object ItemDeleteEvent : ItemUiEvent
+    data class ItemErrorEvent(
+        val message: UiText
+    ) : ItemUiEvent
+}

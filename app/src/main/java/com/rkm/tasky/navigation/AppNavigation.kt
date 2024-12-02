@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.rkm.tasky.feature.agenda.screen.AgendaNavigationScreenEvents
 import com.rkm.tasky.feature.agenda.screen.AgendaScreenRoot
 import com.rkm.tasky.feature.agenda.viewmodel.AgendaViewModel
 import com.rkm.tasky.feature.common.Mode
@@ -22,6 +23,9 @@ import com.rkm.tasky.feature.registration.viewmodel.RegistrationViewModel
 import com.rkm.tasky.feature.reminder.screen.ReminderScreenEvents
 import com.rkm.tasky.feature.reminder.screen.ReminderScreenRoot
 import com.rkm.tasky.feature.reminder.viewmodel.ReminderViewModel
+import com.rkm.tasky.feature.task.screen.TaskScreenEvents
+import com.rkm.tasky.feature.task.screen.TaskScreenRoot
+import com.rkm.tasky.feature.task.viewmodel.TaskViewModel
 import com.rkm.tasky.ui.activity.AuthState
 import kotlinx.serialization.Serializable
 
@@ -39,12 +43,18 @@ fun AppNavigation(
 
         navigation<Destination.Home>(startDestination = Destination.Agenda) {
             composable<Destination.Agenda> {
+                val events = AgendaNavigationScreenEvents(
+                    onReminderClick = { id, mode, date ->
+                        navController.navigate(Destination.Reminder(id = id, mode = mode, date = date))
+                    },
+                    onTaskClick = { id, mode, date ->
+                        navController.navigate(Destination.Task(id = id, mode = mode, date = date))
+                    }
+                )
                 AgendaScreenRoot(
                     modifier = modifier,
                     viewModel = hiltViewModel<AgendaViewModel>(),
-                    onReminderClick = { id, mode, date ->
-                        navController.navigate(Destination.Reminder(id = id, mode = mode, date = date))
-                    }
+                    events = events
                 )
             }
 
@@ -70,6 +80,34 @@ fun AppNavigation(
                 ReminderScreenRoot(
                     modifier = modifier,
                     viewModel = hiltViewModel<ReminderViewModel>(),
+                    events = events,
+                    title = title,
+                    desc = desc
+                )
+            }
+
+            composable<Destination.Task> {
+
+                val title = it.savedStateHandle.get<String>(EditActionType.TITLE.name)
+                val desc = it.savedStateHandle.get<String>(EditActionType.DESCRIPTION.name)
+
+                val events = TaskScreenEvents(
+                    onNavigateBack = {
+                        navController.navigate(Destination.Agenda) {
+                            popUpTo(Destination.Agenda) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    onEditField = { text, action ->
+                        navController
+                            .navigate(route = Destination.Edit(text, action))
+                    }
+                )
+
+                TaskScreenRoot(
+                    modifier = modifier,
+                    viewModel = hiltViewModel<TaskViewModel>(),
                     events = events,
                     title = title,
                     desc = desc
@@ -146,6 +184,9 @@ sealed class Destination {
 
     @Serializable
     data class Reminder(val id: String = "", val mode: String = Mode.CREATE.name, val date: String) : Destination()
+
+    @Serializable
+    data class Task(val id: String = "", val mode: String = Mode.CREATE.name, val date: String) : Destination()
 
     @Serializable
     data class Edit(val text: String, val action: String) : Destination()
